@@ -11,6 +11,7 @@ extern uint32_t fov_percent, draw_distance_percent;
 void SettingsEntryPad(int port, input::Pad& pad);  // src/game/settings_entry.cpp
 std::vector<achievements::Def> AchievementSet();    // src/game/achievement_set.cpp
 void WheelFeel(input::WheelFeel& feel);             // src/game/wheel_feel.cpp
+float MusicLevel();                                 // src/game/hooks.cpp
 }
 
 namespace {
@@ -75,4 +76,5 @@ const app::GameInfo app::kGame = {
     .same_code = {"ec6e902fc167de349f1dc1838a7441dfff932c62", "acd776330a9b903fd567b544cf7ece0f612f6c7d",
                   "702b79fd3bc844a413cbc26404718b1bf7e44e87"},
     .wheel = pgr2::WheelFeel,  // a steering wheel's force feedback follows the player's car
+    .send_level = pgr2::MusicLevel,  // the radio, heard through the effect sends, at the music volume
 };

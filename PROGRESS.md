@@ -37,6 +37,22 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-24 - Paris's missing floor; the radio at the music volume
+
+Harry's video (Paris, Pont d'Iena): the road surface missing; the radio ignoring the Music volume. Only Paris.
+- Floor: the draws the crash guard left out all used material type 5, whose table entry was zero: the city material
+  arrays are 100 long on the disc build and Paris fills 113 of one, the extra 13 dwords overwriting material types 0
+  to 6 (memory dumps: the base game's types 0 to 9 intact, Paris's not; the title update's XBE, imported into Ghidra
+  as pgr2tu, has the same code with the arrays moved and 150 long). src/game/city_tables.cpp keeps entries past 100
+  aside (the loader 0x16C450, the reader 0x118B90, the reset 0x1BEFE0). Headless Paris: "113 entries, 13 kept aside",
+  the guard no longer fires, the road is drawn.
+- Radio: Music volume is the float 0x367528 (found by diffing memory at half and full); the race radio's samples are
+  full scale and its only send is at 0 mB at any setting, so the console's DSP applies it. sdk 97a51d2: GameInfo::
+  send_level scales sends played into the speakers; PGR2 gives the music volume. Headless: radio gain 0.501 at full,
+  0.251 at half (the player's profile), 0.351 in Instant Action (default 0.7).
+- Also: a scripts/pad/paris.txt run fails when the harness disk has no DLC (smoke wipes it): copy the packs again.
+Smoke OK. Next: Harry checks Paris and the radio volume.
+
 ### 2026-10-24 - Paris crash: draws with garbage strides left out; an uncompiled menu callback
 
 Harry's log (Paris, draw distance 200%): every DLC file matches, and the game stops 1.3 s after Paris loads, with no

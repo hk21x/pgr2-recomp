@@ -280,6 +280,18 @@ X86_FUNC(sub_0018BC16) {
     LOGR("pgr2: a profile signed by another console (an Xbox's save): signature accepted, the profile's own checks follow");
 }
 
+// the music volume (Options > Sound / Music; 0x367528, 0 to 1, read by 0x5DD70 and others). In races the radio plays
+// only through effect send 14 at full level and the DSP image puts it into the speakers at this volume (the menus'
+// music has it in its mix bin levels instead: -577 mB full, -1179 half); the mixer stands in for the image
+// (GameInfo::send_level), so the radio follows the setting again
+namespace pgr2 {
+float MusicLevel() {
+    float f;
+    std::memcpy(&f, &kernel::G<uint32_t>(0x367528), 4);
+    return f == f ? f : 1.0f;
+}
+}  // namespace pgr2
+
 // hide_hud: HideOverlays (a Frontend.ini switch, the byte 0x291A24), which the HUD code (0xDA000-0xE8000) reads each
 // frame, set before every frame step (0xD90F0) so the option applies at once
 X86_EXTERN_FUNC(__imp__sub_000D90F0);

@@ -164,6 +164,13 @@ Each item is marked:
   Paris loads); the SDK now leaves out any draw whose vertices lie outside committed guest memory (logged
   `gpu: a draw reads vertices outside the guest's memory`). The DLC cities and their routes are registered in the
   menus, after boot: route indexes past 145 are empty until then, and PGR2_ROUTE on one loads Edinburgh against it.
+- **[PGR2]** City material object 0x3FE8C0: 100 pixel constants (16 bytes), 100 dwords at 0x3FEF00, then the material
+  types (8 bytes: shaders, vertex size in the low 6 bits of +7) at 0x3FF090; counts 0x40AA54 (types), 0x40AA56
+  (dwords, with a byte each at 0x4076F0). The streaming chunk loader 0x16C450 appends; 0x118B90 reads a dword or its
+  top byte by the draw record's index byte (+6); 0x1BEFE0 resets. Paris needs 113 dwords: the 13 extra overwrote
+  material types 0 to 6 (type 5 lost its shaders and size: 0x119CC0 set stride 5 - 4 = -4, the missing floor) and
+  0x407754 on. The title update made the arrays 150 long (0x404E00, 0x405760, 0x40E018). src/game/city_tables.cpp
+  keeps entries past 100 aside.
 - **[PGR2]** What the disc build cannot take from the booster packs (title update data): object paks in the newer layout
   (a zlib compressed WMSH chunk first, where the disc's open with an INDX index: read as garbage meshes), materials
   whose bucket is past the city draw list's 106 (0x11B210, table 0x457188: a null write), and night or overcast sets
@@ -191,6 +198,11 @@ Each item is marked:
 - **[PGR2]** The lobby, the race and the results work with two headless instances (`scripts/linktest.sh`).
 
 ## Sound
+
+- **[PGR2]** The music volume is the float 0x367528 (0 to 1; Instant Action from the title runs at the default 0.7,
+  a player's game at their setting). The menus' music carries it in its mix bin levels (-577 mB full, -1179 half);
+  in races the radio goes to effect send 14 alone at 0 mB, its samples at full scale, and the DSP image applies the
+  volume. The mixer plays such sends into the speakers itself, so GameInfo::send_level gives it the volume.
 
 - **[console]** The software mixer plays everything PGR2 uses: streams, ADPCM, the engine via SetFrequency, and
   the music fades.

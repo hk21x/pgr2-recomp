@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-24 - Paris at 200% draw distance: m_CompressionStream after five minutes
+
+Harry: Paris much better, then PGR2's fatal error "m_CompressionStream.msg" near the end of a race (draw distance
+200%, 310 s in). The F3 stacks: a streamed city block (table 0x3F2D38) failing to unpack in 0x1003E0. The title
+update's streaming code and constants are the disc build's, and the only arrays it enlarged besides the city ones are
+paint colours, two car lists and 0x20 bytes of the audio manager (FINDINGS). Not reproduced: headless the car cannot
+drive a lap (holding the throttle stops at the first corner; the auto start's flag not found among five candidates).
+Suspected: 200% draw distance streams more of Paris than the streamer's buffers hold. Next: Harry's A/B at 100%.
+
 ### 2026-10-24 - Paris's missing floor; the radio at the music volume
 
 Harry's video (Paris, Pont d'Iena): the road surface missing; the radio ignoring the Music volume. Only Paris.

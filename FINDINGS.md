@@ -171,6 +171,12 @@ Each item is marked:
   material types 0 to 6 (type 5 lost its shaders and size: 0x119CC0 set stride 5 - 4 = -4, the missing floor) and
   0x407754 on. The title update made the arrays 150 long (0x404E00, 0x405760, 0x40E018). src/game/city_tables.cpp
   keeps entries past 100 aside.
+- **[PGR2]** The title update's default.xbe (in the DLC's uPAL folder) has the disc build's code with addresses moved;
+  .local/tu has a Ghidra project of it (pgr2tu, .local/tu/g.sh runs the helper scripts on it). Aligning both builds'
+  disassembly and pairing their globals shows what it enlarged: the city material arrays (100 to 150), the paint
+  colours (600 to 700, 84 bytes each from 0x32F1F4), two lists beside the car table (0x310454 and 0x310888, +0x50
+  each) and 0x20 bytes in the audio manager 0x465638 (its fields from +0x2CA0 move). The city streaming code (blocks
+  0x3F2D38, unpacked in place by 0x1003E0) and its constants are the same.
 - **[PGR2]** What the disc build cannot take from the booster packs (title update data): object paks in the newer layout
   (a zlib compressed WMSH chunk first, where the disc's open with an INDX index: read as garbage meshes), materials
   whose bucket is past the city draw list's 106 (0x11B210, table 0x457188: a null write), and night or overcast sets

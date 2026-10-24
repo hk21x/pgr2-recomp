@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-24 - Paris's crash after the start line: the city slots kept aside completely
+
+Harry: L'Arc de Triomphe crashes 2 s after the line, at 100% draw distance too, on PGR2's fatal "m_CompressionStream.
+msg". Reproduced headless (PGR2_ROUTE=151 once the menus have registered Paris, scripts/pad/paris.txt): 52 s into the
+race. A log of each streamed block unpacked (0x1003E0) showed the last asking for block 7742 of a table of 2000, its
+entry garbage: an animated texture's frame (0x1075E0) read from 0x407754, where the city material object's kind bytes
+for slots 100 to 112 had landed. The 2026-10-24 fix covered one loader and one reader; the object has two loaders, a
+load-time and a per-frame constant pass that walk every slot, and two resets (FINDINGS). Now each loader runs with the
+real count, the slots past 100 are copied out and what they overwrote restored (before 0x107820 writes the animated
+textures), and the object's count stays at 100; the slots past 100 get their pixel constants from the game's own
+passes run on a scratch copy of the object, and a draw naming one gets a stand-in slot with its colour and constant
+for the call. Headless: route 151 five minutes, past the line and the Arc, no fault; "city slots: 113". Smoke OK.
+
 ### 2026-10-24 - Paris at 200% draw distance: m_CompressionStream after five minutes
 
 Harry: Paris much better, then PGR2's fatal error "m_CompressionStream.msg" near the end of a race (draw distance

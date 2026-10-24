@@ -164,13 +164,17 @@ Each item is marked:
   Paris loads); the SDK now leaves out any draw whose vertices lie outside committed guest memory (logged
   `gpu: a draw reads vertices outside the guest's memory`). The DLC cities and their routes are registered in the
   menus, after boot: route indexes past 145 are empty until then, and PGR2_ROUTE on one loads Edinburgh against it.
-- **[PGR2]** City material object 0x3FE8C0: 100 pixel constants (16 bytes), 100 dwords at 0x3FEF00, then the material
-  types (8 bytes: shaders, vertex size in the low 6 bits of +7) at 0x3FF090; counts 0x40AA54 (types), 0x40AA56
-  (dwords, with a byte each at 0x4076F0). The streaming chunk loader 0x16C450 appends; 0x118B90 reads a dword or its
-  top byte by the draw record's index byte (+6); 0x1BEFE0 resets. Paris needs 113 dwords: the 13 extra overwrote
-  material types 0 to 6 (type 5 lost its shaders and size: 0x119CC0 set stride 5 - 4 = -4, the missing floor) and
-  0x407754 on. The title update made the arrays 150 long (0x404E00, 0x405760, 0x40E018). src/game/city_tables.cpp
-  keeps entries past 100 aside.
+- **[PGR2]** City material object 0x3FE8C0, its slots in arrays of 100: pixel constants +0x0 (16 bytes), colours
+  +0x640 (0x3FEF00), then material types +0x7D0 (0x3FF090, 8 bytes: shaders, vertex size in the low 6 bits of +7),
+  kinds +0x8E30 (0x4076F0, a byte), animated textures +0x8E94 (0x407754, 0xC4 each, 64; each frame's stream block)
+  and refs +0xBF94 (0x40A854, 128); counts +0xC194 on (0x40AA54 types, 0x40AA56 slots, 0x40AA5A animations,
+  0x40AA5E refs). Slots are appended by the city pak loader 0x16CFA0 (through 0x16C0D0, then 0x107820 appends the
+  animations) and the streaming loader 0x16C450; 0x117F30 (load) and 0x1186C0 (each frame) write each slot's pixel
+  constant from its kind and colour (they read nothing else of the object); a draw (0x118B90) names its slot in byte
+  +6 of its record; 0x1BEFE0 and 0x1073C0 reset. Paris has 113 slots: the extra overwrote material types 0 to 6 (the
+  missing floor: type 5's stride 0 - 4 = -4), its kinds landed on the animated textures (a frame asked for stream
+  block 7742: "m_CompressionStream.msg") and the per-frame pass wrote constants over the colours. The title update
+  made the arrays 150 long. src/game/city_tables.cpp keeps the slots past 100 aside and the count at 100.
 - **[PGR2]** The title update's default.xbe (in the DLC's uPAL folder) has the disc build's code with addresses moved;
   .local/tu has a Ghidra project of it (pgr2tu, .local/tu/g.sh runs the helper scripts on it). Aligning both builds'
   disassembly and pairing their globals shows what it enlarged: the city material arrays (100 to 150), the paint

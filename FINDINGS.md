@@ -207,6 +207,13 @@ Each item is marked:
 - **[console]** Loopback instances on Linux shift ports below 1024 up 20000 (PGR2 binds 1000 to 1002).
 - **[PGR2]** The lobby, the race and the results work with two headless instances (`scripts/linktest.sh`).
 
+- **[PGR2]** Clear-weather Nurburgring: the race's frame buffer clear is depth and stencil only (flags 3), so the sky
+  dome (vertex shader with 1351-index strip, pixel shader blending a 256x128 gradient and a cloud texture) has to
+  cover every pixel the scenery leaves. It and the far hills lie past the far plane; the console's W-buffer does not
+  clip there, the GPU renderers did: old frames showed through (a white sky, brown bars that flashed while driving).
+  Since sdk (W-buffered draws keep z within w) the vertex shaders clamp instead. The DLC TVR Cerbera Speed 12's Car
+  Challenge is on "Nurburgring 1" by the title update's cars.ini.
+
 ## Sound
 
 - **[PGR2]** The music volume is the float 0x367528 (0 to 1; Instant Action from the title runs at the default 0.7,

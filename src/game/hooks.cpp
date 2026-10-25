@@ -332,6 +332,7 @@ X86_FUNC(sub_00116C20) {
 // PGR2_NIGHT=1 (experiment): every race at night. The conditions are picked in 0x0F14E0 (it writes 0x383188 itself,
 // found with a watchpoint); night is set right after, before the race copies it and loads the city's night set.
 // PGR2_ROUTE=N (test): the race is on route N
+// PGR2_WEATHER=N (test): the race's weather (0x383184: 0 clear, 2 overcast), set after the roll as night is
 // PGR2_CAR=N (test): player 1 drives car N (the car table 0x3109F0, 0x270 bytes from 0x3109F4; the players' cars at
 // 0x39B318 + player x 0x2498, which 0x17C50 reads when it builds the car)
 X86_EXTERN_FUNC(__imp__sub_000F14E0);
@@ -369,6 +370,13 @@ X86_FUNC(sub_000F14E0) {
         return on;
     }();
     if (night) kernel::W32(0x383188, 1);
+    static const long weather = [] {
+        const char* e = std::getenv("PGR2_WEATHER");
+        long w = e && *e ? std::strtol(e, nullptr, 0) : -1;
+        if (w >= 0) LOGR("pgr2: PGR2_WEATHER=%ld, every race in that weather (0 clear, 2 overcast)", w);
+        return w;
+    }();
+    if (weather >= 0) kernel::W32(0x383184, uint32_t(weather));
 }
 
 // PGR2's stage 0 combiner modes (0x105ED0(mode): 1 MODULATE(diffuse, texture), 5 SELECTARG1(texture), ...; it skips a

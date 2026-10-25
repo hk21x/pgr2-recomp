@@ -37,6 +37,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-25 - Nurburgring's flashing sky: W-buffered draws no longer far-clipped
+
+Harry: Time Attack > Car Challenge > Paris > TVR Cerbera Speed 12 goes to Nurburgring (the title update's cars.ini puts
+its challenge on "Nurburgring 1", so that is right); the sky is black in the flyover and white with brown bars that
+flash while driving, D3D12 and D3D11, MSAA on or off. Headless (PGR2_ROUTE=50, new PGR2_WEATHER=0) the reference
+renderer draws a blue sky with clouds. Harry's captures (XBE_CAPTURE_DRAWS=vs:B0101C01): the frame clear is depth
+only, the sky dome draw changes nothing on screen, and a hillside is missing as well: geometry past the far plane,
+which the console's W-buffer keeps and D3D clips. sdk: for W-buffered draws the vertex shaders keep z within w (both
+the programs' epilogue and fixed function), near clipping and the shader's depth unchanged. All 83 generated shaders
+compile (shadercheck). Smoke OK. Next: Harry checks Nurburgring.
+
 ### 2026-10-25 - Quit game in the settings window (issue 16)
 
 Issue 16 (rizaumami): no way to quit without Alt+Tab and the window's close button. The settings window has a Quit game

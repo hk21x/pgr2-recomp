@@ -29,13 +29,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Stutter (2026-10-22): wheel scan and the visibility report fence stalls fixed; slow frames 0-3 per 10 s on
   Harry's PC (was up to 272); render thread 10-14 ms a frame of 16.7
 - Steering wheel (DirectInput, force feedback, F1 > Wheel): Harry's rig (Simucube, BU0836 pedals, shifter, button box)
-  detected and bound on Windows (2026-10-22); pedals on Z/Rz/slider fixed 2026-10-23, to confirm
-- Ultrawide: menus, HUD, replays confirmed on 32:9; the rear view mirror narrowed (2026-10-23), to confirm
+  detected and bound on Windows (2026-10-22); pedals on Z/Rz/slider confirmed (2026-10-25)
+- Ultrawide: menus, HUD, replays confirmed on 32:9; the rear view mirror confirmed (2026-10-25)
 - Launcher (PGR2Launcher.exe, launcher.bat): builds and launches the game on Windows (2026-10-22)
-- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays)
+- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays); 1.0.3 on 2026-10-25 (Paris, radio volume, pedals, mirror, profiles, media patched discs)
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-10-25 - release 1.0.3
+
+Harry confirmed on Windows 11: everything since 1.0.2 works (Paris races, its floor, the radio volume, pedals on any
+axes, the ultrawide mirror, Xbox profiles). Notes in docs/releases/v1.0.3.md, tag v1.0.3. The licence (local branch
+`licence`) is still not on main.
 
 ### 2026-10-24 - Paris's crash after the start line: the city slots kept aside completely
 

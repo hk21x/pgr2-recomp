@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-25 - sharp text and HUD (the SDK's Sharpen2D, from Everything or Nothing)
+
+GameInfo::sharpen_2d on: the textures 2D draws use are enlarged on a background thread (Catmull-Rom colour, mask-like
+alpha rebuilt as a sharp anti-aliased edge, soft alpha interpolated; A8 text and pictures up to 128 texels 4x, larger
+2x) and drawn as replacements; F1 > Graphics "Sharp text and HUD" turns it off. SDK moved to the fork's main for it
+(697c30b). Headless with the reference renderer (XBE_SHARPEN_DUMP): 15 menu and HUD textures enlarged (the font sheet,
+the speedometer, the gear digits): staircase edges become smooth curves; title and race frames otherwise unchanged.
+Smoke OK, every Windows source checks. Next: Harry looks at the menus and HUD at 3440x1440.
+
 ### 2026-10-25 - Nurburgring's flashing sky: W-buffered draws no longer far-clipped
 
 Harry: Time Attack > Car Challenge > Paris > TVR Cerbera Speed 12 goes to Nurburgring (the title update's cars.ini puts

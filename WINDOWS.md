@@ -48,7 +48,9 @@ A selects, B goes back). **Quit game** at its top right asks, then closes the ga
 button do). Tabs:
 - Display: monitor (with more than one), display mode, resolution, vsync, aspect ratio (Fill the screen: ultrawide).
 - Graphics: render scale, anisotropic filtering, frame rate cap, antialiasing (FXAA, MSAA 2x/4x/8x), frames-a-second
-  counter, renderer (Direct3D 12 or 11, next start).
+  counter, renderer (Direct3D 12 or 11, next start), **Sharp text and HUD** (on by default: the menus', HUD's and
+  text's textures are enlarged two or four times with sharp edges on a background thread, so lettering and gauges stay
+  crisp at high resolutions; a texture shows at its original size for a moment the first time it appears).
 - Game: skip intro movies, hide the race HUD, race camera field of view (%), races at 60 (experimental).
 - General: pause when the window is not in front.
 - Controls: keys and controller remapping.

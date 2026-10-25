@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-25 - Quit game in the settings window (issue 16)
+
+Issue 16 (rizaumami): no way to quit without Alt+Tab and the window's close button. The settings window has a Quit game
+button at its top right (sdk), which asks first and then closes the window as its close button does; Alt+F4 already
+did, now written down in README and WINDOWS.md. The SDK is now the fork's main with the PGR1 and EoN work (3948
+present parameters, mouse look, MultiSampleMode): recompiled, smoke OK, every Windows source checks.
+
 ### 2026-10-25 - release 1.0.3
 
 Harry confirmed on Windows 11: everything since 1.0.2 works (Paris races, its floor, the radio volume, pedals on any

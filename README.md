@@ -95,7 +95,7 @@ tools for Windows**), about 15 GB free, and your disc's files: `default.xbe` and
 
 **Settings window:** press **F1**, or **Back + Start** on a controller, or choose **Options > General Options > PC
 Settings** in the game's menus. Tabs: Display, Graphics, Game, Achievements, General and Controls. Changes are saved
-at once.
+at once. **Quit game** (top right) closes the game, as does **Alt+F4**.
 
 **Keyboard** (plays as controller 1 while the window has the focus; remap in Controls, two keys per input):
 

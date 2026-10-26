@@ -150,6 +150,22 @@ code, so it can be shared. To try it as a player would: copy it into an empty fo
 without Visual Studio) and run it. Send `PGR2\launcher.log` with any report. The Linux side tested each step but
 the build itself (`msiexec` for the SDK, then the compile) only runs on Windows.
 
+## Your music (custom soundtracks)
+
+PGR2 plays Xbox custom soundtracks (CDs the dashboard ripped to the hard disk). The launcher makes them from your
+music: in its **4  Your music** section, *Choose a music folder...* and pick the folder.
+- Each folder inside becomes a soundtrack named after it (with everything under it, so an artist's albums can sit in
+  one); the songs directly in the chosen folder make one more. At most 100 soundtracks of 504 songs (the Xbox's).
+- MP3, FLAC, OGG, Opus, M4A, AAC, WAV, WMA and AIFF files are converted to the Xbox's WMA with FFmpeg, which the
+  launcher downloads the first time (about 90 MB, into its tools folder). Song names come from the tags
+  ("Artist / Title"), else the file names; names are cut to 31 characters, as on the Xbox.
+- *Update my music* after adding, changing or removing songs: only those are converted.
+- In the game: Options > Sound / Music > **PGR 2 Custom Soundtrack** > Add/Remove Songs (the triggers change
+  soundtrack: yours follow the game's own), then in a race choose the custom soundtrack in the pause menu's
+  Radio/CD Options.
+- The files go in `play\hdd\E\TDATA\FFFE0000\MUSIC` (`ST.DB` and numbered folders). A MUSIC folder copied from a
+  real Xbox works as it is; the launcher then leaves it alone (move it away to use a folder of yours instead).
+
 ## Xbox Live DLC cities and cars (experimental)
 
 Paris and Long Beach from the PGR2 booster packs, on the disc's game. Confirmed on Windows (2026-10-21): both race,

@@ -37,6 +37,21 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-26 - your music as PGR2's custom soundtracks (launcher)
+
+PGR2 plays Xbox custom soundtracks: XAPI (compiled into the game, 0x190014 to 0x19020C) reads
+E:\TDATA\FFFE0000\MUSIC\ST.DB and the game opens MUSIC\<soundtrack>\<song>.WMA (0x190434) with its own WMA decoder.
+The ST.DB layout was read from that code (sdk launcher/core/music.h). Headless: a database and two ffmpeg-made WMA 2
+files appear under Options > Sound / Music > PGR 2 Custom Soundtrack after the game's own soundtracks, and Play
+streams them: the recording holds 440 Hz on the left and 660 Hz on the right alone, as encoded. sdk launcher: a
+"Your music" section (game.json "music": true) picks a folder, converts each MP3/FLAC/OGG/Opus/M4A/AAC/WAV/WMA/AIFF to
+WMA 2 with FFmpeg 7.1.1 (Gyan's essentials build, an optional toolchain.json tool fetched the first time, 88 MB, its
+wmav2 encoder checked), writes ST.DB, and on Update converts only what changed. launcher_cli music on a test library
+(loose files, an album with a CD2 folder, tags and none, accents): 4 songs in 3 soundtracks, re-runs keep what is
+unchanged; in the game the soundtracks and accented names show. The SDK now includes the other sessions' shader cache
+on disk, multichannel DSOUND voices and best-fit contiguous memory: recompiled, smoke OK, Windows sources check.
+Next: Harry tries Your music in the launcher (a new launcher build).
+
 ### 2026-10-25 - sharp text and HUD (the SDK's Sharpen2D, from Everything or Nothing)
 
 GameInfo::sharpen_2d on: the textures 2D draws use are enlarged on a background thread (Catmull-Rom colour, mask-like

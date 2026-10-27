@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-27 - PC Settings as a page of the game's own options
+- Harry: the everyday picture settings in the game's menus rather than only the F1 window (the hybrid: F1 keeps
+  display, controls, wheel and the rest).
+- Options > General Options > PC Settings (Screen Center's slot, 0xA2E60) now builds a page of the game's option rows,
+  copied from Game Options (0xA1710): render scale, anti-aliasing, texture filtering, sharp text and HUD, draw
+  distance, field of view, race HUD, frame counter, and More Settings, which builds the page again and opens the
+  window. Each row steps an int in guest memory; each frame a changed row sets its setting (and saves pgr2.toml), a
+  setting changed in F1 moves its row. A and B go back to General Options. The page's widgets: FINDINGS.
+- Headless: the page drawn as the game's own (heading, legend, help lines), Right changes render scale and
+  anti-aliasing (logged), More Settings asks for the window, B returns to General Options. Smoke OK.
+- Next: Harry on Windows (that each row's setting shows at once, the window from More Settings, gamepad and keyboard).
+
 ### 2026-10-27 - wheels: the game told controller 1 is a steering wheel
 - A player (wheel, separate USB pedals and buttons): a huge dead zone, then a non-linear response, whatever the wheel
   software and the Wheel tab said. PGR2 reads each port's XInputGetCapabilities subtype (0x26D8E2 into +0xB96 of the

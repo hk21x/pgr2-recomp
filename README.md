@@ -151,7 +151,8 @@ Plays as controller 1, with two keys for each console input, remappable in the s
   PGR 2 Custom Soundtrack to build your playlist, then the Radio/CD options in a race's pause menu.
 - **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
   files (F1 > Game); see [WINDOWS.md](WINDOWS.md).
-- **Settings Window** - Press F1, Back + Start on a controller, or choose Options > General Options > PC Settings in the game's menus, for display, graphics, game options and controls. Changes are saved to `pgr2.toml`.
+- **PC Settings in the game's menus** - Options > General Options > PC Settings: render scale, anti-aliasing, texture filtering, sharp text and HUD, draw distance, field of view, the race HUD and the frame counter, changed with left and right like the game's own options and applied at once. Its last row, More Settings, opens the settings window.
+- **Settings Window** - Press F1 or Back + Start on a controller for everything: display, graphics, game options, controls and the wheel. Changes made in either place are saved to `pgr2.toml`.
 - **Skip Intro** - Goes straight to the title screen.
 - **Hide HUD** - Clears the race HUD for screenshots and replays.
 - **Pause On Focus Loss** - The game and its sound stop while another window is in front.

@@ -128,6 +128,12 @@ Each item is marked:
   by 16:9 / that shape, as the HUD is squeezed; the box itself must stay, as the mirror's 2D frame is placed from it.
   Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button names
   0x28F960); the default has CAMERA_NEXT on Black, CAMERA_PREV on White.
+- **Option pages.** A page is a builder function returning 1 (General Options 0xA40A0, Game Options 0xA1710); the
+  frame 0x2FEE08 holds the title's string id at +0x34. Rows: 0x58EE0 (cdecl, 17 arguments: x, y floats; 1; label;
+  help line; an int; choice count; 2; 0; eight choice texts, all UTF-16 pointers) steps the int with Left and Right
+  (0x4D130 on actions 2 and 3) and shows its choice; 0x59020 the same for a byte. The manager [0x2F4B78]: 0x4D3A0
+  chains rows, 0x4D4C0 sends an action (4 A, 5 B) to a page builder, 0x4D270 focuses a row. The legend 0x28A488
+  (0x89200 A's text, 0x891E0). src/game/settings_entry.cpp builds PC Settings from these.
 - **Wheels.** The controller poll 0x1375D0 (per port 0x124 bytes) opens a port on insertion and reads its
   XInputGetCapabilities (0x26D8E2) into +0xB96; the only reader of the subtype is 0x13787A, `CMP byte [ESI+0x5E],0x10`
   (XINPUT_DEVSUBTYPE_GC_WHEEL). Anything else gets a gamepad's treatment on both sticks: an adaptive dead zone (from

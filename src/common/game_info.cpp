@@ -8,7 +8,6 @@ void InstallDrawFilter();  // src/game/draw_filter.cpp
 namespace pgr2 {
 extern bool skip_intro, hide_hud, dlc;
 extern uint32_t fov_percent, draw_distance_percent;
-void SettingsEntryPad(int port, input::Pad& pad);  // src/game/settings_entry.cpp
 std::vector<achievements::Def> AchievementSet();    // src/game/achievement_set.cpp
 void WheelFeel(input::WheelFeel& feel);             // src/game/wheel_feel.cpp
 float MusicLevel();                                 // src/game/hooks.cpp
@@ -66,7 +65,7 @@ const app::GameInfo app::kGame = {
     .window = nullptr,                    // the game window is up
     .message = nullptr,                   // window messages first; true takes one
     .ui = nullptr,                        // ImGui drawing each frame
-    .pad = pgr2::SettingsEntryPad,        // changes a polled pad: B back from PC Settings
+    .pad = nullptr,                       // changes a polled pad
     .rumble = nullptr,                    // changes a rumble before it is set
     .achievements = pgr2::AchievementSet(),  // conditions on guest memory, checked each frame
     // the North American release (region NA+Japan, version 5): its default.xbe differs from the PAL one (version 2)

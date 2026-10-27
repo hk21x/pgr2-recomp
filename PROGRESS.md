@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-27 - launcher: too long a folder path stops the Windows SDK unpacking
+- A player's launcher.log stopped after 7 of the Windows SDK's 10 MSIs with no error. Their launcher sat in
+  `F:\Project Gotham Racing 2 (USA, Japan) (En,Ja,...)\Project Gotham Racing 2 (...)\PGR2\` (about 135
+  characters); `msiexec /a` fails past 260 characters and the SDK's deepest files lie about 130 below `tools\`.
+- SDK (fork main): Builder::PathTooLong (more than 80 characters, only before a first build) stops the build with
+  what to do, the window shows it in red and disables Build; BuildAll logs "build stopped: <reason>" to
+  launcher.log, so later failures are in the log too. README troubleshooting entry.
+- Next: the player's confirmation from a short folder.
+
 ### 2026-10-26 - release 1.1.0
 
 Harry confirmed Your music on Windows ("works perfectly"). Since 1.0.3: Your music (launcher section 4, FFmpeg), sharp

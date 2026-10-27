@@ -45,8 +45,8 @@ and no admin rights needed.
 
 **Steps:**
 1. Download `PGR2Launcher.exe` from the [latest release](https://github.com/hk21x/pgr2-recomp/releases/latest).
-2. Put it in a folder of its own (for example `C:\Games\PGR2`) and run it. Everything it makes goes in a `PGR2`
-   folder beside it. Windows may warn about an unrecognised app: choose **More info**, then **Run anyway**.
+2. Put it in a folder of its own with a short path (for example `C:\Games\PGR2`) and run it. Everything it makes
+   goes in a `PGR2` folder beside it. Windows may warn about an unrecognised app: choose **More info**, then **Run anyway**.
 3. **Your game:** choose your disc image or the folder with the disc's files. The launcher checks that it is a
    supported release.
 4. **Build:** accept the license terms for Microsoft's C++ libraries and Windows SDK (the build uses them), then press
@@ -179,6 +179,9 @@ in [PROGRESS.md](PROGRESS.md), and technical findings in [FINDINGS.md](FINDINGS.
   the diagnostic switches (frame captures with F3, frame logs with F4, `XBE_PERF` timings).
 - The launcher's build failing: send `PGR2\launcher.log` (its Details section shows the same). Press Build again
   after a network problem: it carries on where it stopped.
+- The build stopping while it unpacks the Windows SDK (the last lines `extracting ... .msi`): the launcher's folder
+  path is too long for Microsoft's installer. Move `PGR2Launcher.exe` and its `PGR2` folder to a short folder such
+  as `C:\Games\PGR2` and press Build again. Launchers from 2026-10-27 on say so before building.
 - "Another release" in the log, or the game not starting: the `default.xbe` is not one of the supported releases.
 - A first boot again (the cache, the intro movies): delete the `hdd` folder beside `PGR2.exe` (`PGR2\play\hdd` with
   the launcher, `out\build\release\hdd` when built from source).

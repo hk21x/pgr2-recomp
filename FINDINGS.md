@@ -125,8 +125,16 @@ Each item is marked:
   widescreen flag 0x48614C) times the box's shape. The mirror of the bumper and hood views is a camera with the box
   220,38 200x70 drawn on the frame itself. Ultrawide (src/game/hooks.cpp): 0x2790F8 is the frame's shape, and a box
   touching neither side keeps its 16:9 aspect and its viewport (0x185640, from the box) is narrowed about the centre
-  by 16:9 / that shape, as the HUD is squeezed; the box itself must stay, as the mirror's 2D frame is placed from it. Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button
-  names 0x28F960); the default has CAMERA_NEXT on Black, CAMERA_PREV on White.
+  by 16:9 / that shape, as the HUD is squeezed; the box itself must stay, as the mirror's 2D frame is placed from it.
+  Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button names
+  0x28F960); the default has CAMERA_NEXT on Black, CAMERA_PREV on White.
+- **Wheels.** The controller poll 0x1375D0 (per port 0x124 bytes) opens a port on insertion and reads its
+  XInputGetCapabilities (0x26D8E2) into +0xB96; the only reader of the subtype is 0x13787A, `CMP byte [ESI+0x5E],0x10`
+  (XINPUT_DEVSUBTYPE_GC_WHEEL). Anything else gets a gamepad's treatment on both sticks: an adaptive dead zone (from
+  0x27D894, moved between 0x27D898 and 0x27D894 as the stick is used) with the rest rescaled, then 0x137460, a learned
+  stick gate (32 sectors from 0.75, the radius divided by the gate's), which bends a wheel's travel. A wheel gets its
+  axes as they come. There is no wheel choice or wheel dead zone in the game's options. The SDK reports a port
+  steered by a bound wheel as one (re-plugging it when that changes).
 
 ## The gearbox
 

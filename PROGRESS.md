@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-27 - wheels: the game told controller 1 is a steering wheel
+- A player (wheel, separate USB pedals and buttons): a huge dead zone, then a non-linear response, whatever the wheel
+  software and the Wheel tab said. PGR2 reads each port's XInputGetCapabilities subtype (0x26D8E2 into +0xB96 of the
+  port in 0x1375D0) and only for a wheel (0x10, test at 0x13787A) skips its gamepad stick handling: an adaptive dead
+  zone and a learned stick gate (0x137460) on both sticks. The SDK never answered XInputGetCapabilities (the library
+  code ran on the HLE's handle and failed), so a wheel was a pad.
+- SDK: XInputGetCapabilities signed for 5659 (game.toml rescan reproduces it) and HLE'd: SubType 0x10 when a bound
+  steering device steers the port (input::Pad::wheel, from WheelRead), else 0x01; a port whose wheel state changes is
+  reported removed and inserted in one XGetDeviceChanges so the game reopens it. Harness PAD_WHEEL=N.
+- Headless: PAD_WHEEL=8600 mid-race, `xapi: controller 1 is a steering wheel` and the race carries on (no
+  disconnection pause). Smoke OK.
+- Next: the player and Harry on Windows: the Wheel tab's dead zone and lock now the whole response.
+
 ### 2026-10-27 - the ultrawide mirror's picture wider than its frame
 - Harry, 21:9 and 32:9 screenshots: the mirror's picture ran past its frame on both sides. Measured: the picture was
   the box narrowed once by 16:9 / aspect (k), as intended, the frame narrowed by k twice. The 2D frame is placed from

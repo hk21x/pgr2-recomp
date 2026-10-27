@@ -130,6 +130,10 @@ it on whichever device it is on.
   in neutral nothing happens. With an automatic gearbox the shifter does nothing. The tab shows the lever's gear and
   the car's.
 - **Raw input**: each device's axes and held buttons, to see what Windows reports.
+- With the steering bound to a device that is plugged in, controller 1 tells the game it is a steering wheel, as an
+  Xbox wheel did: the game then takes the steering as it comes, without the pad's dead zone and stick shaping (before
+  2026-10-27 it got those, a large dead zone then a bent response). The Wheel tab's rotation, lock and dead zone are
+  then the only ones. The log says `xapi: controller 1 is a steering wheel`.
 - Without any binding set up, the first device reporting itself as a driving device is used with the G920 layout
   (steering X, throttle Y, brake Rz, clutch slider 1). Anything else (a Simucube base, pedal and button boxes, a pad
   with rumble) is only used once bound in the Wheel tab.

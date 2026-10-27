@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-27 - the ultrawide mirror's picture wider than its frame
+- Harry, 21:9 and 32:9 screenshots: the mirror's picture ran past its frame on both sides. Measured: the picture was
+  the box narrowed once by 16:9 / aspect (k), as intended, the frame narrowed by k twice. The 2D frame is placed from
+  the camera's box (+0x28..+0x34), which the 2026-10-23 fix narrowed, and the HUD squeeze narrowed it again.
+- src/game/hooks.cpp: the box stays as the game set it; only the viewport 0x185640 sets from it is narrowed (the box
+  swapped in for that call), the aspect at +0x38 as before. Headless 32:9 hood view (Black twice in a race): picture
+  and frame both 270..370 of 640. Smoke OK.
+- Next: Harry checks the mirror on 21:9 and 32:9.
+
 ### 2026-10-27 - launcher: too long a folder path stops the Windows SDK unpacking
 - A player's launcher.log stopped after 7 of the Windows SDK's 10 MSIs with no error. Their launcher sat in
   `F:\Project Gotham Racing 2 (USA, Japan) (En,Ja,...)\Project Gotham Racing 2 (...)\PGR2\` (about 135

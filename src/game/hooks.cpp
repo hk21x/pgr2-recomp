@@ -239,28 +239,45 @@ void ApplyAspect() {
 // ultrawide: a camera (0x1857F0, thiscall: x, y, w, h of its box on the 640 wide screen, ..., an aspect or 0 at +0x1C)
 // keeps the box at +0x28..+0x34 and its aspect, 0x2790F8 times the box's shape, at +0x38. The rear view mirror in the
 // bumper and hood views is one, 220,38 200x70: on a frame wider than 16:9 its box stretched with the screen and ran into
-// the HUD. A box touching neither side is narrowed about the centre by 16:9 / the aspect used, as the HUD is
-// (gpu::HudSqueeze), and given the aspect it has at 16:9: the box and its picture as at 16:9. Full width and split
-// screen views reach a side and keep theirs.
+// the HUD. A box touching neither side keeps the aspect it has at 16:9, and its viewport (set from the box by 0x185640)
+// is narrowed about the centre by 16:9 / the aspect used, as the HUD is (gpu::HudSqueeze). The box itself stays: the
+// mirror's 2D frame is placed from it and squeezed with the HUD, so narrowing the box squeezed the frame twice.
+// Full width and split screen views reach a side and keep theirs.
+namespace {
+std::unordered_map<uint32_t, std::pair<int32_t, int32_t>> narrowed;  // camera: viewport x, w
+}
 X86_EXTERN_FUNC(__imp__sub_001857F0);
 X86_FUNC(sub_001857F0) {
     uint32_t cam = ctx.ecx;
     int32_t x = int32_t(kernel::R32(ctx.esp + 4)), w = int32_t(kernel::R32(ctx.esp + 12));
     uint32_t given = kernel::R32(ctx.esp + 0x1C);
     __imp__sub_001857F0(ctx, base);
+    narrowed.erase(cam);
     float aspect;
     std::memcpy(&aspect, &kernel::G<uint32_t>(0x2790F8), 4);
     if (!kernel::G<uint8_t>(0x48614C) || given || aspect <= 16.0f / 9.0f + 1e-3f || x <= 0 || x + w >= 640) return;
     float k = 16.0f / 9.0f / aspect, own;
     int32_t nx = int32_t(std::lround(320 + (x - 320) * k)), nw = std::max(1, int32_t(std::lround(w * k)));
-    kernel::W32(cam + 0x28, uint32_t(nx));
-    kernel::W32(cam + 0x30, uint32_t(nw));
+    narrowed[cam] = {nx, nw};
     std::memcpy(&own, &kernel::G<uint32_t>(cam + 0x38), 4);
     own *= k;
     std::memcpy(&kernel::G<uint32_t>(cam + 0x38), &own, 4);
     static int said = 0;
-    if (said++ < 8) LOGR("pgr2: camera box %d,%u %dx%u narrowed to %d wide at %d for the %.3f:1 frame", x,
+    if (said++ < 8) LOGR("pgr2: camera box %d,%u %dx%u: viewport narrowed to %d wide at %d for the %.3f:1 frame", x,
                          kernel::R32(cam + 0x2C), w, kernel::R32(cam + 0x34), nw, nx, aspect);
+}
+
+X86_EXTERN_FUNC(__imp__sub_00185640);
+X86_FUNC(sub_00185640) {
+    uint32_t cam = ctx.ecx;
+    auto it = narrowed.find(cam);
+    if (it == narrowed.end()) return __imp__sub_00185640(ctx, base);
+    uint32_t x = kernel::R32(cam + 0x28), w = kernel::R32(cam + 0x30);
+    kernel::W32(cam + 0x28, uint32_t(it->second.first));
+    kernel::W32(cam + 0x30, uint32_t(it->second.second));
+    __imp__sub_00185640(ctx, base);
+    kernel::W32(cam + 0x28, x);
+    kernel::W32(cam + 0x30, w);
 }
 
 // profiles from a real console: the profile loader (0xA87B0) compares Profile.Sav's first 20 bytes with the roamable

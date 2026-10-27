@@ -124,8 +124,8 @@ Each item is marked:
   wide screen; box at +0x28..+0x34, applied by 0x185640), aspect at +0x38 = 0x2790F8 (16:9; 0x2790FC 4:3 without the
   widescreen flag 0x48614C) times the box's shape. The mirror of the bumper and hood views is a camera with the box
   220,38 200x70 drawn on the frame itself. Ultrawide (src/game/hooks.cpp): 0x2790F8 is the frame's shape, and a box
-  touching neither side is narrowed about the centre by 16:9 / that shape with its 16:9 aspect, as the HUD is
-  squeezed. Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button
+  touching neither side keeps its 16:9 aspect and its viewport (0x185640, from the box) is narrowed about the centre
+  by 16:9 / that shape, as the HUD is squeezed; the box itself must stay, as the mirror's 2D frame is placed from it. Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button
   names 0x28F960); the default has CAMERA_NEXT on Black, CAMERA_PREV on White.
 
 ## The gearbox

@@ -204,6 +204,8 @@ host. On one PC: copy `out\build\release` to a second folder and start each copy
 
 ## What to look at and report
 
+Help and reports: the [Discord server](https://discord.gg/PQjkKsdtc). The files below help with any report.
+
 Please note for each: works / wrong (how) / not reached, and send `logs\pgr2.log`. Screenshots and short clips help;
 for a flicker, a frame log (F4 with `XBE_FRAMELOG=60`) at the spot.
 

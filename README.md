@@ -173,6 +173,11 @@ MSAA and the settings window in. Open: sound effects (reverb, filters) are not m
 below 60 in the busiest streets. Progress is
 in [PROGRESS.md](PROGRESS.md), and technical findings in [FINDINGS.md](FINDINGS.md).
 
+## Community and Support
+
+Join the [Discord server](https://discord.gg/PQjkKsdtc) for help getting the game running, to report problems,
+and to talk about the port with other players.
+
 ## Troubleshooting
 
 - Something wrong: the first lines of `logs\pgr2.log` list the settings, the GPU and any `XBE_*` or `PGR2_*`

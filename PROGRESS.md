@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-28 - wheels: the d-pad bound to buttons
+- A player's wheel has no hat, so no d-pad. The Wheel tab's Buttons table listed Start to White only, though the
+  wheel code reads a binding for every console input and the settings file keeps them all.
+- SDK (fork main): the table also lists D-pad Up, Down, Left and Right; the steering device's hat still works beside
+  them. Windows syntax check OK (the window is not built headless). SDK at the fork's main, which also brings the
+  other sessions' xbe_recomp fix (an instruction ending in a section's zero filled tail): game.toml rescan unchanged,
+  regenerated, smoke OK.
+- Next: the player binds the d-pad on Windows.
+
 ### 2026-10-27 - PC Settings as a page of the game's own options
 - Harry: the everyday picture settings in the game's menus rather than only the F1 window (the hybrid: F1 keeps
   display, controls, wheel and the rest).

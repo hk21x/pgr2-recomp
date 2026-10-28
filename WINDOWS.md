@@ -123,8 +123,9 @@ it on whichever device it is on.
 - **Force feedback**: on the device the steering is bound to, on the steering's axis (the pedal and button boxes are
   only read). Strength, road and impacts; Push left / Push right test it. The device's own centring spring is turned
   off while the game has it.
-- **Buttons**: each console button (A B X Y, Black/White, Start/Back, the sticks' clicks, the d-pad) from a button on any
-  device. The steering device's hat is the d-pad. Back + Start opens the settings window.
+- **Buttons**: each console button (the d-pad's Up, Down, Left and Right, A B X Y, Black/White, Start/Back, the sticks'
+  clicks) from a button on any device. The steering device's hat is the d-pad too, so a wheel without a hat binds
+  the d-pad to buttons. Back + Start opens the settings window.
 - **H-pattern shifter**: bind Reverse and gears 1 to 7 to the shifter's positions. With a manual gearbox (chosen at
   Select Transmission), moving the lever presses the game's own shift up (B) and down (X) until the car is in that gear;
   in neutral nothing happens. With an automatic gearbox the shifter does nothing. The tab shows the lever's gear and

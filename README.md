@@ -56,8 +56,10 @@ and no admin rights needed.
 5. **Play:** press **Play**. The first start sets up the emulated hard disk and copies the game's cache while the intro
    movies play (about two minutes); later starts are quick.
 
-When this project is updated the launcher shows **Update**: press it, then Play. **Remove the build files** frees
-about 10 GB once the game is built (an update then builds everything again).
+When a new release is out, the launcher (1.2.0 and later) offers it at the top of its window: **Update the
+launcher** downloads it, checks it and restarts, then **Update** rebuilds the game for that release, keeping your
+saves and settings; then Play. **Remove the build files** frees about 10 GB once the game is built (an update then
+builds everything again).
 
 Files, all under the `PGR2` folder beside the launcher:
 - `play\` the game: `PGR2.exe`, `pgr2.toml` (settings), `hdd\` (profiles, saves and caches), `logs\pgr2.log` (the game's

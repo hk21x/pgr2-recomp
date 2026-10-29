@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-29 - release 1.2.0: launcher updates, PC Settings page, wheels
+- The shared launcher's updates (fork launcher-update 0b5ff49, from the EoN session): a release launcher offers a
+  newer release's launcher at start (SHA-256 checked, swapped in, restarted) and builds the game from its own tag,
+  offering a rebuild for another version. Fork main fast-forwarded to it: PGR2 and PGR1 smoke OK, PGR1 repro a live
+  race; EoN's smoke did not run here (its test tree was mid-merge by another session), the commit is launcher only.
+  game.toml rescan unchanged.
+- Notes in docs/releases/v1.2.0.md: PC Settings page, wheels (no gamepad dead zone, d-pad from buttons), the
+  ultrawide mirror, the launcher's long-path warning, shared fixes, Discord; this launcher downloaded by hand once.
+
 ### 2026-10-28 - wheels: the d-pad bound to buttons
 - A player's wheel has no hat, so no d-pad. The Wheel tab's Buttons table listed Start to White only, though the
   wheel code reads a binding for every console input and the settings file keeps them all.

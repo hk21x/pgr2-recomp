@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-30 - the game's languages
+- The disc holds English, Japanese, German, French, Spanish, Italian, Korean and Chinese; on a console the dashboard's
+  language chooses, and the host always answered English. SDK: Settings::language, GameInfo::languages, F1 > Game >
+  Language, XC_LANGUAGE answers it (XBE_LANGUAGE to test); PGR2 lists the eight, and PC Settings has a Language row.
+- Headless, each language to a race on a kept disk, no traps: the HUD in German, French, Spanish, Italian, Korean,
+  Chinese (their own fonts); Japanese has its menus translated and the disc's own English HUD text ("Lap Time").
+  Portuguese has text files but the game runs it as English (Z:\English.Ind), so is not offered. A switch finds
+  no Z:\<language>.Ind, so the game formats the cache partition and copies again, about 100 s of movies; the same
+  language again does not. Smoke OK for PGR2 and PGR1; EoN's eon-soak tree fails with or without this commit (a stale
+  tree), and without a language list the host answers English as before.
+- Next: Harry on Windows: switch language, restart, saves still there.
+
 ### 2026-10-29 - release 1.2.0: launcher updates, PC Settings page, wheels
 - The shared launcher's updates (fork launcher-update 0b5ff49, from the EoN session): a release launcher offers a
   newer release's launcher at start (SHA-256 checked, swapped in, restarted) and builds the game from its own tag,

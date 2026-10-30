@@ -134,6 +134,9 @@ Each item is marked:
   (0x4D130 on actions 2 and 3) and shows its choice; 0x59020 the same for a byte. The manager [0x2F4B78]: 0x4D3A0
   chains rows, 0x4D4C0 sends an action (4 A, 5 B) to a page builder, 0x4D270 focuses a row. The legend 0x28A488
   (0x89200 A's text, 0x891E0). src/game/settings_entry.cpp builds PC Settings from these.
+- **Languages.** The game takes XC_LANGUAGE: English, Japanese, German, French, Spanish, Italian, Korean, TChinese
+  from Frontend\<language>.ini and Cache\Resource; 9 Portuguese has files but runs as English. A missing
+  Z:\<language>.Ind makes it format the cache partition (Z only) and copy again.
 - **Wheels.** The controller poll 0x1375D0 (per port 0x124 bytes) opens a port on insertion and reads its
   XInputGetCapabilities (0x26D8E2) into +0xB96; the only reader of the subtype is 0x13787A, `CMP byte [ESI+0x5E],0x10`
   (XINPUT_DEVSUBTYPE_GC_WHEEL). Anything else gets a gamepad's treatment on both sticks: an adaptive dead zone (from

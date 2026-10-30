@@ -203,6 +203,12 @@ Past the LAN: set `join_ip = 'a.b.c.d'` (the host's address) in the joiner's `pg
 host. On one PC: copy `out\build\release` to a second folder and start each copy with `PGR2.exe --instance 1` and
 `--instance 2`. Headless this works end to end (lobby, race, results); it has not been tried on Windows yet.
 
+## Language
+
+Options > General Options > PC Settings > Language, or F1 > Game: English, Japanese, German, French, Spanish, Italian,
+Korean or Chinese, at the next start. That start copies the game's files again (about two minutes of movies), as the
+first one did. PC Settings' own rows stay in English; Japanese keeps the disc's English text in the race HUD.
+
 ## What to look at and report
 
 Help and reports: the [Discord server](https://discord.gg/PQjkKsdtc). The files below help with any report.

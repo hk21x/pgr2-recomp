@@ -76,5 +76,6 @@ const app::GameInfo app::kGame = {
                   "702b79fd3bc844a413cbc26404718b1bf7e44e87"},
     .wheel = pgr2::WheelFeel,  // a steering wheel's force feedback follows the player's car
     .send_level = pgr2::MusicLevel,  // the radio, heard through the effect sends, at the music volume
-    .sharpen_2d = true,              // menus, HUD and text drawn from enlarged, sharpened copies of their textures
+    .sharpen_2d = true,
+    .languages = {1, 2, 3, 4, 5, 6, 7, 8},  // the disc's; Portuguese has text files but the game runs it as English              // menus, HUD and text drawn from enlarged, sharpened copies of their textures
 };

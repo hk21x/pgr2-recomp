@@ -37,6 +37,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - solid 60 in races: the turns
+- Harry's XBE_PERF log (D3D12, 3440x1440, render scale 200, MSAA 4x, sharpening 50, draw distance 100, Windows): 43-45
+  fps on turns, where draws go from 3000-4500 to 6100-6450 a frame and the render thread takes 20-21 ms (about 3.7 us
+  a draw); GPU wait 0, so not the settings. Headless, the title thread alone runs a race at about 600 fps.
+- CAP: draws are short triangle strips (avg 56 vertices at the spot); of 2586 draws in a frame, 85% share shaders and
+  targets with the one before but only 19% match it entirely, as the material's texture changes (header B007D1E0
+  rewritten). So merging neighbours would gain little without reordering.
+- Round 1 (fork branch race60-solid, not main): the last draw's stage, view table and samplers reused without a lookup;
+  XBE_PERF's third line counts stages by route, same samplers and views, and times BindTargets. Needed: about 2 us a
+  draw. Next: Harry's log at the same spots, then the largest remaining step (or moving work off the render thread).
+
 ### 2026-10-31 - release 1.4.0: sharpening, MSAA and FXAA separate
 - Harry asked for the release after checking the settings on Windows. Notes in docs/releases/v1.4.0.md, tag v1.4.0.
 

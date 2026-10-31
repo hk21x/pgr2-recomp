@@ -196,7 +196,7 @@ Plays as controller 1, with two keys for each console input, remappable in the s
 - **Saves** - Profiles, options and career progress are kept on an emulated hard disk beside the exe.
 - **System Link** - Plays over the LAN, or by connecting straight to a friend's IP address (`join_ip`).
 - **Achievements** - 64 achievements (Kudos World Series and class medals, Arcade, Kudos ranks, the garage, speed, wins, Geometry Wars) with pop-ups and a list in the settings window, written in RetroAchievements' condition format; the set and its memory map are in [ACHIEVEMENTS.md](ACHIEVEMENTS.md).
-- **60 FPS Races** - "Races at 60 frames a second" in the settings window, with unchanged physics (experimental: the busiest streets need a fast CPU to hold 60).
+- **60 FPS Races** - "Races at 60 frames a second" in PC Settings or the settings window, at the next start, with unchanged physics. Off by default. Replays can dip at render scale 200%, and a slower CPU may dip in the busiest streets.
 - **Draw Distance** - 25% to 400% of the console's (experimental: most streets end before the console's distance).
 
 ### Miscellaneous
@@ -228,7 +228,7 @@ and to talk about the port with other players.
 - "Another release" in the log, or the game not starting: the `default.xbe` is not one of the supported releases.
 - A first boot again (the cache, the intro movies): delete the `hdd` folder beside `PGR2.exe` (`PGR2\play\hdd` with
   the launcher, `out\build\release\hdd` when built from source).
-- Races at 60 frames a second dipping below 60: it is experimental; the console's 30 is the default.
+- Races at 60 frames a second dipping below 60: the limit is usually the CPU, in the busiest streets (draw distance above 100% adds to it). In replays it is the GPU: lower the render scale or MSAA. The console's 30 is the default.
 
 ## Credits
 

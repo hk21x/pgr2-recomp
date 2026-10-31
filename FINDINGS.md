@@ -128,6 +128,11 @@ Each item is marked:
   by 16:9 / that shape, as the HUD is squeezed; the box itself must stay, as the mirror's 2D frame is placed from it.
   Controller layouts: 0x34CC1C, 0xFC each, two button ids per action from +8 (action names 0x28A1F8, button names
   0x28F960); the default has CAMERA_NEXT on Black, CAMERA_PREV on White.
+- **The reflection cube's cost.** The cube pass (loop at 0x180064, faces 0 to 5) is 30-39% of a race's draws and asks
+  0x179290 (thiscall: 0, the face; always yes) per face. At 60 src/game/hooks.cpp answers yes to every other face, each
+  face changing at the console's 30 a second. The title's frame needs about 1.7 ms headless; the render thread is the
+  limit, about 3 us a draw. PGR2 points one texture header at each material in turn, so a key holding the render
+  thread's copy of a header misses each time.
 - **Option pages.** A page is a builder function returning 1 (General Options 0xA40A0, Game Options 0xA1710); the
   frame 0x2FEE08 holds the title's string id at +0x34. Rows: 0x58EE0 (cdecl, 17 arguments: x, y floats; 1; label;
   help line; an int; choice count; 2; 0; eight choice texts, all UTF-16 pointers) steps the int with Left and Right

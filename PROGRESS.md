@@ -5,7 +5,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 ## Status
 - Milestone: 4 - races run under pad control; Windows: boots, movies, menus, races, saves, audio, reflections
 - XDK 5659: 191 of 250 functions, 13 of 13 data
-- Speed: paced by the game's present interval (menus 60, races 30); race_60fps option (experimental)
+- Speed: paced by the game's present interval (menus 60, races 30); race_60fps option (off by default; holds 60 on Harry's PC, replays dip at render scale 200%)
 - Rendering, confirmed on Windows: car body, car shadow (sun and night), fences/posts/signs, car selection, street
   light glows behind buildings, night building flicker (Edinburgh) gone, ultrawide with HUD, draw distance, MSAA,
   render scale. To confirm: trees (point sprites, 2026-10-21)
@@ -37,6 +37,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - races at 60: no longer experimental
+- Harry on Windows, 200%, MSAA 4x, sharpening 50: races hold 60 (one second at 54 at about 4470 draws, with XBE_PERF on),
+  reflections fine; replays and ghosts tried, split screen not. Replays and the flyover are limited by the GPU, not the
+  CPU: the same replay at 200% MSAA 4x 50-55 fps, 200% no MSAA 58-60, 100% with or without MSAA a steady 60; the title
+  waits on a fence for the GPU, 16-18 ms a frame at 200% MSAA 4x. Depth of field the likely cost, not measured alone;
+  its blur target could run at a lower scale (next). Off by default still: the limit is the CPU, and only Harry's has
+  been measured. PC Settings has the row, the page at 20 between rows to fit eleven.
+
 ### 2026-10-31 - solid 60: the reflection cube at the console's rate
 - Harry's runs at render scale 100 without MSAA and at 200 with MSAA 4x (draw distance 100): the same, 43-45 fps at about
   6350 draws, so on those turns only the render thread limits. The memo fix took full route binds from 4400 to 450 a
@@ -63,6 +71,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Round 1 (fork branch race60-solid, not main): the last draw's stage, view table and samplers reused without a lookup;
   XBE_PERF's third line counts stages by route, same samplers and views, and times BindTargets. Needed: about 2 us a
   draw. Next: Harry's log at the same spots, then the largest remaining step (or moving work off the render thread).
+### 2026-10-31 - launcher: MinGit's busybox edition (a player's build stopped at git submodule)
+- A player's every build stopped at `git submodule`: MinGit runs it as a script under MSYS2's sh, whose forks died on
+  their PC (0xC0000142). CMake's FetchContent runs it too, so changing only the launcher's call would not do. The busybox
+  edition of the same MinGit has a shell without that fork. The player swapped it into tools\git by hand and reports it
+  fixed. launcher/toolchain.json now names it: launchers fetch that file at each build, so no new release is needed;
+  a tool's download changing makes it download once more.
+- 60 FPS paused meanwhile (branch race60-solid). Harry's second log: a GPU limit too (Present waits 9-14 ms at about
+  1500 draws, render scale 200, MSAA 4x, draw distance 200), and about 4400 stage binds a frame by the full route with
+  about 500 textures: not a palette (SetPalette is never called headless).
 
 ### 2026-10-31 - release 1.4.0: sharpening, MSAA and FXAA separate
 - Harry asked for the release after checking the settings on Windows. Notes in docs/releases/v1.4.0.md, tag v1.4.0.

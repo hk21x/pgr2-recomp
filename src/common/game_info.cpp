@@ -54,8 +54,8 @@ const app::GameInfo app::kGame = {
                  "100 is the console's; 50 to 200, at once."},
                 {"draw_distance_percent", nullptr, &pgr2::draw_distance_percent, "Draw distance (%)",
                  "100 is the console's; 25 to 400, from the next race. Experimental: most streets end before it."},
-                {"race_60fps", &pgr2::race_60fps, nullptr, "Races at 60 frames a second (experimental)",
-                 "Same physics, sampled twice as often; at the next start."},
+                {"race_60fps", &pgr2::race_60fps, nullptr, "Races at 60 frames a second",
+                 "Same physics, sampled twice as often; at the next start. Replays can dip at render scale 200%."},
                 {"dlc", &pgr2::dlc, nullptr, "Xbox Live DLC cities (experimental)",
                  "Paris and Long Beach from your packs in hdd\\E\\TDATA\\4d53004b\\$C (WINDOWS.md); at the next start."}},
     .load = nullptr,                      // reads more from the settings file's toml::table

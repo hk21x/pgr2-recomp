@@ -7,7 +7,7 @@
 // (0xA1710) is a list of option rows, which this page copies:
 //   the frame 0x2FEE08: +0x34 the title's string id, 1.0 at +0x38..+0x40, the byte +0x45 1, then thiscall 0x7A110
 //     with 0xC and 0xB (the second after zeroing +0x38 and +0x3C when the byte 0x49E110 is set)
-//   a row 0x58EE0 (cdecl, 17 arguments): x, y (floats, 0 and 144 + 24 a row, here 22 to fit ten), 1, label, help line, the int it
+//   a row 0x58EE0 (cdecl, 17 arguments): x, y (floats, 0 and 144 + 24 a row, here 20 to fit eleven), 1, label, help line, the int it
 //     changes, the number of choices, 2, 0, eight choice texts; Left and Right step the int through the choices,
 //     wrapping (0x4D130 on the row's actions 2 and 3), and the row shows the choice it holds
 //   the button legend 0x28A488: 0x28A720 = 1, +0 and +0x28C = 0, then 0x89200 (A's text, id 21 "Continue", 0) and
@@ -30,6 +30,7 @@
 
 namespace pgr2 {
 
+extern bool race_60fps;
 extern uint32_t fov_percent, draw_distance_percent;
 
 namespace {
@@ -116,6 +117,10 @@ const Row kRows[] = {
      {u"75%", u"90%", u"100%", u"110%", u"125%", u"150%"},
      [] { return Nearest(kFov, fov_percent); },
      [](uint32_t i) { fov_percent = kFov[i]; }},
+    {u"Races at 60 FPS", u"At the next start. Physics are the same; replays can dip at 200% scale.",
+     {u"Off", u"On"},
+     [] { return uint32_t(race_60fps); },
+     [](uint32_t i) { race_60fps = i != 0; }},
     // the console's numbering from 1 (GameInfo::languages); a change makes the game fill its cache again at the next start
     {u"Language", u"At the next start, which copies the game's files again.",
      {u"English", u"Japanese", u"Deutsch", u"Fran\u00E7ais", u"Espa\u00F1ol", u"Italiano", u"Korean", u"Chinese"},
@@ -172,7 +177,7 @@ void Build(X86Context& ctx, bool more) {
         bool setting = i < kSettingRows;
         const char16_t* label = setting ? kRows[i].label : u"More Settings";
         const char16_t* help = setting ? kRows[i].help : u"Display, controls, wheel and the rest: the settings window (F1).";
-        uint32_t args[17] = {0, FloatBits(144.0f + 22.0f * float(i)), 1, Guest(label), Guest(help),
+        uint32_t args[17] = {0, FloatBits(144.0f + 20.0f * float(i)), 1, Guest(label), Guest(help),
                              setting ? g_vars + i * 4 : open_var, 0, 2, 0};
         std::vector<const char16_t*> choices = setting ? kRows[i].choices : std::vector<const char16_t*>{u"Open"};
         args[6] = uint32_t(choices.size());

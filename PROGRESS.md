@@ -37,6 +37,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - launcher: MinGit's busybox edition (a player's build stopped at git submodule)
+- A player's every build stopped at `git submodule`: MinGit runs it as a script under MSYS2's sh, whose forks died on
+  their PC (0xC0000142). CMake's FetchContent runs it too, so changing only the launcher's call would not do. The busybox
+  edition of the same MinGit has a shell without that fork. The player swapped it into tools\git by hand and reports it
+  fixed. launcher/toolchain.json now names it: launchers fetch that file at each build, so no new release is needed;
+  a tool's download changing makes it download once more.
+- 60 FPS paused meanwhile (branch race60-solid). Harry's second log: a GPU limit too (Present waits 9-14 ms at about
+  1500 draws, render scale 200, MSAA 4x, draw distance 200), and about 4400 stage binds a frame by the full route with
+  about 500 textures: not a palette (SetPalette is never called headless).
+
 ### 2026-10-31 - release 1.4.0: sharpening, MSAA and FXAA separate
 - Harry asked for the release after checking the settings on Windows. Notes in docs/releases/v1.4.0.md, tag v1.4.0.
 

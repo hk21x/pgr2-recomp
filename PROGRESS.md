@@ -32,10 +32,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   detected and bound on Windows (2026-10-22); pedals on Z/Rz/slider confirmed (2026-10-25)
 - Ultrawide: menus, HUD, replays confirmed on 32:9; the rear view mirror confirmed (2026-10-25)
 - Launcher (PGR2Launcher.exe, launcher.bat): builds and launches the game on Windows (2026-10-22)
-- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays); 1.0.3 on 2026-10-25 (Paris, radio volume, pedals, mirror, profiles, media patched discs); 1.1.0 on 2026-10-26 (your music, sharp text and HUD, Nurburgring sky, shader cache, Quit game); 1.2.0 on 2026-10-29 (launcher updates, PC Settings page, wheels, mirror); 1.3.0 on 2026-10-31 (languages)
+- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays); 1.0.3 on 2026-10-25 (Paris, radio volume, pedals, mirror, profiles, media patched discs); 1.1.0 on 2026-10-26 (your music, sharp text and HUD, Nurburgring sky, shader cache, Quit game); 1.2.0 on 2026-10-29 (launcher updates, PC Settings page, wheels, mirror); 1.3.0 on 2026-10-31 (languages); 1.4.0 on 2026-10-31 (sharpening, MSAA and FXAA separate)
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-10-31 - release 1.4.0: sharpening, MSAA and FXAA separate
+- Harry asked for the release after checking the settings on Windows. Notes in docs/releases/v1.4.0.md, tag v1.4.0.
 
 ### 2026-10-31 - README: graphics settings compared
 - Harry's Windows screenshots of one paused frame (3440x1440): MSAA 4x cleans edges, FXAA softens, render scale 200% is

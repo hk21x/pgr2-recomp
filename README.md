@@ -41,8 +41,7 @@ and no admin rights needed.
 **You need:**
 - Windows 10 or 11, 64 bit, and a GPU with Direct3D 12 or 11.
 - Your own copy of the game (PAL or NTSC): an `.iso` image of your disc, or a folder with the disc's files.
-- About 15 GB free for the first build (about 10 GB stays installed, mostly your copy of the game), and an internet
-  connection for about 1.4 GB of build tools.
+- About 3 GB free, plus room for your copy of the game, and an internet connection for about 1.4 GB of build tools.
 
 **Steps:**
 1. Download `PGR2Launcher.exe` from the [latest release](https://github.com/hk21x/pgr2-recomp/releases/latest).
@@ -74,7 +73,7 @@ To remove everything, delete the launcher and its `PGR2` folder (keep `play\hdd`
 
 **You need:** Windows 10 or 11 (64 bit), [Git](https://git-scm.com/download/win), Visual Studio 2022 (Community is
 fine) with **Desktop development with C++** (`build.bat` offers to add **C++ Clang tools for Windows** and **C++ CMake
-tools for Windows**), about 15 GB free, and your disc's files: `default.xbe` and its folders (`Cache`, `CarDynamics`,
+tools for Windows**), about 3 GB free, and your disc's files: `default.xbe` and its folders (`Cache`, `CarDynamics`,
 `data`, `Frontend`, `Game`, `media`, ...), or an `.iso` image of the disc.
 
 1. Clone the repository with its SDK:

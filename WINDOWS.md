@@ -12,7 +12,7 @@ Everything below runs on your PC; nothing here touches the Linux VM. FINDINGS.md
 - 7-Zip on the PATH, only for `release.bat`.
 - Your PGR2 disc's files (PAL or NTSC, both run from the same build): `default.xbe` with the folders beside it (Cache, CarDynamics, data, Frontend, Game,
   media, ...), exactly as they are in the VM's `assets` folder. An .iso of the disc also works.
-- About 15 GB free: the generated C++ alone is around 100 MB, the object files several GB.
+- About 3 GB free: the generated C++ is around 100 MB and the build output a few hundred MB.
 
 ## Steps
 
@@ -148,8 +148,8 @@ buttons from the SLI-PRO; the TH8A's gears in a manual car; nothing doubles up w
 `PGR2Launcher.exe` builds and plays the game for someone with no tools: choose the disc image or folder, accept
 Microsoft's license for its C++ libraries, press Build, then Play. It downloads portable build tools (about 1.4 GB:
 Clang, CMake, Ninja, MinGit, Microsoft's C++ libraries and Windows SDK) into a `PGR2` folder beside itself, installs
-nothing in Windows and needs no admin rights. The first build takes 30 to 90 minutes and about 15 GB; "Remove the
-build files" frees most of it afterwards. Later it offers Update when this repository's main branch moves on.
+nothing in Windows and needs no admin rights. The first build takes 30 to 90 minutes and about 3 GB, plus room for your copy of the game; "Remove the
+build files" frees a few hundred MB afterwards. Later it offers Update when this repository's main branch moves on.
 
 Make it: run `launcher.bat` (it needs what build.bat needs); it leaves `PGR2Launcher.exe` here. The exe holds no game
 code, so it can be shared. To try it as a player would: copy it into an empty folder (ideally on a PC or account

@@ -327,15 +327,33 @@ X86_FUNC(sub_000D90F0) {
 // through 0x177C70 (thiscall, the interval 0, 1 or 2): 1 in the movies and menus, 2 in races. Asked for 2, this
 // passes 1: the swap paces to 60 and the frame step (0xD90F0, 1 / (60 / interval)) becomes 1/60, so physics takes
 // one fixed 1/60 step a frame instead of two.
-X86_EXTERN_FUNC(__imp__sub_00177C70);
-X86_FUNC(sub_00177C70) {
+static bool Race60() {
     static const bool on = [] {
         bool v = pgr2::race_60fps || std::getenv("PGR2_RACE60") != nullptr;
         if (v) LOGR("pgr2: races at 60 frames a second");
         return v;
     }();
-    if (on && kernel::R32(ctx.esp + 4) == 2) kernel::W32(ctx.esp + 4, 1);
+    return on;
+}
+
+X86_EXTERN_FUNC(__imp__sub_00177C70);
+X86_FUNC(sub_00177C70) {
+    if (Race60() && kernel::R32(ctx.esp + 4) == 2) kernel::W32(ctx.esp + 4, 1);
     __imp__sub_00177C70(ctx, base);
+}
+
+// At 60 the car's reflection cube is the console's work twice over, about a third of a race's draws (the render thread
+// is what holds a race under 60: 3 us a draw). The pass (the loop at 0x180064, faces 0 to 5) asks 0x179290 (thiscall:
+// 0, the face), a stub that answers yes, whether to draw each face; a face it turns down keeps its picture. So each
+// pass draws every other face, and each face still changes 30 times a second, as on the console. PGR2_CUBE_ALL=1 draws
+// them all.
+X86_FUNC(sub_00179290) {
+    static const bool all = std::getenv("PGR2_CUBE_ALL") != nullptr;
+    static uint32_t pass = 0;
+    uint32_t face = kernel::R32(ctx.esp + 8);
+    if (face == 0) pass++;
+    ctx.eax = all || !Race60() || (face & 1) == (pass & 1);
+    ctx.esp += 12;  // ret 8
 }
 
 // a city's area loads (0x116C20, the lighting set chosen inline from 0x383188 and 0x383184): the values it loads with

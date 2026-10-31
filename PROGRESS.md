@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - solid 60: the reflection cube at the console's rate
+- Harry's runs at render scale 100 without MSAA and at 200 with MSAA 4x (draw distance 100): the same, 43-45 fps at about
+  6350 draws, so on those turns only the render thread limits. The memo fix took full route binds from 4400 to 450 a
+  frame but bind only from 4.8 to 3.9 ms.
+- CAP: the car's reflection cube, drawn whole each frame, is 30-39% of a frame's draws, so at 60 twice the console's
+  work. The pass (0x180064) asks 0x179290 (always yes) per face; src/game/hooks.cpp now answers yes to every other face
+  at 60, so each face changes 30 times a second as on the console. PGR2_CUBE_ALL=1 draws them all. Headless: cube about
+  226 draws a frame, no traps, race drawn. Windows to measure, and to look at the reflections on the car.
+
 ### 2026-10-31 - solid 60: the stage memo's misses
 - Harry's second log: about 4400 of the stage binds a frame took the full route, with about 500 textures. PGR2 points
   one header (B007D1E0) at each material in turn, and the render thread copies a changed header to a new place in its

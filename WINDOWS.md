@@ -47,14 +47,14 @@ Settings** (it replaces Screen Center; closing the window returns to General Opt
 A selects, B goes back). **Quit game** at its top right asks, then closes the game (as Alt+F4 or the window's close
 button do). Tabs:
 - Display: monitor (with more than one), display mode, resolution, vsync, aspect ratio (Fill the screen: ultrawide).
-- Graphics: render scale, anisotropic filtering, frame rate cap, antialiasing (FXAA, MSAA 2x/4x/8x), frames-a-second
+- Graphics: render scale, anisotropic filtering, frame rate cap, MSAA (2x/4x/8x), FXAA, sharpening (0 to 100%), frames-a-second
   counter, renderer (Direct3D 12 or 11, next start), **Sharp text and HUD** (on by default: the menus', HUD's and
   text's textures are enlarged two or four times with sharp edges on a background thread, so lettering and gauges stay
   crisp at high resolutions; a texture shows at its original size for a moment the first time it appears).
 - Game: skip intro movies, hide the race HUD, race camera field of view (%), races at 60 (experimental).
 - General: pause when the window is not in front.
 - Controls: keys and controller remapping.
-Everything is saved to `pgr2.toml` at once. Display mode, resolution, monitor, render scale, antialiasing, the counter, hide HUD
+Everything is saved to `pgr2.toml` at once. Display mode, resolution, monitor, render scale, MSAA, FXAA, sharpening, the counter, hide HUD
 and field of view apply at once; aspect ratio, skip intro and race_60fps at the next start. While the
 window is open the game gets no input.
 

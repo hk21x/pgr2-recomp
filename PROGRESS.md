@@ -37,6 +37,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - MSAA and FXAA separate, and sharpening (issue #25)
+- A player found the image soft at the highest render scale. SDK (fork main): Settings::msaa, fxaa and sharpen replace
+  antialiasing (the old key carries over); psfinal runs FXAA, then contrast adaptive sharpening, then gamma, in the one
+  final pass on D3D12 and D3D11; both act on the finished frame, HUD included. Sharpening is off by default, its step
+  a source or output pixel, whichever is larger, and its strength linear from zero (CAS's scale was grainy on the road
+  at 50%, seen by running the formula on a capture).
+- PC Settings: MSAA, FXAA and Sharpening rows; Race HUD and Frame Counter left for F1 (ten rows fit).
+- Checked: DXC compiles psfinal, Windows syntax check, page headless, PGR2 and PGR1 smoke, EoN builds. Not seen on a
+  GPU: the harness has no D3D.
+- Next: Harry on Windows: sharpening at 25, 50, 100% at render scale 100 and 200, FXAA with MSAA, an old pgr2.toml.
+
 ### 2026-10-31 - release 1.3.0: the game's languages
 - Harry confirmed the language setting on Windows ("Works"). Notes in docs/releases/v1.3.0.md, tag v1.3.0. Players on
   1.2.0 are offered it by the launcher, the first release to go out that way.

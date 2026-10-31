@@ -30,7 +30,6 @@
 
 namespace pgr2 {
 
-extern bool hide_hud;
 extern uint32_t fov_percent, draw_distance_percent;
 
 namespace {
@@ -82,17 +81,25 @@ struct Row {
 };
 
 const std::vector<uint32_t> kRender = {50, 75, 100, 125, 150, 200}, kAniso = {0, 2, 4, 8, 16},
-                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150};
+                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150}, kSharpen = {0, 25, 50, 75, 100};
 
 const Row kRows[] = {
     {u"Render Scale", u"The 3D picture's size, percent of the screen. More is sharper and slower.",
      {u"50%", u"75%", u"100%", u"125%", u"150%", u"200%"},
      [] { return Nearest(kRender, app::Get().render_percent); },
      [](uint32_t i) { app::Get().render_percent = kRender[i]; }},
-    {u"Anti-aliasing", u"Smooths jagged edges. FXAA is quickest; MSAA smooths the 3D scene.",
-     {u"Off", u"FXAA", u"MSAA 2x", u"MSAA 4x", u"MSAA 8x"},
-     [] { return std::min<uint32_t>(app::Get().antialiasing, 4); },
-     [](uint32_t i) { app::Get().antialiasing = i; }},
+    {u"MSAA", u"Smooths the edges of the 3D scene. More is slower.",
+     {u"Off", u"2x", u"4x", u"8x"},
+     [] { return std::min<uint32_t>(app::Get().msaa, 3); },
+     [](uint32_t i) { app::Get().msaa = i; }},
+    {u"FXAA", u"Smooths the finished frame, HUD included. A little softer.",
+     {u"Off", u"On"},
+     [] { return uint32_t(app::Get().fxaa); },
+     [](uint32_t i) { app::Get().fxaa = i != 0; }},
+    {u"Sharpening", u"Crisper picture. Too much shows as grain.",
+     {u"Off", u"25%", u"50%", u"75%", u"100%"},
+     [] { return Nearest(kSharpen, app::Get().sharpen); },
+     [](uint32_t i) { app::Get().sharpen = kSharpen[i]; }},
     {u"Texture Filtering", u"Sharper road and walls at a distance.",
      {u"Game", u"2x", u"4x", u"8x", u"16x"},
      [] { return Nearest(kAniso, app::Get().aniso); },
@@ -109,14 +116,6 @@ const Row kRows[] = {
      {u"75%", u"90%", u"100%", u"110%", u"125%", u"150%"},
      [] { return Nearest(kFov, fov_percent); },
      [](uint32_t i) { fov_percent = kFov[i]; }},
-    {u"Race HUD", u"Hide the race HUD for screenshots and replays.",
-     {u"Shown", u"Hidden"},
-     [] { return uint32_t(hide_hud); },
-     [](uint32_t i) { hide_hud = i != 0; }},
-    {u"Frame Counter", u"Frames a second in a corner of the screen.",
-     {u"Off", u"On"},
-     [] { return uint32_t(app::Get().show_fps); },
-     [](uint32_t i) { app::Get().show_fps = i != 0; }},
     // the console's numbering from 1 (GameInfo::languages); a change makes the game fill its cache again at the next start
     {u"Language", u"At the next start, which copies the game's files again.",
      {u"English", u"Japanese", u"Deutsch", u"Fran\u00E7ais", u"Espa\u00F1ol", u"Italiano", u"Korean", u"Chinese"},

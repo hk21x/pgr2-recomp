@@ -32,10 +32,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   detected and bound on Windows (2026-10-22); pedals on Z/Rz/slider confirmed (2026-10-25)
 - Ultrawide: menus, HUD, replays confirmed on 32:9; the rear view mirror confirmed (2026-10-25)
 - Launcher (PGR2Launcher.exe, launcher.bat): builds and launches the game on Windows (2026-10-22)
-- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays); 1.0.3 on 2026-10-25 (Paris, radio volume, pedals, mirror, profiles, media patched discs); 1.1.0 on 2026-10-26 (your music, sharp text and HUD, Nurburgring sky, shader cache, Quit game)
+- Release 1.0 (2026-10-22): the launcher built by .github/workflows/release.yml on a tag v*; 1.0.1 the same day; 1.0.2 on 2026-10-23 (radio, replays); 1.0.3 on 2026-10-25 (Paris, radio volume, pedals, mirror, profiles, media patched discs); 1.1.0 on 2026-10-26 (your music, sharp text and HUD, Nurburgring sky, shader cache, Quit game); 1.2.0 on 2026-10-29 (launcher updates, PC Settings page, wheels, mirror); 1.3.0 on 2026-10-31 (languages)
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-10-31 - release 1.3.0: the game's languages
+- Harry confirmed the language setting on Windows ("Works"). Notes in docs/releases/v1.3.0.md, tag v1.3.0. Players on
+  1.2.0 are offered it by the launcher, the first release to go out that way.
 
 ### 2026-10-30 - the game's languages
 - The disc holds English, Japanese, German, French, Spanish, Italian, Korean and Chinese; on a console the dashboard's

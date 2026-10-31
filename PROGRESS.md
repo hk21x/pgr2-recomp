@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - solid 60: the stage memo's misses
+- Harry's second log: about 4400 of the stage binds a frame took the full route, with about 500 textures. PGR2 points
+  one header (B007D1E0) at each material in turn, and the render thread copies a changed header to a new place in its
+  ring (render_thread.cpp Header), so the memo's key, which held the address, missed each time. The key is now the
+  header's contents, without the reference count; 2D draws apart for Sharpen2D. Windows to measure, with render scale
+  100 and MSAA off as well, to part this from the GPU limit (Present 9-14 ms at 200%, MSAA 4x).
+
 ### 2026-10-31 - solid 60 in races: the turns
 - Harry's XBE_PERF log (D3D12, 3440x1440, render scale 200, MSAA 4x, sharpening 50, draw distance 100, Windows): 43-45
   fps on turns, where draws go from 3000-4500 to 6100-6450 a frame and the render thread takes 20-21 ms (about 3.7 us

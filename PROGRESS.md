@@ -37,6 +37,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - README: graphics settings compared
+- Harry's Windows screenshots of one paused frame (3440x1440): MSAA 4x cleans edges, FXAA softens, render scale 200% is
+  smoothest; sharpening 50% is crisp, 100% gritty on walls and roads, so the README recommends about 50%. A wipe and
+  three panels in docs/images, from his captures in .local/win. This also confirms MSAA, FXAA and sharpening on a real GPU.
+
 ### 2026-10-31 - MSAA and FXAA separate, and sharpening (issue #25)
 - A player found the image soft at the highest render scale. SDK (fork main): Settings::msaa, fxaa and sharpen replace
   antialiasing (the old key carries over); psfinal runs FXAA, then contrast adaptive sharpening, then gamma, in the one

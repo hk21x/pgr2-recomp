@@ -116,6 +116,41 @@ mapped to any controller input in Controls.
 
 ![Ultrawide: the view widened to 21:9, the HUD kept at 16:9](docs/images/pgr2-ultrawide.webp)
 
+## Graphics settings
+
+In Options > General Options > PC Settings or the settings window (F1); they apply at once. All of these are one paused
+frame at 3440x1440.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-wipe.webp" alt="A wipe between all settings off and render scale 200%, MSAA 4x and sharpening 50%" width="800">
+  <br>
+  <i>All off vs. the recommended start for a capable PC: render scale 200%, MSAA 4x, sharpening 50%.</i>
+</p>
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-car.webp" alt="Close-up of the car's roof and mirror with all off, MSAA 4x, FXAA and render scale 200%" width="800">
+  <br>
+  <i>Edges around the car, enlarged three times.</i>
+</p>
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-edges.webp" alt="A railing and bench with all off, MSAA 4x, FXAA and render scale 200%" width="800">
+  <br>
+  <i>Fine detail, enlarged twice.</i>
+</p>
+
+- **MSAA** smooths the edges of the 3D scene and keeps textures sharp. The more samples, the slower.
+- **FXAA** smooths the finished frame, HUD included, and softens it a little.
+- **Render scale** draws the picture larger than the screen: the smoothest fine detail, and the slowest.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-sharpness.webp" alt="A shopfront with all off, sharpening 50%, sharpening 100% and all three together" width="800">
+  <br>
+  <i>Sharpening, enlarged twice.</i>
+</p>
+
+- **Sharpening** makes the picture crisper. Around 50% is a good start; 100% turns walls and roads gritty.
+
 ## Features
 
 ### Display

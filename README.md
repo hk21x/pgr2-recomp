@@ -41,7 +41,8 @@ and no admin rights needed.
 **You need:**
 - Windows 10 or 11, 64 bit, and a GPU with Direct3D 12 or 11.
 - Your own copy of the game (PAL or NTSC): an `.iso` image of your disc, or a folder with the disc's files.
-- About 15 GB free, and an internet connection for about 1.4 GB of build tools.
+- About 15 GB free for the first build (about 10 GB stays installed, mostly your copy of the game), and an internet
+  connection for about 1.4 GB of build tools.
 
 **Steps:**
 1. Download `PGR2Launcher.exe` from the [latest release](https://github.com/hk21x/pgr2-recomp/releases/latest).
@@ -58,8 +59,8 @@ and no admin rights needed.
 
 When a new release is out, the launcher (1.2.0 and later) offers it at the top of its window: **Update the
 launcher** downloads it, checks it and restarts, then **Update** rebuilds the game for that release, keeping your
-saves and settings; then Play. **Remove the build files** frees about 10 GB once the game is built (an update then
-builds everything again).
+saves and settings; then Play. **Remove the build files** frees a few hundred MB once the game is built (the button shows how much; an
+update then builds everything again).
 
 Files, all under the `PGR2` folder beside the launcher:
 - `play\` the game: `PGR2.exe`, `pgr2.toml` (settings), `hdd\` (profiles, saves and caches), `logs\pgr2.log` (the game's

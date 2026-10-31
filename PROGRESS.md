@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-10-31 - README: what an install takes
+- Harry's built install: play 7.3 GB (mostly the game's copy), tools 1.83 GB, source 0.33 GB, downloads empty: about 9.5
+  GB. Remove the build files frees 231 MB, not the "about 10 GB" the README said. README corrected; 15 GB stays as the
+  free space to ask for in the first build, whose true peak is not measured. Next for v1.5.0: mouse pointer, screenshot
+  key, presets, collected logs, depth of field, as Harry chooses.
+
 ### 2026-10-31 - races at 60: no longer experimental
 - Harry on Windows, 200%, MSAA 4x, sharpening 50: races hold 60 (one second at 54 at about 4470 draws, with XBE_PERF on),
   reflections fine; replays and ghosts tried, split screen not. Replays and the flyover are limited by the GPU, not the

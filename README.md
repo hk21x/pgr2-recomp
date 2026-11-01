@@ -188,7 +188,7 @@ Plays as controller 1, with two keys for each console input, remappable in the s
   PGR 2 Custom Soundtrack to build your playlist, then the Radio/CD options in a race's pause menu.
 - **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
   files (F1 > Game); see [WINDOWS.md](WINDOWS.md).
-- **Recomp in the game's menus** - Options > General Options > Recomp: every setting of this PC version in the game's own option rows, in sections (Picture, Display, Game, Controls, Wheel), changed with left and right and saved at once, and Quit Game. Binding a wheel or keys by pressing them, and achievements, are in the settings window, which Recomp opens.
+- **Recomp in the game's menus** - Options > General Options > Recomp: every setting of this PC version in the game's own option rows, in sections (Picture, Performance, Display, Game, Controls, Wheel), changed with left and right and saved at once, and Quit Game. Binding a wheel or keys by pressing them, and achievements, are in the settings window, which Recomp opens.
 - **Settings Window** - Press F1 or Back + Start on a controller for everything: display, graphics, game options, controls and the wheel. Changes made in either place are saved to `pgr2.toml`.
 - **Skip Intro** - Goes straight to the title screen.
 - **Hide HUD** - Clears the race HUD for screenshots and replays.

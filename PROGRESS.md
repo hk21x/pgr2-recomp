@@ -38,13 +38,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 ## Log
 
 ### 2026-11-01 - Recomp replaces PC Settings in the game's menus
-- Harry: the in-game page should be called RECOMP and hold all the settings. A landing page (Picture, Display, Game,
-  Controls, Wheel, Bindings and More, Quit Game) with a section of the game's rows each: everything of F1 that left and
+- Harry: the in-game page should be called RECOMP and hold all the settings. A landing page (Picture, Performance, Display,
+  Game, Controls, Wheel, Bindings and More, Quit Game) with a section of the game's rows each: everything of F1 that left and
   right can set. One builder, 0xA2E60, tells the rows apart by the focus at the manager's +0x2C when A sends it there.
   Bindings by moving a control, remapping one input, readouts and achievements stay in F1, which a row opens. Rows hold 8
   choices: resolutions the widest 7 with Desktop, sliders in steps. Quit needs two presses to the right.
 - Headless: every section drawn, rows set their settings, Back returns to the row it came from, Quit leaves (Exit 0). sdk:
   app::ListModes, and the harness's stubs. Not on Windows: Monitor, Display Mode and Resolution rows, which ApplyDisplay.
+  Merged with the new graphics options (SMAA, scaling filter, alpha edges, world textures, low latency), rows for them too.
 ### 2026-11-01 - graphics options for every game (SDK)
 - All off by default, F1 > Graphics: SMAA (upstream, runtime/gpu/smaa), a sharp scaling filter, smooth alpha edges with MSAA,
   enhanced world textures (doubled in the background), low latency (a waitable swap chain holding one frame, next start).

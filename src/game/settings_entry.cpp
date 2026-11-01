@@ -122,17 +122,23 @@ void WheelChanged() { input::WheelSetup(); }
 uint32_t g_quit = 0;
 
 const std::vector<Row> kPicture = {
-    {u"Render Scale", u"The 3D picture's size, percent of the screen. More is slower.",
-     [] { return Choices{u"25%", u"50%", u"75%", u"100%", u"125%", u"150%", u"175%", u"200%"}; },
-     [] { return Nearest(kRender, app::Get().render_percent); },
-     [](uint32_t i) { app::Get().render_percent = kRender[i]; }},
     {u"MSAA", u"Smooths the edges of the 3D scene. More is slower.",
      [] { return Choices{u"Off", u"2x", u"4x", u"8x"}; },
      [] { return std::min<uint32_t>(app::Get().msaa, 3); },
      [](uint32_t i) { app::Get().msaa = i; }},
-    {u"FXAA", u"Smooths the finished frame, HUD included. A little softer.", OnOff,
-     [] { return uint32_t(app::Get().fxaa); },
-     [](uint32_t i) { app::Get().fxaa = i != 0; }},
+    {u"Smooth Alpha Edges", u"With MSAA: softens fences and leaves too.", OnOff,
+     [] { return uint32_t(app::Get().alpha_coverage); },
+     [](uint32_t i) { app::Get().alpha_coverage = i != 0; }},
+    {u"Edge Smoothing", u"The finished frame, HUD included. SMAA keeps more detail.",
+     [] { return Choices{u"Off", u"FXAA", u"SMAA"}; },
+     [] {
+         const app::Settings& s = app::Get();
+         return s.smaa ? uint32_t(2) : uint32_t(s.fxaa);
+     },
+     [](uint32_t i) {
+         app::Get().fxaa = i == 1;
+         app::Get().smaa = i == 2;
+     }},
     {u"Sharpening", u"Crisper picture. Too much shows as grain.",
      [] { return Choices{u"Off", u"25%", u"50%", u"75%", u"100%"}; },
      [] { return Nearest(kSharpen, app::Get().sharpen); },
@@ -141,13 +147,30 @@ const std::vector<Row> kPicture = {
      [] { return Choices{u"Game", u"2x", u"4x", u"8x", u"16x"}; },
      [] { return Nearest(kAniso, app::Get().aniso); },
      [](uint32_t i) { app::Get().aniso = kAniso[i]; }},
+    {u"World Textures", u"Doubled in the background. Uses more video memory.", OnOff,
+     [] { return uint32_t(app::Get().world_textures); },
+     [](uint32_t i) { app::Get().world_textures = i != 0; }},
     {u"Sharp Text and HUD", u"Menus, text and the HUD drawn crisp at high resolutions.", OnOff,
      [] { return uint32_t(app::Get().sharp_2d); },
      [](uint32_t i) { app::Get().sharp_2d = i != 0; }},
+};
+
+const std::vector<Row> kPerformance = {
+    {u"Render Scale", u"The 3D picture's size, percent of the screen. More is slower.",
+     [] { return Choices{u"25%", u"50%", u"75%", u"100%", u"125%", u"150%", u"175%", u"200%"}; },
+     [] { return Nearest(kRender, app::Get().render_percent); },
+     [](uint32_t i) { app::Get().render_percent = kRender[i]; }},
+    {u"Scaling Filter", u"How the frame reaches the screen's size.",
+     [] { return Choices{u"Bilinear", u"Sharp"}; },
+     [] { return app::Get().scale_filter % 2; },
+     [](uint32_t i) { app::Get().scale_filter = i; }},
     {u"Frame Rate Cap", u"Limits the frame rate further than the game does.",
      [] { return Choices{u"30", u"60", u"120", u"144", u"240", u"None"}; },
      [] { return NearestCap(app::Get().fps_cap); },
      [](uint32_t i) { app::Get().fps_cap = kCaps[i]; }},
+    {u"Low Latency", u"Next start. Less input lag; a slow frame shows more.", OnOff,
+     [] { return uint32_t(app::Get().low_latency); },
+     [](uint32_t i) { app::Get().low_latency = i != 0; }},
     {u"Frame Counter", u"Frames a second in a corner of the screen.", OnOff,
      [] { return uint32_t(app::Get().show_fps); },
      [](uint32_t i) { app::Get().show_fps = i != 0; }},
@@ -324,7 +347,8 @@ struct Section {
     const std::vector<Row>* rows;
 };
 const Section kSections[] = {
-    {u"Picture", u"Render scale, anti-aliasing, sharpening and frame cap.", &kPicture},
+    {u"Picture", u"Anti-aliasing, sharpening and textures.", &kPicture},
+    {u"Performance", u"Render scale, frame cap, latency and renderer.", &kPerformance},
     {u"Display", u"Monitor, display mode, resolution and aspect ratio.", &kDisplay},
     {u"Game", u"Frame rate, draw distance, language and more.", &kGame},
     {u"Controls", u"Keyboard and mouse.", &kControls},

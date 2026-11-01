@@ -37,6 +37,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - Recomp from the pause menu
+- Harry: Recomp from the pause menu too. 0x8F820 builds its row (Continue, Retry, Quit, Settings; online and replays their
+  own) and chains it along action 3 with 0x4D3A0; src/game now appends a Recomp button after the last, B on it resumes
+  as the others (0x8CE10), and the landing page's B returns to 0x8F820. The page starts as the pause Settings page
+  0x8ED10 does, without the frame setup of the front end's option pages.
+  In that menu's mode each controller has its own focus (the manager's +0x34, the port a builder's second argument). Headless,
+  a race: Recomp in the row, sections, a setting changed, Back to landing and to the pause menu, no traps. Open: the
+  page does not dim the race or show the title as the game's pause pages do (the object 0x279574 on the first row did
+  not do it); readable. Not tried: Display rows in a race, split screen (two controllers' focus).
+
 ### 2026-11-01 - Recomp replaces PC Settings in the game's menus
 - Harry: the in-game page should be called RECOMP and hold all the settings. A landing page (Picture, Performance, Display,
   Game, Controls, Wheel, Bindings and More, Quit Game) with a section of the game's rows each: everything of F1 that left and

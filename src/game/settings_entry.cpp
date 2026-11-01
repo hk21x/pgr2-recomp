@@ -40,7 +40,8 @@ extern uint32_t fov_percent, draw_distance_percent;
 namespace {
 
 constexpr uint32_t kStrings = 0x28A870;  // string table: a UTF-16 pointer per id
-constexpr uint32_t kGeneralOptions = 0xA40A0, kPage = 0xA2E60;  // page builders
+constexpr uint32_t kGeneralOptions = 0xA40A0, kPage = 0xA2E60, kPause = 0x8F820;  // page builders
+constexpr uint32_t kResume = 0x8CE10, kButton = 0x58970;
 constexpr uint32_t kFrame = 0x2FEE08, kManager = 0x2F4B78, kLegend = 0x28A488;
 constexpr uint32_t kRow = 0x58EE0, kFrameMode = 0x7A110, kLegendText = 0x89200, kLegendHelp = 0x891E0;
 constexpr uint32_t kChain = 0x4D3A0, kAction = 0x4D4C0, kFocus = 0x4D270;
@@ -365,6 +366,9 @@ bool g_on_page = false;            // one of ours is the page shown (General Opt
 int g_section = -1;                // the section shown, -1 the landing page
 uint32_t g_row_va[kMaxRows];       // the page's rows as the game made them, to tell which A was pressed on
 int g_row_count = 0;
+bool g_from_pause = false;         // reached from the pause menu, not General Options
+bool g_in_pause_build = false;     // 0x8F820 is building its row
+uint32_t g_pause_last = 0;         // the last button it chained
 
 uint32_t Text16(uint32_t id) {
     uint32_t p = kernel::R32(kStrings + id * 4);
@@ -377,15 +381,37 @@ uint32_t FloatBits(float f) {
     return u;
 }
 
-// the row the page manager has in focus, of those last built; -1 none
-int FocusedRow() {
-    uint32_t focus = kernel::R32(kernel::R32(kManager) + 0x2C);
+// the pause menu: a Recomp button after its last, in its row. Its buttons run one after another along action 3
+void AddToPause(X86Context& ctx) {
+    using kernel::CallGuest;
+    if (!g_pause_last) return;
+    uint32_t button = CallGuest(ctx, kButton, {0x42DC0000, 0, 3, kEmpty, kPage, 2, 4, 2, 0, 0, 0});
+    ctx.ecx = kLegend;
+    CallGuest(ctx, kLegendText, {Text16(965), button});
+    ctx.ecx = kLegend;
+    CallGuest(ctx, kLegendHelp, {Text16(1406)});
+    uint32_t list = mem::AllocSystem(8);
+    kernel::W32(list, g_pause_last);
+    kernel::W32(list + 4, button);
+    ctx.ecx = kernel::R32(kManager);
+    CallGuest(ctx, kChain, {list, 2, 3, 0});
+    ctx.ecx = kernel::R32(kManager);
+    CallGuest(ctx, kAction, {list + 4, 1, 5, kResume, 2});
+    mem::FreeSystem(list);
+    LOGR("pgr2: Recomp added to the pause menu");
+}
+
+// the row the page manager has in focus, of those last built; -1 none. In the pause menu's mode (0x4C8C0 with 3, the
+// manager's +0x28) each controller has its own focus, from +0x34; a page builder gets the controller as its second argument
+int FocusedRow(uint32_t port) {
+    uint32_t manager = kernel::R32(kManager);
+    uint32_t focus = kernel::R32(manager + 0x28) == 3 ? kernel::R32(manager + 0x34 + (port & 3) * 4) : kernel::R32(manager + 0x2C);
     for (int i = 0; i < g_row_count; i++)
         if (g_row_va[i] == focus) return i;
     return -1;
 }
 
-void Build(X86Context& ctx, int focus) {
+void Build(X86Context& ctx, int focus, uint32_t port) {
     using kernel::CallGuest;
     if (!g_vars) g_vars = mem::AllocSystem(4 * kMaxRows);
     g_page = g_section >= 0 ? kSections[g_section].rows : nullptr;
@@ -395,22 +421,28 @@ void Build(X86Context& ctx, int focus) {
         kernel::W32(g_vars + i * 4, g_shown[i]);
     }
     g_quit = 0;
-    // the frame, as the game's option pages set it
-    uint32_t frame = kernel::R32(kFrame);
-    kernel::W32(frame + 0x34, 1044);
-    uint32_t one = kernel::R32(0x275B98);
-    kernel::W32(frame + 0x38, one);
-    kernel::W32(frame + 0x3C, one);
-    kernel::W32(frame + 0x40, one);
-    kernel::G<uint8_t>(frame + 0x45) = 1;
-    ctx.ecx = frame;
-    CallGuest(ctx, kFrameMode, {0xC});
-    if (kernel::G<uint8_t>(0x49E110)) {
-        kernel::W32(frame + 0x3C, 0);
-        kernel::W32(frame + 0x38, 0);
+    if (g_from_pause) {
+        // as the pause menu's own Settings page (0x8ED10) starts
+        kernel::G<uint8_t>(0x367524) = 0;
+        CallGuest(ctx, 0x141560, {1});
+    } else {
+        // the frame, as the game's option pages set it
+        uint32_t frame = kernel::R32(kFrame);
+        kernel::W32(frame + 0x34, 1044);
+        uint32_t one = kernel::R32(0x275B98);
+        kernel::W32(frame + 0x38, one);
+        kernel::W32(frame + 0x3C, one);
+        kernel::W32(frame + 0x40, one);
+        kernel::G<uint8_t>(frame + 0x45) = 1;
+        ctx.ecx = frame;
+        CallGuest(ctx, kFrameMode, {0xC});
+        if (kernel::G<uint8_t>(0x49E110)) {
+            kernel::W32(frame + 0x3C, 0);
+            kernel::W32(frame + 0x38, 0);
+        }
+        ctx.ecx = kernel::R32(kFrame);
+        CallGuest(ctx, kFrameMode, {0xB});
     }
-    ctx.ecx = kernel::R32(kFrame);
-    CallGuest(ctx, kFrameMode, {0xB});
     // the rows
     uint32_t rows = mem::AllocSystem(4 * kMaxRows);  // the page manager keeps the rows, not this list
     for (int i = 0; i < count; i++) {
@@ -448,9 +480,9 @@ void Build(X86Context& ctx, int focus) {
     ctx.ecx = kernel::R32(kManager);
     CallGuest(ctx, kAction, {rows, uint32_t(count), 4, kPage, 2});
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kAction, {rows, uint32_t(count), 5, g_page ? kPage : kGeneralOptions, 2});
+    CallGuest(ctx, kAction, {rows, uint32_t(count), 5, g_page ? kPage : g_from_pause ? kPause : kGeneralOptions, 2});
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kFocus, {kernel::R32(rows + uint32_t(std::clamp(focus, 0, count - 1)) * 4), uint32_t(-1)});
+    CallGuest(ctx, kFocus, {kernel::R32(rows + uint32_t(std::clamp(focus, 0, count - 1)) * 4), port});
     mem::FreeSystem(rows);
 }
 
@@ -511,12 +543,44 @@ X86_EXTERN_FUNC(__imp__sub_000A40A0);
 X86_FUNC(sub_000A40A0) {
     pgr2::g_on_page = false;
     pgr2::g_section = -1;
+    pgr2::g_from_pause = false;
     __imp__sub_000A40A0(ctx, base);
+}
+
+// the chaining of a page's buttons (thiscall: list, count, action, wrap): the pause menu's last one
+X86_EXTERN_FUNC(__imp__sub_0004D3A0);
+X86_FUNC(sub_0004D3A0) {
+    if (pgr2::g_in_pause_build && kernel::R32(ctx.esp + 12) == 3) {
+        uint32_t list = kernel::R32(ctx.esp + 4), count = kernel::R32(ctx.esp + 8);
+        pgr2::g_pause_last = count ? kernel::R32(list + (count - 1) * 4) : 0;
+    }
+    __imp__sub_0004D3A0(ctx, base);
+}
+
+// the pause menu's builder: Continue, Retry, Quit, Settings, and Recomp. Not online (0x3B1EC3, whose menu has its own
+// handlers) and not in a replay (a menu of its own, built from here, which does not chain along action 3 last)
+X86_EXTERN_FUNC(__imp__sub_0008F820);
+X86_FUNC(sub_0008F820) {
+    pgr2::g_on_page = false;
+    pgr2::g_section = -1;
+    pgr2::g_from_pause = true;
+    pgr2::g_in_pause_build = true;
+    pgr2::g_pause_last = 0;
+    int32_t replay_mode = int32_t(kernel::R32(0x383190));
+    bool replay = replay_mode != -1 && (kernel::G<uint8_t>(0x34C2B0 + uint32_t(replay_mode) * 0x4C) & 4);
+    __imp__sub_0008F820(ctx, base);
+    pgr2::g_in_pause_build = false;
+    if (!replay && !kernel::G<uint8_t>(0x3B1EC3)) {
+        uint32_t eax = ctx.eax;
+        pgr2::AddToPause(ctx);
+        ctx.eax = eax;
+    }
 }
 
 // Screen Center's page builder (0xA2E60, no arguments, returns 1): ours instead. From General Options the landing page;
 // from the landing page A on a section opens it, on Bindings the settings window; from a section, back to the landing page
 X86_FUNC(sub_000A2E60) {
+    uint32_t port = pgr2::g_from_pause ? kernel::R32(ctx.esp + 8) : uint32_t(-1);
     int focus = 0;
     bool window = false;
     if (pgr2::g_on_page) {
@@ -524,7 +588,7 @@ X86_FUNC(sub_000A2E60) {
             focus = pgr2::g_section;
             pgr2::g_section = -1;
         } else {
-            int row = pgr2::FocusedRow();
+            int row = pgr2::FocusedRow(port);
             LOGR("pgr2: Recomp row %d chosen", row);
             if (row >= 0 && row < pgr2::kSectionCount) pgr2::g_section = row;
             else {
@@ -533,7 +597,7 @@ X86_FUNC(sub_000A2E60) {
             }
         }
     }
-    pgr2::Build(ctx, focus);
+    pgr2::Build(ctx, focus, port);
     pgr2::g_on_page = true;
     if (window) {
         std::lock_guard lock(app::UiLock());

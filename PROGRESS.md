@@ -37,6 +37,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - README: new wipe from PNGs, with the current recommended settings
+Two more of Harry's F12 PNGs from one paused frame, cropped at full size around the car with no sky (clouds move while
+paused). Recommended now also has Smooth Alpha Edges and Texture Filtering 16x. 800x520, 58 frames, 504 KB (was 178 KB).
+
 ### 2026-11-01 - README: each new graphics setting compared on and off
 Harry's eight F12 PNGs from one paused frame (kept in .local/win), five panels in docs/images. Seen in the
 crops: SMAA smooths the barrier; Smooth Alpha Edges smooths leaves against the sky with no dark outline there; 16x

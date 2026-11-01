@@ -118,13 +118,13 @@ mapped to any controller input in Controls.
 
 ## Graphics settings
 
-In Options > General Options > Recomp or the settings window (F1); they apply at once. All of these are one paused
+In Options > General Options > Recomp or the settings window (F1); they apply at once. Each comparison is one paused
 frame at 3440x1440.
 
 <p align="center">
-  <img src="docs/images/pgr2-settings-wipe.webp" alt="A wipe between all settings off and render scale 200%, MSAA 4x and sharpening 50%" width="800">
+  <img src="docs/images/pgr2-settings-wipe.webp" alt="A wipe across a yellow Carrera GT between all settings off and the recommended settings" width="800">
   <br>
-  <i>All off vs. the recommended start for a capable PC: render scale 200%, MSAA 4x, sharpening 50%.</i>
+  <i>All off vs. the recommended start for a capable PC: render scale 200%, MSAA 4x, smooth alpha edges, texture filtering 16x, sharpening 50%.</i>
 </p>
 
 <p align="center">

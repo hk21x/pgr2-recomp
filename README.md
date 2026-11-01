@@ -189,6 +189,7 @@ Plays as controller 1, with two keys for each console input, remappable in the s
 - **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
   files (F1 > Game); see [WINDOWS.md](WINDOWS.md).
 - **Recomp in the game's menus** - Options > General Options > Recomp, or the pause menu in a race: every setting of this PC version in the game's own option rows, in sections (Picture, Performance, Display, Game, Controls, Wheel), changed with left and right and saved at once, and Quit Game. Binding a wheel or keys by pressing them, and achievements, are in the settings window, which Recomp opens.
+- **Screenshots** - F12 saves the frame as a full resolution PNG in the `screenshots` folder beside the game, without the settings window.
 - **Settings Window** - Press F1 or Back + Start on a controller for everything: display, graphics, game options, controls and the wheel. Changes made in either place are saved to `pgr2.toml`.
 - **Skip Intro** - Goes straight to the title screen.
 - **Hide HUD** - Clears the race HUD for screenshots and replays.

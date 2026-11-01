@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - F12 screenshots; no pointer over the game
+- app/screenshot.cpp: F12 reads the back buffer before the interface (D3D12 and D3D11) and writes a PNG with WIC on a thread
+  of its own, into screenshots beside the exe. The pointer hides over the game unless the settings window is open (it
+  showed in Harry's comparison shots: hidden only with mouse look, and only when the mouse moved); a timer takes
+  away one left standing. For every game (sdk). Windows syntax check only: not run, the harness has no window.
+
 ### 2026-11-01 - Recomp from the pause menu
 - Harry: Recomp from the pause menu too. 0x8F820 builds its row (Continue, Retry, Quit, Settings; online and replays their
   own) and chains it along action 3 with 0x4D3A0; src/game now appends a Recomp button after the last, B on it resumes

@@ -206,6 +206,12 @@ Past the LAN: set `join_ip = 'a.b.c.d'` (the host's address) in the joiner's `pg
 host. On one PC: copy `out\build\release` to a second folder and start each copy with `PGR2.exe --instance 1` and
 `--instance 2`. Headless this works end to end (lobby, race, results); it has not been tried on Windows yet.
 
+## Screenshots and the pointer
+
+F12 saves the frame as shown (sharpening and gamma included, the settings window not) as a PNG in `screenshots` beside the
+exe, under both renderers; a note says so for a few seconds. The mouse pointer is hidden over the game while it has the
+focus, and shows over the settings window.
+
 ## Language
 
 Options > General Options > Recomp > Language, or F1 > Game: English, Japanese, German, French, Spanish, Italian,

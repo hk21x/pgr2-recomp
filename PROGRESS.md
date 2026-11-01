@@ -45,6 +45,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   choices: resolutions the widest 7 with Desktop, sliders in steps. Quit needs two presses to the right.
 - Headless: every section drawn, rows set their settings, Back returns to the row it came from, Quit leaves (Exit 0). sdk:
   app::ListModes, and the harness's stubs. Not on Windows: Monitor, Display Mode and Resolution rows, which ApplyDisplay.
+### 2026-11-01 - graphics options for every game (SDK)
+- All off by default, F1 > Graphics: SMAA (upstream, runtime/gpu/smaa), a sharp scaling filter, smooth alpha edges with MSAA,
+  enhanced world textures (doubled in the background), low latency (a waitable swap chain holding one frame, next start).
+- Evidence, no GPU here: tools/filter_preview runs the final pass's real HLSL on PGR2 frames: unchanged at 1:1, about 28%
+  larger steps between neighbours at 200%, 26% upscaling 2x. The first downscale kernel was softer than bilinear and was
+  replaced. World textures: no measurable gain over cubic on frames, edges slightly cleaner; real textures not tried. SMAA and
+  coverage shaders compile with DXC (3 real PGR2 shaders for coverage, early frames); SMAA has never made an image.
+- Gate: smoke OK on PGR2, PGR1 and its repro frame, Agent Under Fire, NightFire, True Crime. Harry agreed to merge without EoN
+  (its SDK line lacks main's final pass and split MSAA setting; needs reconciling) and without Forza (repo gone from the VM on
+  2026-11-01, cause not found, accepted). Forza's one SDK commit off main kept as fork branch forza-last.
+- Next: Harry's Windows test of all five, SMAA first; then HDR on its own branch.
 
 ### 2026-11-01 - race frame rate: 30, 60, 90, 120 or 144
 - Harry on Windows at 120: no slow motion, same physics, ghosts and replays fine; 120 where draws are few, 62-100 in the

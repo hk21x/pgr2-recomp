@@ -40,6 +40,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 ### 2026-11-01 - Release 1.5.0
 Notes in docs/releases/v1.5.0.md; tag v1.5.0 builds the launcher. Not checked: split-screen above 30 (said in the notes),
 a settings file with the old race_60fps carrying over, the update prompt from an older launcher.
+### 2026-11-01 - Enhanced world textures: loading spread over frames (SDK)
+- Harry's PC: frames of 130-316 ms in two runs with it on, no shaders compiling, longest racing frame about 20 ms with it off.
+  Likely cause, not measured: bursts of finished pictures loading on the render thread, as many as were ready in one frame, each
+  building its mips there (2.65 ms for 1024 square on this VM); about eleven of them fill the 64 MB upload ring, which submits
+  mid frame.
+- As EoN's button pictures did (158 to 0.67 ms): mips made on the background thread; new pictures share about 6 MB a frame, the
+  rest draw the game's texture until a later frame; world textures' bytes checked by a sample each frame. A picture over 4 ms to
+  load is logged ("picture for ... took").
+- Not measured: no GPU here. Smoke OK on PGR2, PGR1, Agent Under Fire, True Crime, NightFire (failed once in the gate: under
+  load it reached vblank 1860 of the 2000 its START needs in the 45 s window; two solo runs passed). F1 help text keeps its
+  hitch warning until Harry's run says otherwise. Next: the same run on Harry's PC, with the log's picture lines.
 
 ### 2026-11-01 - README: new wipe from PNGs, with the current recommended settings
 Two more of Harry's F12 PNGs from one paused frame, cropped at full size around the car with no sky (clouds move while

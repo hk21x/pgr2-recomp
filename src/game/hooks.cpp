@@ -312,9 +312,15 @@ float MusicLevel() {
 // hide_hud: HideOverlays (a Frontend.ini switch, the byte 0x291A24), which the HUD code (0xDA000-0xE8000) reads each
 // frame, set before every frame step (0xD90F0) so the option applies at once
 static uint32_t RaceHz();
+static bool Race60();
 
 X86_EXTERN_FUNC(__imp__sub_000D90F0);
 X86_FUNC(sub_000D90F0) {
+    // above the console's 30, game time from the clock (the byte 0x2919AD picks that branch of the frame step, read
+    // nowhere else, the one system link takes): a frame running late then takes more physics steps, where fixed time
+    // would slow the whole race down with the frame rate. PGR2_FIXED_TIME=1 keeps the fixed time.
+    static const bool fixed_time = std::getenv("PGR2_FIXED_TIME") != nullptr;
+    if (Race60() && !fixed_time) kernel::G<uint8_t>(0x2919AD) = 1;
     if (uint32_t hz = RaceHz()) {
         bool racing = kernel::G<uint8_t>(0x49E110) != 0;
         kernel::G<uint8_t>(0x48614B) = uint8_t(racing ? hz : 60);

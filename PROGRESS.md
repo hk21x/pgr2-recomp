@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - above 60: the slow motion
+- Harry at PGR2_HZ=120 on Windows (100%, no MSAA): no jitter, so the game's own motion between steps holds, and 120 up to
+  about 1400 draws, 82-90 at 2500-2900; but the whole game went in slow motion. The frame step adds a fixed dt a frame, so
+  85 fps at 120 is 71% speed (and 44 fps in a race at 60 was 73%). The byte 0x2919AD, read only there, takes the frame
+  step's clock branch, as system link does: more physics steps on a late frame, a gap over 0.15 s dropped. Set in races
+  at 60 and above; PGR2_FIXED_TIME=1 goes back. Headless, 120 asked and paced at 60: lap time 35.42, 45.41, 55.39 at 10
+  s apart with it, 16.87, 21.87, 26.87 without. Not known: replays, which may keep fixed time (0x14C80, 0x30CD9C and
+  0x3B1EC7 choose it); handling on Windows.
+
 ### 2026-11-01 - above 60 in races: the first look (branch high-fps, an experiment)
 - The frame step's dt comes from the display rate byte 0x48614B over the interval 0x4860F1, and physics is a fixed step
   accumulator, so writing the byte moves the frame rate alone. Headless: at 120 one step every other frame (300 of 600),

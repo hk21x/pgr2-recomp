@@ -12,7 +12,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - PC: F1 / Back+Start settings window, redone 2026-11-01, new look to confirm on Windows (display, monitor, graphics, FXAA, fps counter, pause on focus loss, game
   options: skip intro, hide HUD, field of view, draw distance, race_60fps, DLC cities; controls), keyboard play,
   remapping; confirmed on Windows except keyboard play and remapping across a restart
-- PC Settings entry in PGR2's menu (Options > General Options, replacing Screen Center): confirmed on Windows
+- Recomp in PGR2's menu (Options > General Options, replacing Screen Center; 2026-11-01, was PC Settings): Windows to confirm
 - Achievements: draft set in ACHIEVEMENTS.md (64, 780 points); runtime built (RA-syntax conditions, pop-up, tab,
   achievements.toml); all 64 live (2026-10-21); the pop-up confirmed on Windows
 - System link: works headless (scripts/linktest.sh); Windows to try
@@ -36,6 +36,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-11-01 - Recomp replaces PC Settings in the game's menus
+- Harry: the in-game page should be called RECOMP and hold all the settings. A landing page (Picture, Display, Game,
+  Controls, Wheel, Bindings and More, Quit Game) with a section of the game's rows each: everything of F1 that left and
+  right can set. One builder, 0xA2E60, tells the rows apart by the focus at the manager's +0x2C when A sends it there.
+  Bindings by moving a control, remapping one input, readouts and achievements stay in F1, which a row opens. Rows hold 8
+  choices: resolutions the widest 7 with Desktop, sliders in steps. Quit needs two presses to the right.
+- Headless: every section drawn, rows set their settings, Back returns to the row it came from, Quit leaves (Exit 0). sdk:
+  app::ListModes, and the harness's stubs. Not on Windows: Monitor, Display Mode and Resolution rows, which ApplyDisplay.
 
 ### 2026-11-01 - race frame rate: 30, 60, 90, 120 or 144
 - Harry on Windows at 120: no slow motion, same physics, ghosts and replays fine; 120 where draws are few, 62-100 in the

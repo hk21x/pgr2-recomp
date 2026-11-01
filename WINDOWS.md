@@ -208,9 +208,9 @@ host. On one PC: copy `out\build\release` to a second folder and start each copy
 
 ## Language
 
-Options > General Options > PC Settings > Language, or F1 > Game: English, Japanese, German, French, Spanish, Italian,
+Options > General Options > Recomp > Language, or F1 > Game: English, Japanese, German, French, Spanish, Italian,
 Korean or Chinese, at the next start. That start copies the game's files again (about two minutes of movies), as the
-first one did. PC Settings' own rows stay in English; Japanese keeps the disc's English text in the race HUD.
+first one did. Recomp's own rows stay in English; Japanese keeps the disc's English text in the race HUD.
 
 ## What to look at and report
 
@@ -220,7 +220,7 @@ Please note for each: works / wrong (how) / not reached, and send `logs\pgr2.log
 for a flicker, a frame log (F4 with `XBE_FRAMELOG=60`) at the spot.
 
 Confirmed on Windows so far: boot, movies, menus, races, saves, sound, reflections, the player's car body, the car
-shadow, fences and signs, car selection, the F1 window, the Direct3D 11 renderer (with MSAA), the PC Settings entry, the achievement pop-up.
+shadow, fences and signs, car selection, the F1 window, the Direct3D 11 renderer (with MSAA), the Recomp entry, the achievement pop-up.
 
 Still to confirm:
 1. **Trees** (2026-10-21): leafy trees in Sydney's terrace streets (point sprites), on D3D12 and D3D11.

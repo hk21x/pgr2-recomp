@@ -138,7 +138,7 @@ Each item is marked:
   help line; an int; choice count; 2; 0; eight choice texts, all UTF-16 pointers) steps the int with Left and Right
   (0x4D130 on actions 2 and 3) and shows its choice; 0x59020 the same for a byte. The manager [0x2F4B78]: 0x4D3A0
   chains rows, 0x4D4C0 sends an action (4 A, 5 B) to a page builder, 0x4D270 focuses a row. The legend 0x28A488
-  (0x89200 A's text, 0x891E0). src/game/settings_entry.cpp builds PC Settings from these.
+  (0x89200 A's text, 0x891E0). src/game/settings_entry.cpp builds Recomp from these: one builder for the landing page and its sections, told apart by the row in focus when A sends it there, the manager's +0x2C.
 - **Languages.** The game takes XC_LANGUAGE: English, Japanese, German, French, Spanish, Italian, Korean, TChinese
   from Frontend\<language>.ini and Cache\Resource; 9 Portuguese has files but runs as English. A missing
   Z:\<language>.Ind makes it format the cache partition (Z only) and copy again.

@@ -1,6 +1,6 @@
-// PC Settings in PGR2's own menu: Options > General Options > Screen Center (which a PC monitor has no use for)
-// becomes PC Settings, a page of the game's own option rows for the everyday picture settings, the last row opening
-// the settings window (F1) for the rest.
+// RECOMP in PGR2's own menu: Options > General Options > Screen Center (which a PC monitor has no use for) becomes a
+// page of sections, each a page of the game's own option rows for the PC's settings. What rows cannot do (binding by
+// moving a control, remapping, live readouts, achievements) stays in the settings window (F1), which a row opens.
 //
 // General Options is built by 0xA40A0: each item a button with a page builder (0x58970), a label (0x89200) and a help
 // line (0x891E0), both pointers from the UTF-16 string table at 0x28A870 by StringList.ini id. Its first page
@@ -18,11 +18,13 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
 #include <mutex>
 #include <string>
 #include <vector>
 
 #include "app/app.h"
+#include "core/input.h"
 #include "core/log.h"
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
@@ -30,6 +32,7 @@
 
 namespace pgr2 {
 
+extern bool skip_intro, dlc, hide_hud;
 extern uint32_t race_fps;
 void RaiseFrameCap();
 extern uint32_t fov_percent, draw_distance_percent;
@@ -48,9 +51,9 @@ struct Text {
     const char16_t* text;
 };
 constexpr Text kTexts[] = {
-    {965, u"PC Settings"},                                 // IDS_OPTIONS_SCREEN_CENTRE, the item
-    {1406, u"Picture settings for this PC, and more."},    // IDS_ON_FOCUS_HELP_OPTIONS_SCREEN
-    {1044, u"PC SETTINGS"},                                // IDS_SCREEN_CENTRE, the page title
+    {965, u"Recomp"},                                      // IDS_OPTIONS_SCREEN_CENTRE, the item
+    {1406, u"Every setting of this PC version."},          // IDS_ON_FOCUS_HELP_OPTIONS_SCREEN
+    {1044, u"RECOMP"},                                     // IDS_SCREEN_CENTRE, the page title
 };
 uint32_t g_guest[3];  // our copies in guest memory
 
@@ -77,67 +80,267 @@ uint32_t Nearest(const std::vector<uint32_t>& values, uint32_t v) {
 struct Row {
     const char16_t* label;
     const char16_t* help;
-    std::vector<const char16_t*> choices;  // at most 8
+    std::vector<const char16_t*> (*choices)();  // at most 8
     uint32_t (*get)();
     void (*set)(uint32_t);
 };
+using Choices = std::vector<const char16_t*>;
 
-const std::vector<uint32_t> kRender = {50, 75, 100, 125, 150, 200}, kAniso = {0, 2, 4, 8, 16},
-                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150}, kSharpen = {0, 25, 50, 75, 100},
-                            kRaceFps = {30, 60, 90, 120, 144};
+Choices OnOff() { return {u"Off", u"On"}; }
 
-const Row kRows[] = {
-    {u"Render Scale", u"The 3D picture's size, percent of the screen. More is sharper and slower.",
-     {u"50%", u"75%", u"100%", u"125%", u"150%", u"200%"},
+const std::vector<uint32_t> kRender = {25, 50, 75, 100, 125, 150, 175, 200}, kAniso = {0, 2, 4, 8, 16},
+                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150},
+                            kSharpen = {0, 25, 50, 75, 100}, kRaceFps = {30, 60, 90, 120, 144},
+                            kCaps = {30, 60, 120, 144, 240, 0}, kSens = {25, 50, 75, 100, 150, 200, 400, 800},
+                            kWheelRange = {180, 270, 360, 540, 720, 900, 1080, 2880},
+                            kWheelLock = {180, 270, 360, 450, 540, 720, 900, 1080},
+                            kDead = {0, 1, 2, 3, 5, 10, 20}, kPercent = {0, 25, 50, 70, 85, 100};
+
+// a UTF-16 copy of a name made at run time, kept for Guest
+const char16_t* Wide(const std::string& text) {
+    static std::deque<std::u16string> made;
+    made.emplace_back(text.begin(), text.end());
+    return made.back().c_str();
+}
+
+// the resolutions offered: the desktop's, then the widest the rows have room for
+std::vector<app::Mode> ResolutionList() {
+    std::vector<app::Mode> list = app::ListModes();
+    if (list.size() > 7) list.resize(7);
+    return list;
+}
+
+uint32_t NearestCap(uint32_t cap) {
+    for (size_t i = 0; i < kCaps.size(); i++)
+        if (kCaps[i] == cap) return uint32_t(i);
+    return 1;
+}
+
+void WheelChanged() { input::WheelSetup(); }
+
+// Quit Game: a second press to the right leaves
+uint32_t g_quit = 0;
+
+const std::vector<Row> kPicture = {
+    {u"Render Scale", u"The 3D picture's size, percent of the screen. More is slower.",
+     [] { return Choices{u"25%", u"50%", u"75%", u"100%", u"125%", u"150%", u"175%", u"200%"}; },
      [] { return Nearest(kRender, app::Get().render_percent); },
      [](uint32_t i) { app::Get().render_percent = kRender[i]; }},
     {u"MSAA", u"Smooths the edges of the 3D scene. More is slower.",
-     {u"Off", u"2x", u"4x", u"8x"},
+     [] { return Choices{u"Off", u"2x", u"4x", u"8x"}; },
      [] { return std::min<uint32_t>(app::Get().msaa, 3); },
      [](uint32_t i) { app::Get().msaa = i; }},
-    {u"FXAA", u"Smooths the finished frame, HUD included. A little softer.",
-     {u"Off", u"On"},
+    {u"FXAA", u"Smooths the finished frame, HUD included. A little softer.", OnOff,
      [] { return uint32_t(app::Get().fxaa); },
      [](uint32_t i) { app::Get().fxaa = i != 0; }},
     {u"Sharpening", u"Crisper picture. Too much shows as grain.",
-     {u"Off", u"25%", u"50%", u"75%", u"100%"},
+     [] { return Choices{u"Off", u"25%", u"50%", u"75%", u"100%"}; },
      [] { return Nearest(kSharpen, app::Get().sharpen); },
      [](uint32_t i) { app::Get().sharpen = kSharpen[i]; }},
     {u"Texture Filtering", u"Sharper road and walls at a distance.",
-     {u"Game", u"2x", u"4x", u"8x", u"16x"},
+     [] { return Choices{u"Game", u"2x", u"4x", u"8x", u"16x"}; },
      [] { return Nearest(kAniso, app::Get().aniso); },
      [](uint32_t i) { app::Get().aniso = kAniso[i]; }},
-    {u"Sharp Text and HUD", u"Menus, text and the HUD drawn crisp at high resolutions.",
-     {u"Off", u"On"},
+    {u"Sharp Text and HUD", u"Menus, text and the HUD drawn crisp at high resolutions.", OnOff,
      [] { return uint32_t(app::Get().sharp_2d); },
      [](uint32_t i) { app::Get().sharp_2d = i != 0; }},
-    {u"Draw Distance", u"How far the race cameras see, percent of the console's. Next race on.",
-     {u"50%", u"75%", u"100%", u"150%", u"200%", u"300%", u"400%"},
-     [] { return Nearest(kDraw, draw_distance_percent); },
-     [](uint32_t i) { draw_distance_percent = kDraw[i]; }},
-    {u"Field of View", u"The race cameras' view, percent of the console's.",
-     {u"75%", u"90%", u"100%", u"110%", u"125%", u"150%"},
-     [] { return Nearest(kFov, fov_percent); },
-     [](uint32_t i) { fov_percent = kFov[i]; }},
+    {u"Frame Rate Cap", u"Limits the frame rate further than the game does.",
+     [] { return Choices{u"30", u"60", u"120", u"144", u"240", u"None"}; },
+     [] { return NearestCap(app::Get().fps_cap); },
+     [](uint32_t i) { app::Get().fps_cap = kCaps[i]; }},
+    {u"Frame Counter", u"Frames a second in a corner of the screen.", OnOff,
+     [] { return uint32_t(app::Get().show_fps); },
+     [](uint32_t i) { app::Get().show_fps = i != 0; }},
+    {u"Renderer", u"At the next start. Direct3D 11 if 12 misbehaves.",
+     [] { return Choices{u"Direct3D 12", u"Direct3D 11"}; },
+     [] { return app::Get().renderer % 2; },
+     [](uint32_t i) { app::Get().renderer = i; }},
+};
+
+const std::vector<Row> kDisplay = {
+    {u"Monitor", u"The display the game runs on.",
+     [] {
+         Choices c{u"Primary"};
+         std::vector<std::string> names = app::Monitors();
+         for (size_t i = 0; i < names.size() && c.size() < 8; i++) c.push_back(Wide("Display " + std::to_string(i + 1)));
+         return c;
+     },
+     [] { return std::min<uint32_t>(app::Get().monitor, 7); },
+     [](uint32_t i) {
+         app::Get().monitor = i;
+         app::ApplyDisplay();
+     }},
+    {u"Display Mode", u"Applies at once.",
+     [] { return Choices{u"Fullscreen", u"Borderless", u"Window"}; },
+     [] { return uint32_t(app::Get().display_mode) % 3; },
+     [](uint32_t i) {
+         app::Get().display_mode = app::DisplayMode(i);
+         app::ApplyDisplay();
+     }},
+    {u"Resolution", u"Applies at once. The settings window lists them all.",
+     [] {
+         Choices c{u"Desktop"};
+         for (const app::Mode& m : ResolutionList()) c.push_back(Wide(std::to_string(m.width) + "x" + std::to_string(m.height)));
+         return c;
+     },
+     [] {
+         const app::Settings& s = app::Get();
+         std::vector<app::Mode> list = ResolutionList();
+         for (size_t i = 0; i < list.size(); i++)
+             if (list[i].width == s.width && list[i].height == s.height) return uint32_t(i + 1);
+         return uint32_t(0);
+     },
+     [](uint32_t i) {
+         app::Settings& s = app::Get();
+         std::vector<app::Mode> list = ResolutionList();
+         s.width = i && i <= list.size() ? list[i - 1].width : 0;
+         s.height = i && i <= list.size() ? list[i - 1].height : 0;
+         app::ApplyDisplay();
+     }},
+    {u"Vertical Sync", u"Off can tear, and lowers delay.", OnOff,
+     [] { return uint32_t(app::Get().vsync); },
+     [](uint32_t i) { app::Get().vsync = i != 0; }},
+    {u"Aspect Ratio", u"At the next start. Fill suits ultrawide screens.",
+     [] { return Choices{u"From Screen", u"4:3", u"16:9", u"Fill Screen"}; },
+     [] { return app::Get().aspect % 4; },
+     [](uint32_t i) { app::Get().aspect = i; }},
+};
+
+const std::vector<Row> kGame = {
     {u"Race Frame Rate", u"Next start. Same physics. Above 60, busy streets can dip.",
-     {u"30", u"60", u"90", u"120", u"144"},
+     [] { return Choices{u"30", u"60", u"90", u"120", u"144"}; },
      [] { return Nearest(kRaceFps, race_fps); },
      [](uint32_t i) {
          race_fps = kRaceFps[i];
          RaiseFrameCap();
      }},
-    // the console's numbering from 1 (GameInfo::languages); a change makes the game fill its cache again at the next start
+    {u"Draw Distance", u"How far the race cameras see. Next race on.",
+     [] { return Choices{u"50%", u"75%", u"100%", u"150%", u"200%", u"300%", u"400%"}; },
+     [] { return Nearest(kDraw, draw_distance_percent); },
+     [](uint32_t i) { draw_distance_percent = kDraw[i]; }},
+    {u"Field of View", u"The race cameras' view, percent of the console's.",
+     [] { return Choices{u"75%", u"90%", u"100%", u"110%", u"125%", u"150%"}; },
+     [] { return Nearest(kFov, fov_percent); },
+     [](uint32_t i) { fov_percent = kFov[i]; }},
+    {u"Race HUD", u"Hide the race HUD for screenshots and replays.",
+     [] { return Choices{u"Shown", u"Hidden"}; },
+     [] { return uint32_t(hide_hud); },
+     [](uint32_t i) { hide_hud = i != 0; }},
+    {u"Skip Intro", u"No intro movies. At the next start.", OnOff,
+     [] { return uint32_t(skip_intro); },
+     [](uint32_t i) { skip_intro = i != 0; }},
+    {u"Xbox Live DLC", u"Cities and cars from your packs. At the next start.", OnOff,
+     [] { return uint32_t(dlc); },
+     [](uint32_t i) { dlc = i != 0; }},
     {u"Language", u"At the next start, which copies the game's files again.",
-     {u"English", u"Japanese", u"Deutsch", u"Fran\u00E7ais", u"Espa\u00F1ol", u"Italiano", u"Korean", u"Chinese"},
+     [] { return Choices{u"English", u"Japanese", u"Deutsch", u"Français", u"Español", u"Italiano", u"Korean", u"Chinese"}; },
      [] { return std::clamp<uint32_t>(app::Get().language, 1, 8) - 1; },
      [](uint32_t i) { app::Get().language = i + 1; }},
+    {u"Pause in Background", u"The game stops while another window is in front.", OnOff,
+     [] { return uint32_t(app::Get().pause_unfocused); },
+     [](uint32_t i) { app::Get().pause_unfocused = i != 0; }},
 };
-constexpr int kSettingRows = int(std::size(kRows));
-constexpr int kRows_ = kSettingRows + 1;  // and More Settings
 
-uint32_t g_vars = 0;            // the rows' ints in guest memory
-uint32_t g_shown[kSettingRows];  // what each held when last looked at
-bool g_on_page = false;          // our page is the one shown (General Options' builder clears it)
+const std::vector<Row> kControls = {
+    {u"Keyboard", u"The keyboard plays as controller 1.", OnOff,
+     [] { return uint32_t(app::Get().keyboard); },
+     [](uint32_t i) { app::Get().keyboard = i != 0; }},
+    {u"Mouse Look", u"The mouse moves the right stick.", OnOff,
+     [] { return uint32_t(app::Get().mouse_look); },
+     [](uint32_t i) { app::Get().mouse_look = i != 0; }},
+    {u"Invert Mouse", u"Up and down swapped.", OnOff,
+     [] { return uint32_t(app::Get().mouse_invert_y); },
+     [](uint32_t i) { app::Get().mouse_invert_y = i != 0; }},
+    {u"Mouse Sensitivity", u"The settings window goes up to 1000%.",
+     [] { return Choices{u"25%", u"50%", u"75%", u"100%", u"150%", u"200%", u"400%", u"800%"}; },
+     [] { return Nearest(kSens, app::Get().mouse_sensitivity); },
+     [](uint32_t i) { app::Get().mouse_sensitivity = kSens[i]; }},
+    {u"Default Keys", u"Right sets every key back to its default.",
+     [] { return Choices{u"Keep", u"Reset"}; },
+     [] { return uint32_t(0); },
+     [](uint32_t i) {
+         if (!i) return;
+         app::Settings& s = app::Get();
+         for (int c = 0; c < input::kControls && c < int(s.keys.size()); c++) s.keys[c] = app::DefaultKeys(c);
+     }},
+    {u"Default Controller", u"Right sets every controller input back.",
+     [] { return Choices{u"Keep", u"Reset"}; },
+     [] { return uint32_t(0); },
+     [](uint32_t i) {
+         if (!i) return;
+         app::Settings& s = app::Get();
+         for (int c = 0; c < input::kControls && c < int(s.pad_map.size()); c++) s.pad_map[c] = uint8_t(c);
+     }},
+};
+
+const std::vector<Row> kWheel = {
+    {u"Invert Steering", u"For a wheel that reads backwards.", OnOff,
+     [] { return uint32_t(app::Get().wheel_steer.invert); },
+     [](uint32_t i) {
+         app::Get().wheel_steer.invert = i != 0;
+         WheelChanged();
+     }},
+    {u"Wheel Rotation", u"As set in the wheel's own software.",
+     [] { return Choices{u"180", u"270", u"360", u"540", u"720", u"900", u"1080", u"2880"}; },
+     [] { return Nearest(kWheelRange, app::Get().wheel_range); },
+     [](uint32_t i) {
+         app::Get().wheel_range = kWheelRange[i];
+         WheelChanged();
+     }},
+    {u"Steering Lock", u"Degrees for full lock. Smaller turns sooner.",
+     [] { return Choices{u"180", u"270", u"360", u"450", u"540", u"720", u"900", u"1080"}; },
+     [] { return Nearest(kWheelLock, app::Get().wheel_lock); },
+     [](uint32_t i) {
+         app::Get().wheel_lock = kWheelLock[i];
+         WheelChanged();
+     }},
+    {u"Dead Zone", u"Steering around the centre that reads as straight.",
+     [] { return Choices{u"0%", u"1%", u"2%", u"3%", u"5%", u"10%", u"20%"}; },
+     [] { return Nearest(kDead, app::Get().wheel_deadzone); },
+     [](uint32_t i) {
+         app::Get().wheel_deadzone = kDead[i];
+         WheelChanged();
+     }},
+    {u"Force Feedback", u"Overall strength. Off turns the forces off.",
+     [] { return Choices{u"Off", u"25%", u"50%", u"70%", u"85%", u"100%"}; },
+     [] { return Nearest(kPercent, app::Get().ffb_strength); },
+     [](uint32_t i) {
+         app::Get().ffb_strength = kPercent[i];
+         WheelChanged();
+     }},
+    {u"Road and Impacts", u"Kerbs, gravel and impacts felt in the wheel.",
+     [] { return Choices{u"Off", u"25%", u"50%", u"70%", u"85%", u"100%"}; },
+     [] { return Nearest(kPercent, app::Get().ffb_road); },
+     [](uint32_t i) {
+         app::Get().ffb_road = kPercent[i];
+         WheelChanged();
+     }},
+};
+
+// the landing page's rows; a section's are its settings
+struct Section {
+    const char16_t* label;
+    const char16_t* help;
+    const std::vector<Row>* rows;
+};
+const Section kSections[] = {
+    {u"Picture", u"Render scale, anti-aliasing, sharpening and frame cap.", &kPicture},
+    {u"Display", u"Monitor, display mode, resolution and aspect ratio.", &kDisplay},
+    {u"Game", u"Frame rate, draw distance, language and more.", &kGame},
+    {u"Controls", u"Keyboard and mouse.", &kControls},
+    {u"Wheel", u"Rotation, lock, dead zone and force feedback.", &kWheel},
+};
+constexpr int kSectionCount = int(std::size(kSections));
+constexpr int kBindingsRow = kSectionCount, kQuitRow = kSectionCount + 1, kLandingRows = kSectionCount + 2;
+constexpr int kMaxRows = 10;
+
+uint32_t g_vars = 0;               // the rows' ints in guest memory
+uint32_t g_shown[kMaxRows];        // what each held when last looked at
+const std::vector<Row>* g_page = nullptr;  // the section shown, null on the landing page
+bool g_on_page = false;            // one of ours is the page shown (General Options' builder clears it)
+int g_section = -1;                // the section shown, -1 the landing page
+uint32_t g_row_va[kMaxRows];       // the page's rows as the game made them, to tell which A was pressed on
+int g_row_count = 0;
 
 uint32_t Text16(uint32_t id) {
     uint32_t p = kernel::R32(kStrings + id * 4);
@@ -150,16 +353,24 @@ uint32_t FloatBits(float f) {
     return u;
 }
 
-void Build(X86Context& ctx, bool more) {
+// the row the page manager has in focus, of those last built; -1 none
+int FocusedRow() {
+    uint32_t focus = kernel::R32(kernel::R32(kManager) + 0x2C);
+    for (int i = 0; i < g_row_count; i++)
+        if (g_row_va[i] == focus) return i;
+    return -1;
+}
+
+void Build(X86Context& ctx, int focus) {
     using kernel::CallGuest;
-    if (!g_vars) g_vars = mem::AllocSystem(4 * kSettingRows);
-    for (int i = 0; i < kSettingRows; i++) {
-        g_shown[i] = kRows[i].get();
+    if (!g_vars) g_vars = mem::AllocSystem(4 * kMaxRows);
+    g_page = g_section >= 0 ? kSections[g_section].rows : nullptr;
+    int count = g_page ? int(g_page->size()) : kLandingRows;
+    for (int i = 0; i < count; i++) {
+        g_shown[i] = g_page ? (*g_page)[size_t(i)].get() : 0;
         kernel::W32(g_vars + i * 4, g_shown[i]);
     }
-    static uint32_t open_var = 0;
-    if (!open_var) open_var = mem::AllocSystem(4);
-    kernel::W32(open_var, 0);
+    g_quit = 0;
     // the frame, as the game's option pages set it
     uint32_t frame = kernel::R32(kFrame);
     kernel::W32(frame + 0x34, 1044);
@@ -177,18 +388,28 @@ void Build(X86Context& ctx, bool more) {
     ctx.ecx = kernel::R32(kFrame);
     CallGuest(ctx, kFrameMode, {0xB});
     // the rows
-    uint32_t rows = mem::AllocSystem(4 * kRows_);  // the page manager keeps the rows, not this list
-    for (int i = 0; i < kRows_; i++) {
-        bool setting = i < kSettingRows;
-        const char16_t* label = setting ? kRows[i].label : u"More Settings";
-        const char16_t* help = setting ? kRows[i].help : u"Display, controls, wheel and the rest: the settings window (F1).";
-        uint32_t args[17] = {0, FloatBits(144.0f + 20.0f * float(i)), 1, Guest(label), Guest(help),
-                             setting ? g_vars + i * 4 : open_var, 0, 2, 0};
-        std::vector<const char16_t*> choices = setting ? kRows[i].choices : std::vector<const char16_t*>{u"Open"};
-        args[6] = uint32_t(choices.size());
-        for (int c = 0; c < 8; c++) args[9 + c] = c < int(choices.size()) ? Guest(choices[c]) : kEmpty;
-        kernel::W32(rows + i * 4, CallGuest(ctx, kRow, args, 17));
+    uint32_t rows = mem::AllocSystem(4 * kMaxRows);  // the page manager keeps the rows, not this list
+    for (int i = 0; i < count; i++) {
+        const char16_t* label;
+        const char16_t* help;
+        std::vector<const char16_t*> choices;
+        if (g_page) {
+            const Row& r = (*g_page)[size_t(i)];
+            label = r.label, help = r.help, choices = r.choices();
+        } else if (i < kSectionCount) {
+            label = kSections[i].label, help = kSections[i].help, choices = {u"Open"};
+        } else if (i == kBindingsRow) {
+            label = u"Bindings and More", help = u"Wheel and key bindings, achievements: the settings window (F1).", choices = {u"Open"};
+        } else {
+            label = u"Quit Game", help = u"Right twice leaves. Progress since the last save is lost.", choices = {u"No", u"Sure?", u"Quit"};
+        }
+        uint32_t args[17] = {0, FloatBits(144.0f + 24.0f * float(i)), 1, Guest(label), Guest(help), g_vars + i * 4,
+                             uint32_t(choices.size()), 2, 0};
+        for (int c = 0; c < 8; c++) args[9 + c] = c < int(choices.size()) ? Guest(choices[size_t(c)]) : kEmpty;
+        g_row_va[i] = CallGuest(ctx, kRow, args, 17);
+        kernel::W32(rows + i * 4, g_row_va[i]);
     }
+    g_row_count = count;
     // the button legend
     kernel::W32(0x28A720, 1);
     kernel::W32(kLegend, 0);
@@ -197,17 +418,15 @@ void Build(X86Context& ctx, bool more) {
     CallGuest(ctx, kLegendText, {Text16(21), 0});
     ctx.ecx = kLegend;
     CallGuest(ctx, kLegendHelp, {Text16(1393)});
-    // up and down, A and B back to General Options, A on More Settings to this page again with the window
+    // up and down; A to this builder (which looks at the row in focus); B back a page
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kChain, {rows, uint32_t(kRows_), 1, 1});
+    CallGuest(ctx, kChain, {rows, uint32_t(count), 1, 1});
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kAction, {rows, uint32_t(kSettingRows), 4, kGeneralOptions, 2});
+    CallGuest(ctx, kAction, {rows, uint32_t(count), 4, kPage, 2});
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kAction, {rows + kSettingRows * 4, 1, 4, kPage, 2});
+    CallGuest(ctx, kAction, {rows, uint32_t(count), 5, g_page ? kPage : kGeneralOptions, 2});
     ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kAction, {rows, uint32_t(kRows_), 5, kGeneralOptions, 2});
-    ctx.ecx = kernel::R32(kManager);
-    CallGuest(ctx, kFocus, {kernel::R32(rows + (more ? kSettingRows : 0) * 4), uint32_t(-1)});
+    CallGuest(ctx, kFocus, {kernel::R32(rows + uint32_t(std::clamp(focus, 0, count - 1)) * 4), uint32_t(-1)});
     mem::FreeSystem(rows);
 }
 
@@ -228,18 +447,30 @@ void ApplySettingsEntry() {
             kernel::W32(entry, g_guest[i]);
         }
     }
-    if (!g_vars) return;
+    if (!g_vars || !g_on_page) return;
     bool changed = false;
-    for (int i = 0; i < kSettingRows; i++) {
-        uint32_t var = kernel::R32(g_vars + i * 4);
-        if (var != g_shown[i] && var < kRows[i].choices.size()) {
+    if (!g_page) {  // the landing page: Quit Game's row steps No, Sure?, Quit
+        uint32_t var = kernel::R32(g_vars + kQuitRow * 4);
+        if (var == 2 && g_quit == 1) {
+            LOGR("pgr2: Quit Game chosen in the Recomp page");
+            app::Quit();
+        } else if (var != g_quit) {
+            if (var == 2) var = 0, kernel::W32(g_vars + kQuitRow * 4, 0);  // from No the other way round: not a second press
+            g_quit = var;
+        }
+        return;
+    }
+    for (size_t i = 0; i < g_page->size(); i++) {
+        const Row& r = (*g_page)[i];
+        uint32_t var = kernel::R32(g_vars + uint32_t(i) * 4);
+        if (var != g_shown[i] && var < r.choices().size()) {
             std::lock_guard lock(app::UiLock());
-            kRows[i].set(var);
+            r.set(var);
             g_shown[i] = var;
             changed = true;
-            LOGR("pgr2: PC Settings row %d to choice %u", i, var);
-        } else if (uint32_t want = kRows[i].get(); want != g_shown[i]) {
-            kernel::W32(g_vars + i * 4, want);
+            LOGR("pgr2: Recomp section %d row %d to choice %u", g_section, int(i), var);
+        } else if (uint32_t want = r.get(); want != g_shown[i]) {
+            kernel::W32(g_vars + uint32_t(i) * 4, want);
             g_shown[i] = want;
         }
     }
@@ -255,17 +486,32 @@ void ApplySettingsEntry() {
 X86_EXTERN_FUNC(__imp__sub_000A40A0);
 X86_FUNC(sub_000A40A0) {
     pgr2::g_on_page = false;
+    pgr2::g_section = -1;
     __imp__sub_000A40A0(ctx, base);
 }
 
-// Screen Center's page builder (0xA2E60, no arguments, returns 1): our page instead. Built again from its own More
-// Settings row, it also opens the settings window
+// Screen Center's page builder (0xA2E60, no arguments, returns 1): ours instead. From General Options the landing page;
+// from the landing page A on a section opens it, on Bindings the settings window; from a section, back to the landing page
 X86_FUNC(sub_000A2E60) {
-    bool more = pgr2::g_on_page;
-    pgr2::Build(ctx, more);
+    int focus = 0;
+    bool window = false;
+    if (pgr2::g_on_page) {
+        if (pgr2::g_section >= 0) {
+            focus = pgr2::g_section;
+            pgr2::g_section = -1;
+        } else {
+            int row = pgr2::FocusedRow();
+            LOGR("pgr2: Recomp row %d chosen", row);
+            if (row >= 0 && row < pgr2::kSectionCount) pgr2::g_section = row;
+            else {
+                focus = row < 0 ? 0 : row;
+                window = row == pgr2::kBindingsRow;
+            }
+        }
+    }
+    pgr2::Build(ctx, focus);
     pgr2::g_on_page = true;
-    LOGR("pgr2: PC Settings page%s", more ? ", the settings window opened" : "");
-    if (more) {
+    if (window) {
         std::lock_guard lock(app::UiLock());
         if (!app::OverlayOpen()) app::ToggleOverlay();
     }

@@ -118,7 +118,7 @@ mapped to any controller input in Controls.
 
 ## Graphics settings
 
-In Options > General Options > PC Settings or the settings window (F1); they apply at once. All of these are one paused
+In Options > General Options > Recomp or the settings window (F1); they apply at once. All of these are one paused
 frame at 3440x1440.
 
 <p align="center">
@@ -188,7 +188,7 @@ Plays as controller 1, with two keys for each console input, remappable in the s
   PGR 2 Custom Soundtrack to build your playlist, then the Radio/CD options in a race's pause menu.
 - **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
   files (F1 > Game); see [WINDOWS.md](WINDOWS.md).
-- **PC Settings in the game's menus** - Options > General Options > PC Settings: render scale, MSAA, FXAA, sharpening, texture filtering, sharp text and HUD, draw distance, field of view and the game's language (eight, from your disc), changed with left and right like the game's own options and applied at once. Its last row, More Settings, opens the settings window.
+- **Recomp in the game's menus** - Options > General Options > Recomp: every setting of this PC version in the game's own option rows, in sections (Picture, Display, Game, Controls, Wheel), changed with left and right and saved at once, and Quit Game. Binding a wheel or keys by pressing them, and achievements, are in the settings window, which Recomp opens.
 - **Settings Window** - Press F1 or Back + Start on a controller for everything: display, graphics, game options, controls and the wheel. Changes made in either place are saved to `pgr2.toml`.
 - **Skip Intro** - Goes straight to the title screen.
 - **Hide HUD** - Clears the race HUD for screenshots and replays.
@@ -196,7 +196,7 @@ Plays as controller 1, with two keys for each console input, remappable in the s
 - **Saves** - Profiles, options and career progress are kept on an emulated hard disk beside the exe.
 - **System Link** - Plays over the LAN, or by connecting straight to a friend's IP address (`join_ip`).
 - **Achievements** - 64 achievements (Kudos World Series and class medals, Arcade, Kudos ranks, the garage, speed, wins, Geometry Wars) with pop-ups and a list in the settings window, written in RetroAchievements' condition format; the set and its memory map are in [ACHIEVEMENTS.md](ACHIEVEMENTS.md).
-- **High Frame Rate Races** - "Race Frame Rate" in PC Settings or the settings window, at the next start: 30 as on the console, 60, 90, 120 or 144, with unchanged physics. Off by default. 60 holds on a fast CPU; above that busy streets dip on most CPUs, and a variable refresh display (FreeSync, G-Sync) hides dips best. Replays can dip at render scale 200%.
+- **High Frame Rate Races** - "Race Frame Rate" in Recomp or the settings window, at the next start: 30 as on the console, 60, 90, 120 or 144, with unchanged physics. Off by default. 60 holds on a fast CPU; above that busy streets dip on most CPUs, and a variable refresh display (FreeSync, G-Sync) hides dips best. Replays can dip at render scale 200%.
 - **Draw Distance** - 25% to 400% of the console's (experimental: most streets end before the console's distance).
 
 ### Miscellaneous

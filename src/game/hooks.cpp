@@ -311,8 +311,15 @@ float MusicLevel() {
 
 // hide_hud: HideOverlays (a Frontend.ini switch, the byte 0x291A24), which the HUD code (0xDA000-0xE8000) reads each
 // frame, set before every frame step (0xD90F0) so the option applies at once
+static uint32_t RaceHz();
+
 X86_EXTERN_FUNC(__imp__sub_000D90F0);
 X86_FUNC(sub_000D90F0) {
+    if (uint32_t hz = RaceHz()) {
+        bool racing = kernel::G<uint8_t>(0x49E110) != 0;
+        kernel::G<uint8_t>(0x48614B) = uint8_t(racing ? hz : 60);
+        app::g_pace_hz = racing ? hz : 60;
+    }
     static bool was = false;
     if (pgr2::hide_hud || was) kernel::G<uint8_t>(0x291A24) = pgr2::hide_hud ? 1 : 0;
     was = pgr2::hide_hud;
@@ -327,9 +334,24 @@ X86_FUNC(sub_000D90F0) {
 // through 0x177C70 (thiscall, the interval 0, 1 or 2): 1 in the movies and menus, 2 in races. Asked for 2, this
 // passes 1: the swap paces to 60 and the frame step (0xD90F0, 1 / (60 / interval)) becomes 1/60, so physics takes
 // one fixed 1/60 step a frame instead of two.
+// PGR2_HZ=120 (an experiment): races drawn at that rate, in the range 61 to 240. The frame step takes its dt from the
+// display rate 0x48614B, and physics still takes fixed 1/60 steps from its accumulator (0xD90F0, 0xF5D60): at 120 a step
+// every other frame, at 144 five in twelve. Headless the picture moves evenly on the frames between steps. Needs a
+// frame rate cap of at least the rate; back to the console's 60 outside a race.
+static uint32_t RaceHz() {
+    static const uint32_t hz = [] {
+        const char* e = std::getenv("PGR2_HZ");
+        uint32_t v = e ? uint32_t(std::atoi(e)) : 0;
+        v = v > 60 && v <= 240 ? v : 0;
+        if (v) LOGR("pgr2: races drawn at %u frames a second (experiment)", v);
+        return v;
+    }();
+    return hz;
+}
+
 static bool Race60() {
     static const bool on = [] {
-        bool v = pgr2::race_60fps || std::getenv("PGR2_RACE60") != nullptr;
+        bool v = pgr2::race_60fps || std::getenv("PGR2_RACE60") != nullptr || RaceHz();
         if (v) LOGR("pgr2: races at 60 frames a second");
         return v;
     }();
@@ -352,7 +374,9 @@ X86_FUNC(sub_00179290) {
     static uint32_t pass = 0;
     uint32_t face = kernel::R32(ctx.esp + 8);
     if (face == 0) pass++;
-    ctx.eax = all || !Race60() || (face & 1) == (pass & 1);
+    // each face about 30 times a second: every other pass at 60, one in four at 120
+    uint32_t every = std::max<uint32_t>((RaceHz() ? RaceHz() : 60) / 30, 2);
+    ctx.eax = all || !Race60() || face % every == pass % every;
     ctx.esp += 12;  // ret 8
 }
 

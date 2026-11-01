@@ -37,6 +37,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - above 60 in races: the first look (branch high-fps, an experiment)
+- The frame step's dt comes from the display rate byte 0x48614B over the interval 0x4860F1, and physics is a fixed step
+  accumulator, so writing the byte moves the frame rate alone. Headless: at 120 one step every other frame (300 of 600),
+  at 144 250 of 600 (60/144), the clock right, no traps. Consecutive frames at 120 differ evenly (about 3980 each, no
+  big and small), though half have no step: the view moves between steps, so the game seems to interpolate already. Not
+  established for the car against the world: the measure was noisy.
+- Prototype, PGR2_HZ=61..240: in races writes the byte and app::g_pace_hz (sdk branch high-fps; PaceRate counted from a
+  fixed 60), each reflection face still about 30 times a second. Headless a steady 120 in a race. The draw budget is
+  the real limit: 8.3 ms a frame at 120, against 6-11 ms in most of a race and about 17 at the worst turns.
+- Next: Harry on Windows: motion of the car and traffic, lap times, replays, frame rate.
+
 ### 2026-10-31 - README: what an install takes
 - Harry's built install: play 7.3 GB (mostly the game's copy), tools 1.83 GB, source 0.33 GB, downloads empty: about 9.5
   GB. Remove the build files frees 231 MB, not the "about 10 GB" the README said. README corrected. Harry then set the free space asked for to

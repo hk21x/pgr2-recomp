@@ -5,7 +5,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 ## Status
 - Milestone: 4 - races run under pad control; Windows: boots, movies, menus, races, saves, audio, reflections
 - XDK 5659: 191 of 250 functions, 13 of 13 data
-- Speed: paced by the game's present interval (menus 60, races 30); race_60fps option (off by default; holds 60 on Harry's PC, replays dip at render scale 200%)
+- Speed: paced by the game's present interval (menus 60, races 30); race_fps option (30 by default; 60 holds on Harry's PC, 120 dips in busy streets, replays dip at render scale 200%)
 - Rendering, confirmed on Windows: car body, car shadow (sun and night), fences/posts/signs, car selection, street
   light glows behind buildings, night building flicker (Edinburgh) gone, ultrawide with HUD, draw distance, MSAA,
   render scale. To confirm: trees (point sprites, 2026-10-21)
@@ -36,6 +36,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-11-01 - race frame rate: 30, 60, 90, 120 or 144
+- Harry on Windows at 120: no slow motion, same physics, ghosts and replays fine; 120 where draws are few, 62-100 in the
+  night cone challenge, 55 at Hong Kong's worst turn, and it still felt better than 60. So race_fps replaces race_60fps
+  (the old key carries over), in F1 > Game and PC Settings, 30 by default; a rate above fps_cap raises the cap. Locked
+  120 would need about 1 us a draw (now about 2.7): multi-threaded drawing, a separate decision.
 
 ### 2026-11-01 - above 60: the slow motion
 - Harry at PGR2_HZ=120 on Windows (100%, no MSAA): no jitter, so the game's own motion between steps holds, and 120 up to

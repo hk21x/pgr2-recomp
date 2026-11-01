@@ -39,8 +39,10 @@ Files the exe writes beside itself, in `out\build\release`:
 - `logs\pgr2.log` the log of the last run (overwritten each start; send it with any report)
 - `pgr2.toml` settings (window, vsync, graphics options). Speed: the game's own frame rate is honoured (menus
   60, races 30, as on the console); `fps_cap` only caps it further (60 by default, 0 for no cap of its own).
-  `race_60fps = true` runs races at 60 instead (same physics, one 1/60 step a frame; each face of the car's reflections still changes 30
-  times a second). Off by default; replays can dip at render scale 200%, and a slower CPU may dip in the busiest streets.
+  `race_fps` runs races at 60, 90, 120 or 144 instead of 30 (same physics, in its fixed 1/60 steps; each face of the
+  car's reflections still changes about 30 times a second). 30 by default; replays can dip at render scale 200%, and
+  above 60 busy streets dip on most CPUs. Game time follows the clock, so dips do not slow the race. A rate above
+  `fps_cap` raises it.
 - `hdd\` the emulated hard disk (E: saves, X/Y/Z: caches)
 
 **Settings window: F1**, **Back + Start** on a controller, or in the game's menus **Options > General Options > PC
@@ -52,11 +54,11 @@ button do). Tabs:
   counter, renderer (Direct3D 12 or 11, next start), **Sharp text and HUD** (on by default: the menus', HUD's and
   text's textures are enlarged two or four times with sharp edges on a background thread, so lettering and gauges stay
   crisp at high resolutions; a texture shows at its original size for a moment the first time it appears).
-- Game: skip intro movies, hide the race HUD, race camera field of view (%), races at 60.
+- Game: skip intro movies, hide the race HUD, race camera field of view (%), race frame rate.
 - General: pause when the window is not in front.
 - Controls: keys and controller remapping.
 Everything is saved to `pgr2.toml` at once. Display mode, resolution, monitor, render scale, MSAA, FXAA, sharpening, the counter, hide HUD
-and field of view apply at once; aspect ratio, skip intro and race_60fps at the next start. While the
+and field of view apply at once; aspect ratio, skip intro and race_fps at the next start. While the
 window is open the game gets no input.
 
 Keyboard (plays as controller 1 while the game window has the focus; remap in F1 > Controls, two keys per input):

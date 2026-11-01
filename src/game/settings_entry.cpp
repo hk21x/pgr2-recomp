@@ -30,7 +30,8 @@
 
 namespace pgr2 {
 
-extern bool race_60fps;
+extern uint32_t race_fps;
+void RaiseFrameCap();
 extern uint32_t fov_percent, draw_distance_percent;
 
 namespace {
@@ -82,7 +83,8 @@ struct Row {
 };
 
 const std::vector<uint32_t> kRender = {50, 75, 100, 125, 150, 200}, kAniso = {0, 2, 4, 8, 16},
-                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150}, kSharpen = {0, 25, 50, 75, 100};
+                            kDraw = {50, 75, 100, 150, 200, 300, 400}, kFov = {75, 90, 100, 110, 125, 150}, kSharpen = {0, 25, 50, 75, 100},
+                            kRaceFps = {30, 60, 90, 120, 144};
 
 const Row kRows[] = {
     {u"Render Scale", u"The 3D picture's size, percent of the screen. More is sharper and slower.",
@@ -117,10 +119,13 @@ const Row kRows[] = {
      {u"75%", u"90%", u"100%", u"110%", u"125%", u"150%"},
      [] { return Nearest(kFov, fov_percent); },
      [](uint32_t i) { fov_percent = kFov[i]; }},
-    {u"Races at 60 FPS", u"At the next start. Physics are the same; replays can dip at 200% scale.",
-     {u"Off", u"On"},
-     [] { return uint32_t(race_60fps); },
-     [](uint32_t i) { race_60fps = i != 0; }},
+    {u"Race Frame Rate", u"Next start. Same physics. Above 60, busy streets can dip.",
+     {u"30", u"60", u"90", u"120", u"144"},
+     [] { return Nearest(kRaceFps, race_fps); },
+     [](uint32_t i) {
+         race_fps = kRaceFps[i];
+         RaiseFrameCap();
+     }},
     // the console's numbering from 1 (GameInfo::languages); a change makes the game fill its cache again at the next start
     {u"Language", u"At the next start, which copies the game's files again.",
      {u"English", u"Japanese", u"Deutsch", u"Fran\u00E7ais", u"Espa\u00F1ol", u"Italiano", u"Korean", u"Chinese"},

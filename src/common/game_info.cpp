@@ -1,5 +1,10 @@
 #include <cstdlib>
 
+#if __has_include(<toml++/toml.hpp>)  // not in the headless harness, which has no settings file
+#include <toml++/toml.hpp>
+#define PGR2_HAS_TOML 1
+#endif
+
 #include "app/app.h"
 #include "core/input.h"
 
@@ -13,7 +18,26 @@ void WheelFeel(input::WheelFeel& feel);             // src/game/wheel_feel.cpp
 float MusicLevel();                                 // src/game/hooks.cpp
 }
 
+namespace pgr2 {
+extern uint32_t race_fps;
+// the frame rate cap, 60 unless changed, must not hold races under the rate chosen for them
+void RaiseFrameCap() {
+    app::Settings& s = app::Get();
+    if (race_fps > 60 && s.fps_cap && s.fps_cap < race_fps) s.fps_cap = race_fps;
+}
+}  // namespace pgr2
+
 namespace {
+#ifdef PGR2_HAS_TOML
+// a settings file from when this was the switch race_60fps
+void LoadOld(const void* table) {
+    const toml::table& t = *static_cast<const toml::table*>(table);
+    if (!t.contains("race_fps") && t["race_60fps"].value_or(false)) pgr2::race_fps = 60;
+}
+#else
+constexpr void (*LoadOld)(const void*) = nullptr;
+#endif
+
 // PGR2_SKIP_INTRO=1, PGR2_HIDE_HUD=1 and PGR2_FOV=percent set those options without a settings file (the headless harness has none)
 void Init() {
     if (const char* e = std::getenv("PGR2_SKIP_INTRO"); e && *e == '1') pgr2::skip_intro = true;
@@ -22,11 +46,12 @@ void Init() {
     if (const char* e = std::getenv("PGR2_FOV")) pgr2::fov_percent = uint32_t(std::atoi(e));
     if (const char* e = std::getenv("PGR2_DRAW")) pgr2::draw_distance_percent = uint32_t(std::atoi(e));
     InstallDrawFilter();  // after the options: the DLC setting picks its part
+    pgr2::RaiseFrameCap();
 }
 }  // namespace
 
 namespace pgr2 {
-bool race_60fps = false;  // races at 60 frames a second instead of the console's 30 (src/game/hooks.cpp)
+uint32_t race_fps = 30;  // the frame rate of races, 30 as on the console (src/game/hooks.cpp)
 bool skip_intro = false;  // no intro movies at start (src/game/hooks.cpp)
 bool hide_hud = false;    // no race HUD, for screenshots (src/game/hooks.cpp)
 uint32_t fov_percent = 100;  // the race cameras' field of view, percent of the console's (src/game/hooks.cpp)
@@ -54,11 +79,11 @@ const app::GameInfo app::kGame = {
                  "100 is the console's; 50 to 200, at once."},
                 {"draw_distance_percent", nullptr, &pgr2::draw_distance_percent, "Draw distance (%)",
                  "100 is the console's; 25 to 400, from the next race. Experimental: most streets end before it."},
-                {"race_60fps", &pgr2::race_60fps, nullptr, "Races at 60 frames a second",
-                 "Same physics, sampled twice as often; at the next start. Replays can dip at render scale 200%."},
+                {"race_fps", nullptr, &pgr2::race_fps, "Race frame rate",
+                 "30 (the console's), 60, 90, 120 or 144; at the next start. Same physics. Above 60 busy streets dip on most CPUs."},
                 {"dlc", &pgr2::dlc, nullptr, "Xbox Live DLC cities (experimental)",
                  "Paris and Long Beach from your packs in hdd\\E\\TDATA\\4d53004b\\$C (WINDOWS.md); at the next start."}},
-    .load = nullptr,                      // reads more from the settings file's toml::table
+    .load = LoadOld,                      // reads more from the settings file's toml::table
     .save = nullptr,                      // writes more into it
     .init = Init,                         // after the settings load, before the window and boot
     .loaded = nullptr,                    // image in memory, before its entry point runs

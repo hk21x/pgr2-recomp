@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - README: each new graphics setting compared on and off
+Harry's eight F12 PNGs from one paused frame (kept in .local/win), five panels in docs/images. Seen in the
+crops: SMAA smooths the barrier; Smooth Alpha Edges smooths leaves against the sky with no dark outline there; 16x
+filtering is the largest change, on the road and lane line; Sharp scaling is a small gain. World Textures only smooths
+texels (number plate) with no new detail: with its 130-316 ms stalls it looks not worth keeping. Clouds keep moving
+while paused, so whole-frame differences mean nothing and sky is not compared. Next: Harry decides on World Textures.
+
 ### 2026-11-01 - stutter traced: World Textures
 - Harry's stutter with this build: 130-316 ms stalls in two runs with world_textures on, repeating on the second run, no
   shaders compiled; turned off, longest racing frame 20 ms and more frames a second at the same draws. The stalls fall where

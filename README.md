@@ -151,6 +151,47 @@ frame at 3440x1440.
 
 - **Sharpening** makes the picture crisper. Around 50% is a good start; 100% turns walls and roads gritty.
 
+<p align="center">
+  <img src="docs/images/pgr2-settings-smaa.webp" alt="A barrier with edge smoothing off and with SMAA" width="800">
+  <br>
+  <i>SMAA on the barrier, enlarged three times.</i>
+</p>
+
+- **SMAA** smooths the edges of the finished frame, HUD included, and softens surfaces a little.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-alpha.webp" alt="A tree against the sky with MSAA 4x, without and with smooth alpha edges" width="800">
+  <br>
+  <i>Smooth alpha edges on the leaves, enlarged three times.</i>
+</p>
+
+- **Smooth alpha edges** softens leaves and other cut-out shapes, which MSAA alone leaves jagged. It needs MSAA on.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-filtering.webp" alt="A road into the distance with texture filtering Game and 16x" width="800">
+  <br>
+  <i>Texture filtering, enlarged twice.</i>
+</p>
+
+- **Texture filtering** keeps the road and its lines sharp into the distance. It has the clearest effect here.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-scaling.webp" alt="A pylon at render scale 150% with the bilinear and sharp scaling filters" width="800">
+  <br>
+  <i>Scaling filter at render scale 150%, enlarged three times.</i>
+</p>
+
+- **Scaling filter** is a small gain: Sharp is a little crisper than Bilinear. It does nothing at 100%.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-world.webp" alt="A number plate with enhanced world textures off and on" width="800">
+  <br>
+  <i>Enhanced world textures, enlarged three times.</i>
+</p>
+
+- **Enhanced world textures** only smooths the texture's pixels and adds no detail, and it can cause hitches of a quarter
+  of a second. Best left off.
+
 ## Features
 
 ### Display

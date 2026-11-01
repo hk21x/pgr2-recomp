@@ -37,6 +37,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - Release 1.5.0
+Notes in docs/releases/v1.5.0.md; tag v1.5.0 builds the launcher. Not checked: split-screen above 30 (said in the notes),
+a settings file with the old race_60fps carrying over, the update prompt from an older launcher.
+
 ### 2026-11-01 - README: new wipe from PNGs, with the current recommended settings
 Two more of Harry's F12 PNGs from one paused frame, cropped at full size around the car with no sky (clouds move while
 paused). Recommended now also has Smooth Alpha Edges and Texture Filtering 16x. 800x520, 58 frames, 504 KB (was 178 KB).

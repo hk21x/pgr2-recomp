@@ -9,7 +9,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Rendering, confirmed on Windows: car body, car shadow (sun and night), fences/posts/signs, car selection, street
   light glows behind buildings, night building flicker (Edinburgh) gone, ultrawide with HUD, draw distance, MSAA,
   render scale. To confirm: trees (point sprites, 2026-10-21)
-- PC: F1 / Back+Start settings window (display, monitor, graphics, FXAA, fps counter, pause on focus loss, game
+- PC: F1 / Back+Start settings window, redone 2026-11-01, new look to confirm on Windows (display, monitor, graphics, FXAA, fps counter, pause on focus loss, game
   options: skip intro, hide HUD, field of view, draw distance, race_60fps, DLC cities; controls), keyboard play,
   remapping; confirmed on Windows except keyboard play and remapping across a restart
 - PC Settings entry in PGR2's menu (Options > General Options, replacing Screen Center): confirmed on Windows
@@ -62,6 +62,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   fixed 60), each reflection face still about 30 times a second. Headless a steady 120 in a race. The draw budget is
   the real limit: 8.3 ms a frame at 120, against 6-11 ms in most of a race and about 17 at the worst turns.
 - Next: Harry on Windows: motion of the car and traffic, lap times, replays, frame rate.
+### 2026-11-01 - settings window redone, for every game (SDK)
+- Harry's choices: dark style of the original Steam (taken as classic olive VGUI, colours in one place at the top of
+  overlay.cpp), section list and full-width rows, controller first. LB/RB sections, d-pad or left stick rows and values, A
+  presses, Y clears a binding, B or Start closes; what closes it stays from the game. Quit moved to its own section.
+- The harness does not draw this window, so sdk/tools/ui_preview runs the real overlay.cpp on stubs with a software
+  rasteriser: pad, mouse and keyboard checks (UI CHECKS OK at 1280x720, 1920x1080, 3840x1080), a PNG of each page. It found
+  Y also pressing the item, the stick not moving rows, table headers as a stop, and lost selection on clearing a key.
+- Gate, game trees' HEAD with the candidate in throwaway clones: smoke OK on PGR2, PGR1 (and its repro frame: live race),
+  EoN, Agent Under Fire, NightFire, Forza, True Crime. EoN's SDK line conflicts with fork main in seven other files, so it was
+  tested as the port on its own pin (fork branch ui-overhaul-eon), not merged with main.
+- Not yet seen: the window on Windows (Tahoma, the renderers, real pads); wincheck syntax only. Next: Harry's play-test.
 
 ### 2026-10-31 - README: what an install takes
 - Harry's built install: play 7.3 GB (mostly the game's copy), tools 1.83 GB, source 0.33 GB, downloads empty: about 9.5

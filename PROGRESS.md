@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-01 - stutter traced: World Textures
+- Harry's stutter with this build: 130-316 ms stalls in two runs with world_textures on, repeating on the second run, no
+  shaders compiled; turned off, longest racing frame 20 ms and more frames a second at the same draws. The stalls fall where
+  new textures come. The rows' and F1's help now warn of hitches; off by default. Whether the option earns a fix or
+  removal: Harry's F12 comparison, on real textures (none yet).
+
 ### 2026-11-01 - F12 screenshots; no pointer over the game
 - app/screenshot.cpp: F12 reads the back buffer before the interface (D3D12 and D3D11) and writes a PNG with WIC on a thread
   of its own, into screenshots beside the exe. The pointer hides over the game unless the settings window is open (it

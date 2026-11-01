@@ -148,7 +148,7 @@ const std::vector<Row> kPicture = {
      [] { return Choices{u"Game", u"2x", u"4x", u"8x", u"16x"}; },
      [] { return Nearest(kAniso, app::Get().aniso); },
      [](uint32_t i) { app::Get().aniso = kAniso[i]; }},
-    {u"World Textures", u"Doubled in the background. Uses more video memory.", OnOff,
+    {u"World Textures", u"Doubled in the background. Can cause big hitches.", OnOff,
      [] { return uint32_t(app::Get().world_textures); },
      [](uint32_t i) { app::Get().world_textures = i != 0; }},
     {u"Sharp Text and HUD", u"Menus, text and the HUD drawn crisp at high resolutions.", OnOff,

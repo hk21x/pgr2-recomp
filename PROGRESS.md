@@ -37,6 +37,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - prebuilt model: measured on Harry's PC (branch prebuilt)
+- Launcher from a package beside it (no download), 16 logical processors: unpack 1.3 s, compile 19.4 s, 20.7 s in all, against 279 s
+  for the whole build. PGR2-package.zip is 72 MB against 1.4 GB of tools. The progress lines come through the pipe from the real exe.
+- Not yet: a real download, 4 processors, a PC without Visual Studio, play and music from this install reported.
+
 ### 2026-11-02 - prebuilt model: launcher flow (branch prebuilt)
 - The launcher takes game.json's package: a zip beside it or the release's (with <zip>.json: size, sha256), unpacked into play
   leaving hdd, assets, logs and the settings alone, then PGR2.exe --prepare-code builds the code with progress on stdout. Steps

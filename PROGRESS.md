@@ -37,6 +37,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - prebuilt model: launcher flow (branch prebuilt)
+- The launcher takes game.json's package: a zip beside it or the release's (with <zip>.json: size, sha256), unpacked into play
+  leaving hdd, assets, logs and the settings alone, then PGR2.exe --prepare-code builds the code with progress on stdout. Steps
+  list and Manage page in classic Steam's style; FFmpeg no longer needs Microsoft's manifests. release-package.bat makes the zip.
+- PAL's own sha1 added to same_code: a package built from NTSC would have refused it.
+- Tested here with a stand-in exe (launcher_cli prebuilt): unpack, progress, resume, a decoy save and settings in the zip left out.
+  Not tested: on Windows, a real download, --prepare-code's output through the pipe.
+
 ### 2026-11-02 - prebuilt model: PGR2 runs from a game code DLL on Windows (branch prebuilt)
 - SDK branch prebuilt: XBE_GAME_DLL, opt-in, from TGP482's XboxXBE-Recomp (MIT); without it a game links as before (smoke OK). The
   first start's config lookup reads through includes: game.toml holds path and partitions, pgr2.toml the hand entries.
@@ -45,6 +53,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Harry's PC: build.bat and prebuilt-test.bat's copy, including the first-start compile: "all works" (2026-11-02). First-start
   time, resume, frame rate and the play checklist not reported in detail. An extracted default.xbe in assets wins over an ISO.
 - Next: Harry's two decisions (where releases build, launcher or zip), then the compile window's look, packaging, other games.
+
+### 2026-11-02 - launcher in classic Steam's style (SDK)
+- Same look and layout as F1: header, section list (Game, Your music, Log), the work in the footer on every page. One palette for
+  both, runtime/app/classic_theme.h. Same steps and wording; "30 to 90 minutes" is still there. Harry on Windows: "UI works".
+- Smoke OK on PGR2, PGR1, Agent Under Fire, NightFire, True Crime with these two commits on the SDK's main; EoN not run (its line
+  needs reconciling with main), Forza gone. Note: the Windows look was tried from the prebuilt branch's build, same UI commits.
+- The prebuilt model stays on branch prebuilt (both repos), unmerged, at Harry's request. Next there: release script, launcher flow.
 
 ### 2026-11-02 - launcher: where a build's time goes (SDK)
 - Compared with TGP482/007Nightfire-XBERecomp: its release ships a prebuilt runtime and clang, lld and xbe_recomp, and its first

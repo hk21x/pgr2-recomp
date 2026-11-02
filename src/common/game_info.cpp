@@ -97,8 +97,8 @@ const app::GameInfo app::kGame = {
     // only in the signature and certificate, every section byte for byte the same. Media patched copies of either (run
     // from a modded console's hard disk): one byte, 0x193964 jge to jmp after XapiVerifyMediaInDrive in the XAPI start,
     // code the host replaces
-    .same_code = {"ec6e902fc167de349f1dc1838a7441dfff932c62", "acd776330a9b903fd567b544cf7ece0f612f6c7d",
-                  "702b79fd3bc844a413cbc26404718b1bf7e44e87"},
+    .same_code = {"676895b86f01938804c5f1cdcad8b44044295cb4", "ec6e902fc167de349f1dc1838a7441dfff932c62",
+                  "acd776330a9b903fd567b544cf7ece0f612f6c7d", "702b79fd3bc844a413cbc26404718b1bf7e44e87"},  // a package is built from one of them
     .wheel = pgr2::WheelFeel,  // a steering wheel's force feedback follows the player's car
     .send_level = pgr2::MusicLevel,  // the radio, heard through the effect sends, at the music volume
     .sharpen_2d = true,

@@ -29,3 +29,5 @@ settings.toml
 
 # harness frame captures (game imagery)
 /captures/
+/PGR2-package.zip
+/PGR2-package.zip.json

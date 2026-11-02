@@ -12,5 +12,6 @@
     "repo": "https://github.com/hk21x/pgr2-recomp.git",
     "branch": "main",
     "toolchain": "https://raw.githubusercontent.com/hk21x/pgr2-recomp/main/launcher/toolchain.json",
-    "music": true
+    "music": true,
+    "package": "PGR2-package.zip"
 }

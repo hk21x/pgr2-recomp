@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - launcher in classic Steam's style (SDK)
+- Same look and layout as F1: header, section list (Game, Your music, Log), the work in the footer on every page. One palette for
+  both, runtime/app/classic_theme.h. Same steps and wording; "30 to 90 minutes" is still there. Harry on Windows: "UI works".
+- Smoke OK on PGR2, PGR1, Agent Under Fire, NightFire, True Crime with these two commits on the SDK's main; EoN not run (its line
+  needs reconciling with main), Forza gone. Note: the Windows look was tried from the prebuilt branch's build, same UI commits.
+- The prebuilt model stays on branch prebuilt (both repos), unmerged, at Harry's request. Next there: release script, launcher flow.
+
 ### 2026-11-02 - launcher: where a build's time goes (SDK)
 - Compared with TGP482/007Nightfire-XBERecomp: its release ships a prebuilt runtime and clang, lld and xbe_recomp, and its first
   start compiles only the generated code into a DLL; ours downloads 1.4 GB of tools, clones, configures and builds everything.

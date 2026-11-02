@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - prebuilt model: PGR2 runs from a game code DLL on Windows (branch prebuilt)
+- SDK branch prebuilt: XBE_GAME_DLL, opt-in, from TGP482's XboxXBE-Recomp (MIT); without it a game links as before (smoke OK). The
+  first start's config lookup reads through includes: game.toml holds path and partitions, pgr2.toml the hand entries.
+- On Linux: all generated code compiled for Windows and linked as PGR2.dll against a stand-in runtime; its only externals are the
+  24 runtime and maths symbols, all 40 real overrides bind to the runtime.
+- Harry's PC: build.bat and prebuilt-test.bat's copy, including the first-start compile: "all works" (2026-11-02). First-start
+  time, resume, frame rate and the play checklist not reported in detail. An extracted default.xbe in assets wins over an ISO.
+- Next: Harry's two decisions (where releases build, launcher or zip), then the compile window's look, packaging, other games.
+
 ### 2026-11-02 - launcher: where a build's time goes (SDK)
 - Compared with TGP482/007Nightfire-XBERecomp: its release ships a prebuilt runtime and clang, lld and xbe_recomp, and its first
   start compiles only the generated code into a DLL; ours downloads 1.4 GB of tools, clones, configures and builds everything.

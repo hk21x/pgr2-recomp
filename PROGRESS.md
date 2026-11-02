@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - prebuilt model in the SDK's main, for a game to opt into
+- Fork main 2933e64 holds XBE_GAME_DLL and the launcher's package flow; a game takes them with XBE_GAME_DLL and game.json package or
+  packages. Smoke OK on PGR2, PGR1, Agent Under Fire, NightFire, True Crime; EoN and Forza as before. No game's main uses it yet.
+- For Agent Under Fire: a package per disc by xbe SHA-1, XBE_GAME_CONFIGS, xbe names without case, scripts/release-package.bat. Its PAL
+  bond compiled for Windows and linked against a stand-in here: 3 [[hook]]s and all 13 overrides bind. Its switch waits for its
+  session's USA launch fix. PGR2's main moves in a later release, with its upgrade path.
+
 ### 2026-11-02 - prebuilt model: measured on Harry's PC (branch prebuilt)
 - Launcher from a package beside it (no download), 16 logical processors: unpack 1.3 s, compile 19.4 s, 20.7 s in all, against 279 s
   for the whole build. PGR2-package.zip is 72 MB against 1.4 GB of tools. The progress lines come through the pipe from the real exe.

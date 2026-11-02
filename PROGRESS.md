@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-02 - launcher: where a build's time goes (SDK)
+- Compared with TGP482/007Nightfire-XBERecomp: its release ships a prebuilt runtime and clang, lld and xbe_recomp, and its first
+  start compiles only the generated code into a DLL; ours downloads 1.4 GB of tools, clones, configures and builds everything.
+- Agent Under Fire's launcher.log from Harry's PC: 742 compiles of which SDL 265, runtime 205 (41 files, five xbes), generated
+  141; configure 105.9 s, the one time it held. PGR2's generated code compiled in 67 s on this VM (8 jobs, Linux; 516 s of compile
+  time; x86_recomp.25.cpp alone 54 s and 1.5 GB). No Windows timing yet.
+- launcher.log now has the time on each line, each stage timed, a summary at the end, also when a build stops. Tested with
+  launcher_cli timing. Next: a clean build of PGR2 and Agent Under Fire on Harry's PC, then decide on the prebuilt model.
+
 ### 2026-11-01 - Release 1.5.0
 Notes in docs/releases/v1.5.0.md; tag v1.5.0 builds the launcher. Not checked: split-screen above 30 (said in the notes),
 a settings file with the old race_60fps carrying over, the update prompt from an older launcher.

@@ -4,6 +4,9 @@
 #   build/linux/xbe_symbols --sign config/pgr2.toml --out sdk/xdk/5659/signatures.toml
 includes = ["game.toml"]
 
+[xbe]
+library = "PGR2.dll"  # the game code DLL the first start builds; this config is the one it reads
+
 # named functions; also gives --sign a name to anchor data on
 [functions]
 0x1EDE60 = "CDirectSoundStream_Constructor"  # stores both stream vtables (0x1EDE72, 0x1EDE79); --sign anchors the vtables on it

@@ -19,7 +19,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - CPU renderer: near-camera band fixed (2026-10-20)
 - Checks: scripts/smoke.sh before main; scripts/linktest.sh, savetest.sh, soak.sh
 - Docs: FINDINGS.md (what is established, by topic), WINDOWS.md (testing)
-- Releases: PAL and NTSC (same code; NTSC smoke OK from its disc image)
+- Releases: PAL and NTSC (same code, one package; NTSC smoke OK from its disc image); 1.6.0 (2026-11-03) installs a prebuilt package
 - Direct3D 11 renderer: done and confirmed on Windows (drawing, MSAA; F1 > Graphics > Renderer, next start). Not
   under D3D11: F3 captures, the 8 bit target swizzle (logged if PGR2 needs it)
 - DLC cities (experimental, F1 > Game, `dlc`): Paris and Long Beach race on Windows (2026-10-21); a few objects left
@@ -36,6 +36,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-11-03 - Release 1.6.0: the prebuilt model
+- Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the
+  compiler; no game code), its .json matching size and SHA-256 as downloaded here. Harry re-tested the release: "Works great".
+- Players on 1.5.x get it through the launcher's banner, then Update in place. The release's own banner path was its first real run.
 
 ### 2026-11-03 - Update from an install built the old way (branch prebuilt; SDK branch upgrade)
 - The launcher updates a 1.5.0-or-earlier install in place: the new version is unpacked and built in play\.next and only then

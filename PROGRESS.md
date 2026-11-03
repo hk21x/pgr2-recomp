@@ -37,6 +37,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-03 - Release 1.5.1
+Notes in docs/releases/v1.5.1.md: the manual shift fix (Harry confirmed on Windows) and the launcher's new look. Also in it,
+off by default: world textures' new loading (not yet tried on Windows). To check: Update from a 1.5.0 launcher.
+
 ### 2026-11-03 - Manual shifts no longer lost above 60
 Player report: with Race Frame Rate over 60 and a manual gearbox, about half the shifts are lost at 120, two thirds at 144,
 with a steady frame rate. The pad is polled every frame, but the car's controls read the shift presses only in a physics

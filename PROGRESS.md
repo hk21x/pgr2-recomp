@@ -37,6 +37,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-03 - Manual shifts no longer lost above 60
+Player report: with Race Frame Rate over 60 and a manual gearbox, about half the shifts are lost at 120, two thirds at 144,
+with a steady frame rate. The pad is polled every frame, but the car's controls read the shift presses only in a physics
+step (60 a second, counted headless: polls 120, controls 60 at 120), and the next poll replaces them (FINDINGS, The gearbox).
+Fix (src/game/hooks.cpp, 0x1375D0, 0x18A40, 0x18740): from 60 up, a poll's presses are kept until the controls take the
+shifts, for as many polls as can pass without a step. Headless, manual forced, 40 alternating shifts at 144: 14 taken
+before, 40 after. At 120 the harness's pad changes in step with physics and lost none either way. Windows to confirm.
+
 ### 2026-11-02 - launcher in classic Steam's style (SDK)
 - Same look and layout as F1: header, section list (Game, Your music, Log), the work in the footer on every page. One palette for
   both, runtime/app/classic_theme.h. Same steps and wording; "30 to 90 minutes" is still there. Harry on Windows: "UI works".

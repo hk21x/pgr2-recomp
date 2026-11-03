@@ -356,6 +356,69 @@ static uint32_t RaceHz() {
     return hz;
 }
 
+// Above 60, shifts kept for the next physics step. The pad manager 0x457768 polls once a frame (0x1375D0): each device's
+// presses since the last poll go to its mask at +0xBBC + device x 0x124, and the poll clears the per pad gates at
+// 0x457758. The car's controls (0x18A40, from 0x16070) are read in the physics step, and read the shift requests
+// (actions 0x12 up, 0x13 down, through 0x18740) once per poll behind that gate: at 30, the first of a frame's two steps
+// takes them. Above 60 frames run with no step (half of them at 120), and a shift pressed in one was gone by the next
+// poll: headless at 144, 14 of 40 shifts taken (Harry's report: about half at 120, a third at 144). At 60 a late clock
+// can leave a frame without a step too. So from 60 the polls' presses are kept until the controls take the shifts, for
+// as many polls as can pass without a step (presses while paused expire): 40 of 40. PGR2_SHIFT_LATCH=0 turns it off.
+namespace {
+constexpr uint32_t kPads = 0x457768;
+uint32_t g_kept[4];
+uint32_t g_age[4];
+bool g_in_controls;
+uint32_t g_taken;  // devices whose shifts the controls read
+
+bool ShiftLatch() {
+    static const bool on = [] {
+        const char* e = std::getenv("PGR2_SHIFT_LATCH");
+        return Race60() && !(e && *e == '0');
+    }();
+    return on;
+}
+}  // namespace
+
+X86_EXTERN_FUNC(__imp__sub_001375D0);
+X86_FUNC(sub_001375D0) {
+    uint32_t pads = ctx.ecx;
+    __imp__sub_001375D0(ctx, base);
+    if (!ShiftLatch() || pads != kPads) return;
+    const uint32_t keep = ((RaceHz() ? RaceHz() : 60) + 59) / 60 + 1;
+    for (uint32_t d = 0; d < 4; d++) {
+        uint32_t pressed = kernel::R32(kPads + d * 0x124 + 0xBBC);
+        if (pressed) g_kept[d] |= pressed, g_age[d] = 0;
+        else if (++g_age[d] >= keep) g_kept[d] = 0;
+    }
+}
+
+X86_EXTERN_FUNC(__imp__sub_00018A40);
+X86_FUNC(sub_00018A40) {
+    g_in_controls = true;
+    g_taken = 0;
+    __imp__sub_00018A40(ctx, base);
+    g_in_controls = false;
+    for (uint32_t d = 0; d < 4; d++)
+        if (g_taken & (1u << d)) g_kept[d] = 0;
+}
+
+// thiscall on the pad manager: (pad, action), true if a button bound to the action was pressed since the last poll
+X86_EXTERN_FUNC(__imp__sub_00018740);
+X86_FUNC(sub_00018740) {
+    uint32_t action = kernel::R32(ctx.esp + 8);
+    uint32_t dev = kernel::R32(ctx.ecx + kernel::R32(ctx.esp + 4) * 0x2C0 + 0x2F4);
+    if (!g_in_controls || ctx.ecx != kPads || (action != 0x12 && action != 0x13) || dev >= 4 || !g_kept[dev]) {
+        __imp__sub_00018740(ctx, base);
+        return;
+    }
+    uint32_t at = kPads + dev * 0x124 + 0xBBC, was = kernel::R32(at);
+    kernel::W32(at, was | g_kept[dev]);
+    __imp__sub_00018740(ctx, base);
+    kernel::W32(at, was);
+    g_taken |= 1u << dev;
+}
+
 // race_fps of 60 or more, or PGR2_RACE60: the interval. The game sets its presentation interval through 0x177C70
 // (thiscall, the interval 0, 1 or 2): 1 in the movies and menus, 2 in races. Asked for 2, this passes 1: the swap paces
 // every frame and the frame step (0xD90F0, 1 / (rate / interval)) shrinks with it.

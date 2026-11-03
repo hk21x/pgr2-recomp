@@ -30,8 +30,8 @@ example) has not been checked and the game asks before starting it.
 
 ## Getting Started
 
-There are two ways to get the game running. Both build it on your own PC from your own disc: the game's code is
-never downloaded, only the tools and this project's source.
+There are two ways to get the game running. Both build the game's code on your own PC from your own disc: it is never
+downloaded, only the program around it.
 
 ### The launcher (recommended)
 
@@ -41,7 +41,7 @@ and no admin rights needed.
 **You need:**
 - Windows 10 or 11, 64 bit, and a GPU with Direct3D 12 or 11.
 - Your own copy of the game (PAL or NTSC): an `.iso` image of your disc, or a folder with the disc's files.
-- About 3 GB free, plus room for your copy of the game, and an internet connection for about 1.4 GB of build tools.
+- About 1 GB free, plus room for your copy of the game, and an internet connection for the game's package (about 70 MB).
 
 **Steps:**
 1. Download `PGR2Launcher.exe` from the [latest release](https://github.com/hk21x/pgr2-recomp/releases/latest).
@@ -49,23 +49,30 @@ and no admin rights needed.
    goes in a `PGR2` folder beside it. Windows may warn about an unrecognised app: choose **More info**, then **Run anyway**.
 3. **Your game:** choose your disc image or the folder with the disc's files. The launcher checks that it is a
    supported release.
-4. **Build:** accept the license terms for Microsoft's C++ libraries and Windows SDK (the build uses them), then press
-   **Build**. It downloads portable build tools (Clang, CMake, Ninja, Git and Microsoft's libraries), this project's
-   source, and builds the game. The first build takes 30 to 90 minutes. You can stop it at any time; it carries on
-   where it left off.
+4. **Get the game ready:** the launcher downloads the game's package (the program and a compiler, no game code),
+   then your PC builds the game's code from your disc. That took about 20 seconds on a fast 16 thread PC; it depends
+   on your PC and connection. You can stop at any time; it carries on where it left off.
 5. **Play:** press **Play**. The first start sets up the emulated hard disk and copies the game's cache while the intro
    movies play (about two minutes); later starts are quick.
 
-When a new release is out, the launcher (1.2.0 and later) offers it at the top of its window: **Update the
-launcher** downloads it, checks it and restarts, then **Update** rebuilds the game for that release, keeping your
-saves and settings; then Play. **Remove the build files** frees a few hundred MB once the game is built (the button shows how much; an
-update then builds everything again).
+When a new release is out, the launcher offers it at the top of its window: **Update the launcher** downloads it,
+checks it and restarts, then **Update** puts the new version in place, keeping your saves, settings and music. The new
+version is built beside the game and only replaces it once it is ready, so a failed or stopped update leaves the game
+as it was.
+
+**Coming from 1.5.0 or earlier:** those versions built everything from source with about 1.4 GB of tools. The new
+launcher shows **A faster way to play**: press **Update**. Your game keeps playing until the new one is ready, and
+your saves, settings and music are kept. Afterwards, **Manage > Remove the old build tools** frees about 2 GB
+(FFmpeg, for your music, stays).
+
+The launcher's pages: **Game** (your disc, the steps, Play), **Your music**, **Manage** (the install, its folders,
+removing build files, building the game again if it will not start) and **Log**.
 
 Files, all under the `PGR2` folder beside the launcher:
-- `play\` the game: `PGR2.exe`, `pgr2.toml` (settings), `hdd\` (profiles, saves and caches), `logs\pgr2.log` (the game's
-  log), `achievements.toml`
-- `launcher.log` the launcher's log (send it with any problem building)
-- `tools\` and `source\` the build tools and the source
+- `play\` the game: `PGR2.exe`, `PGR2.dll` (the game's code, built on your PC), `pgr2.toml` (settings), `hdd\` (profiles,
+  saves, caches and your music), `logs\pgr2.log` (the game's log), `achievements.toml`, `compiler\` (what builds the code)
+- `launcher.log` the launcher's log (send it with any problem)
+- `tools\ffmpeg` only if you import your music
 
 To remove everything, delete the launcher and its `PGR2` folder (keep `play\hdd` if you want your saves).
 
@@ -84,7 +91,9 @@ tools for Windows**), about 3 GB free, and your disc's files: `default.xbe` and 
    Cloned without `--recurse-submodules`? Run `git submodule update --init`.
 2. Put your game files in the `assets` folder: `assets\default.xbe` with the game's folders beside it. With an `.iso`,
    put the `.iso` in `assets` and also copy `default.xbe` out of it into `assets` (the build recompiles from that file).
-3. Run `build.bat` from Explorer or a command prompt. The first build takes 30 to 90 minutes; later builds are quicker.
+3. Run `build.bat` from Explorer or a command prompt. The first build takes a few minutes on a fast PC (the launcher's old
+   whole build took under 5 on a 16 thread one), longer on a slower PC; later builds are quicker. On Windows the game's code
+   is built into `PGR2.dll` beside the exe.
    Do not run `xbe_symbols` or edit `config\game.toml`: the committed configuration is the one for the supported release.
 4. Answer Y to "Play now?", or run `out\build\release\PGR2.exe`. It finds the `assets` folder beside itself or in any
    folder above it.
@@ -223,9 +232,10 @@ H-pattern shifters with a manual gearbox.
 Plays as controller 1, with two keys for each console input, remappable in the settings window.
 
 ### General
-- **Launcher** - `PGR2Launcher.exe`: choose your disc, Build, Play, Update; portable build tools, nothing installed.
+- **Launcher** - `PGR2Launcher.exe`: choose your disc, Get the game ready, Play, Update; a prebuilt package and your PC
+  builds the game's code from your disc, nothing installed.
 - **Your Music** - PGR2's custom soundtracks from a folder of your own music (MP3, FLAC, OGG, M4A, WAV and more):
-  the launcher's "Your music" section converts it, each folder a soundtrack. In the game: Options > Sound / Music >
+  the launcher's **Your music** page converts it, each folder a soundtrack. In the game: Options > Sound / Music >
   PGR 2 Custom Soundtrack to build your playlist, then the Radio/CD options in a race's pause menu.
 - **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
   files (F1 > Game); see [WINDOWS.md](WINDOWS.md).

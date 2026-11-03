@@ -37,6 +37,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-03 - Update from an install built the old way (branch prebuilt; SDK branch upgrade)
+- The launcher updates a 1.5.0-or-earlier install in place: the new version is unpacked and built in play\.next and only then
+  replaces the game; saves, music and settings stay; Manage offers to remove the old tools (FFmpeg stays). Mock test here, with a
+  failed first compile: old game kept, second run completed. Harry on a copy of his real install: "All works" (save, music,
+  F1 settings, wheel bindings, music import after removing the old tools).
+- Docs for the prebuilt flow (README, WINDOWS.md), a v* tag now makes a draft (the package is attached by hand), notes for v1.6.0
+  drafted. Not tagged. Next: the SDK's main after its gate, this branch into main with smoke, then Harry's release.
+
 ### 2026-11-02 - prebuilt model in the SDK's main, for a game to opt into
 - Fork main 2933e64 holds XBE_GAME_DLL and the launcher's package flow; a game takes them with XBE_GAME_DLL and game.json package or
   packages. Smoke OK on PGR2, PGR1, Agent Under Fire, NightFire, True Crime; EoN and Forza as before. No game's main uses it yet.

@@ -29,7 +29,7 @@ Everything below runs on your PC; nothing here touches the Linux VM. FINDINGS.md
    - [1/3] finds Visual Studio and clang.
    - [2/3] says `config\game.toml already written`. It must: the config is committed and must not be
      regenerated. If it ever runs `xbe_symbols` instead, stop and tell me.
-   - [3/3] recompiles default.xbe (seconds) and compiles everything (30 to 90 minutes the first time).
+   - [3/3] recompiles default.xbe (seconds) and compiles everything (a few minutes the first time on a fast PC; on Windows the game's code goes into PGR2.dll).
    - Answer Y to "Play now?", or run `out\build\release\PGR2.exe` yourself.
 4. The first start formats the emulated cache partition and copies the frontend files to it, then plays the four
    intro movies (about two minutes). Later starts reuse it. To repeat the first start, delete
@@ -147,25 +147,30 @@ buttons from the SLI-PRO; the TH8A's gears in a manual car; nothing doubles up w
 
 ## The launcher (for players without Visual Studio)
 
-`PGR2Launcher.exe` builds and plays the game for someone with no tools: choose the disc image or folder, accept
-Microsoft's license for its C++ libraries, press Build, then Play. It downloads portable build tools (about 1.4 GB:
-Clang, CMake, Ninja, MinGit, Microsoft's C++ libraries and Windows SDK) into a `PGR2` folder beside itself, installs
-nothing in Windows and needs no admin rights. The first build takes 30 to 90 minutes and about 3 GB, plus room for your copy of the game; "Remove the
-build files" frees a few hundred MB afterwards. Later it offers Update when this repository's main branch moves on.
+`PGR2Launcher.exe` installs and plays the game for someone with no tools: choose the disc image or folder, press **Get
+the game ready**, then Play. It downloads the release's `PGR2-package.zip` (the exe, its runtime DLLs and the compiler:
+clang, lld, xbe_recomp; no game code) into a `PGR2` folder beside itself and runs `PGR2.exe --prepare-code`, which builds
+`PGR2.dll` from the disc. The new version is unpacked and built in `play\.next` and only then replaces the game. An
+install from 1.5.0 or earlier (built from source) is updated in place, keeping `hdd`, the settings and the music;
+**Manage > Remove the old build tools** then deletes the old tools and source (FFmpeg stays).
 
-Make it: run `launcher.bat` (it needs what build.bat needs); it leaves `PGR2Launcher.exe` here. The exe holds no game
-code, so it can be shared. To try it as a player would: copy it into an empty folder (ideally on a PC or account
-without Visual Studio) and run it. Send `PGR2\launcher.log` with any report. The Linux side tested each step but
-the build itself (`msiexec` for the SDK, then the compile) only runs on Windows.
+Make it: run `launcher.bat` (it needs what build.bat needs); it leaves `PGR2Launcher.exe` here. To try a package without
+a release, run `build.bat`, then `release-package.bat`, and put `PGR2-package.zip` beside the launcher in an empty folder:
+a zip beside the launcher is used before any download. Send `PGR2\launcher.log` with any report.
+
+**Releasing:** a `v*` tag builds the launcher and makes a **draft** release with `docs/releases/<tag>.md` as its notes.
+On a PC with the game, run `build.bat` then `release-package.bat` from a clean checkout of the tag, attach
+`PGR2-package.zip` and `PGR2-package.zip.json` (its size and SHA-256, which the launcher checks) to the draft, then
+publish. The launcher downloads the package from its own tag's release.
 
 ## Your music (custom soundtracks)
 
 PGR2 plays Xbox custom soundtracks (CDs the dashboard ripped to the hard disk). The launcher makes them from your
-music: in its **4  Your music** section, *Choose a music folder...* and pick the folder.
+music: on its **Your music** page, *Choose a music folder...* and pick the folder.
 - Each folder inside becomes a soundtrack named after it (with everything under it, so an artist's albums can sit in
   one); the songs directly in the chosen folder make one more. At most 100 soundtracks of 504 songs (the Xbox's).
 - MP3, FLAC, OGG, Opus, M4A, AAC, WAV, WMA and AIFF files are converted to the Xbox's WMA with FFmpeg, which the
-  launcher downloads the first time (about 90 MB, into its tools folder). Song names come from the tags
+  launcher downloads the first time (about 90 MB, into `tools\ffmpeg`). Song names come from the tags
   ("Artist / Title"), else the file names; names are cut to 31 characters, as on the Xbox.
 - *Update my music* after adding, changing or removing songs: only those are converted.
 - In the game: Options > Sound / Music > **PGR 2 Custom Soundtrack** > Add/Remove Songs (the triggers change

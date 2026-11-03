@@ -45,5 +45,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           notes="docs/releases/${GITHUB_REF_NAME}.md"
-          gh release create "$GITHUB_REF_NAME" out/launcher/PGR2Launcher.exe \
+          if [ ! -f "$notes" ]; then
+            echo "::error::$notes is missing: each tag needs its release notes there, committed before the tag"
+            exit 1
+          fi
+          # a draft: the package is built on a PC with the game. Attach PGR2-package.zip and its .json, then publish
+          gh release create "$GITHUB_REF_NAME" out/launcher/PGR2Launcher.exe --draft \
             --title "Project Gotham Racing 2 PC port ${GITHUB_REF_NAME#v}" --notes-file "$notes"

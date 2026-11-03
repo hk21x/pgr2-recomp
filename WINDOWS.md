@@ -151,7 +151,7 @@ buttons from the SLI-PRO; the TH8A's gears in a manual car; nothing doubles up w
 the game ready**, then Play. It downloads the release's `PGR2-package.zip` (the exe, its runtime DLLs and the compiler:
 clang, lld, xbe_recomp; no game code) into a `PGR2` folder beside itself and runs `PGR2.exe --prepare-code`, which builds
 `PGR2.dll` from the disc. The new version is unpacked and built in `play\.next` and only then replaces the game. An
-install from 1.5.0 or earlier (built from source) is updated in place, keeping `hdd`, the settings and the music;
+install from 1.5.1 or earlier (built from source) is updated in place, keeping `hdd`, the settings and the music;
 **Manage > Remove the old build tools** then deletes the old tools and source (FFmpeg stays).
 
 Make it: run `launcher.bat` (it needs what build.bat needs); it leaves `PGR2Launcher.exe` here. To try a package without

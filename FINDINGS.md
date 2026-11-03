@@ -158,6 +158,13 @@ Each item is marked:
   0x16520 says automatic, and the car's requests +0x1BC4 (up) / +0x1BC5 (down), which the pad's B and X set.
   Automatic: the byte 0x39B320 + player x 0x2498 (set at Select Transmission: Auto), or the car's mode +0x19C8 or the
   dword 0x39B31C + player x 0x2498 being 1 or 2. Measured headless with gdb watchpoints and shift logging, 2026-10-22.
+- **[PGR2]** Shift requests are edges from the pad poll. The pad manager 0x457768 polls once a frame (0x1375D0, the only
+  XInputGetState caller): device d's presses since the last poll are the mask at +0xBBC + d x 0x124 (held +0xBB4), and
+  the poll zeroes the per pad gates 0x457758..64. The car's controls (0x16070 -> 0x18A40, controls at car +0x1BB8, so
+  +0x1BC4/5 are its +0x0C/+0x0D) run in the physics step, and read actions 0x12 (up) and 0x13 (down) through 0x18740
+  once per gate. Polls 120 and controls 60 a second at 120 (counted headless, 2026-11-03), so above 60 a press in a frame
+  with no step is lost: 14 of 40 at 144 headless. src/game/hooks.cpp keeps the presses for the next step from 60 up.
+  The harness changes its pad 60 times a second in step with physics, so at 120 it never shows the loss; 144 does.
 
 ## Time of day and weather
 

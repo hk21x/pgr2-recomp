@@ -60,7 +60,7 @@ checks it and restarts, then **Update** puts the new version in place, keeping y
 version is built beside the game and only replaces it once it is ready, so a failed or stopped update leaves the game
 as it was.
 
-**Coming from 1.5.0 or earlier:** those versions built everything from source with about 1.4 GB of tools. The new
+**Coming from 1.5.1 or earlier:** those versions built everything from source with about 1.4 GB of tools. The new
 launcher shows **A faster way to play**: press **Update**. Your game keeps playing until the new one is ready, and
 your saves, settings and music are kept. Afterwards, **Manage > Remove the old build tools** frees about 2 GB
 (FFmpeg, for your music, stays).

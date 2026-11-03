@@ -73,6 +73,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Harry's PC: build.bat and prebuilt-test.bat's copy, including the first-start compile: "all works" (2026-11-02). First-start
   time, resume, frame rate and the play checklist not reported in detail. An extracted default.xbe in assets wins over an ISO.
 - Next: Harry's two decisions (where releases build, launcher or zip), then the compile window's look, packaging, other games.
+### 2026-11-03 - Release 1.5.1
+Notes in docs/releases/v1.5.1.md: the manual shift fix (Harry confirmed on Windows) and the launcher's new look. Also in it,
+off by default: world textures' new loading (not yet tried on Windows). To check: Update from a 1.5.0 launcher.
+
+### 2026-11-03 - Manual shifts no longer lost above 60
+Player report: with Race Frame Rate over 60 and a manual gearbox, about half the shifts are lost at 120, two thirds at 144,
+with a steady frame rate. The pad is polled every frame, but the car's controls read the shift presses only in a physics
+step (60 a second, counted headless: polls 120, controls 60 at 120), and the next poll replaces them (FINDINGS, The gearbox).
+Fix (src/game/hooks.cpp, 0x1375D0, 0x18A40, 0x18740): from 60 up, a poll's presses are kept until the controls take the
+shifts, for as many polls as can pass without a step. Headless, manual forced, 40 alternating shifts at 144: 14 taken
+before, 40 after. At 120 the harness's pad changes in step with physics and lost none either way. Windows to confirm.
 
 ### 2026-11-02 - launcher in classic Steam's style (SDK)
 - Same look and layout as F1: header, section list (Game, Your music, Log), the work in the footer on every page. One palette for

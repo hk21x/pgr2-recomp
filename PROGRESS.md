@@ -52,7 +52,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   bottom-left lap panel stops about 30 px short, as at 16:9); 1280x720 unchanged; the F1 window stays on screen.
 - Found there: a resolution changed in play (16:10 to 16:9) set the 4:3 views back to 1.333 with the frame shown 16:9.
   SDK fix: the TV mode the game booted with is kept, and a title widening its 4:3 views fills the new screen; F1 now
-  offers 16:10 and 16:9 window sizes in Window mode (only the monitor's modes were listed). Next: Harry's recheck.
+  offers 16:10 and 16:9 window sizes in Window mode (only the monitor's modes were listed).
+- Recheck on Windows (f8bd45d, SDK 359eb0c): "Looks great". 1280x800 at 1.600:1, F1 to 1280x720 at 1.778:1 (the race
+  fills 16:9, HUD 4:3 in the middle), back to 1.600:1; F1 window on screen; no errors. Seen in the log: for about 17
+  presents after a switch the targets are made at a mixed size (1422x800, 1152x720) before the swap chain reaches the
+  new one; nothing visible, left. Next: the all-games gate on SDK aspect-16x10, after the candidate reaches fork main.
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

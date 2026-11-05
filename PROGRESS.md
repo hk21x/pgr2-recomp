@@ -47,7 +47,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   0x2790F8 is in widescreen; the rear view mirror's viewport is narrowed for the 4:3 layout as it is for 16:9.
 - Headless at 1280x800: SMOKE OK, "4:3 3D views at 1.600:1", mirror 200 wide narrowed to 167; race frames shown at 16:10
   keep the rev counter round and the HUD's corner panels on the edges. 16:9 (1280x720): SMOKE OK, unchanged.
-- Next: Harry on a 16:10 screen (or a 1280x800 / 1920x1200 window): race, mirror view, menus, garage and showroom.
+- Windows (Harry's RX 7900 XT, D3D12, 1280x800 window, from the VM's build): car select, race intro, chase and bumper
+  views, mirror, garage and showroom fill without bars or stretching; the HUD's corner panels reach the edges (the
+  bottom-left lap panel stops about 30 px short, as at 16:9); 1280x720 unchanged; the F1 window stays on screen.
+- Found there: a resolution changed in play (16:10 to 16:9) set the 4:3 views back to 1.333 with the frame shown 16:9.
+  SDK fix: the TV mode the game booted with is kept, and a title widening its 4:3 views fills the new screen; F1 now
+  offers 16:10 and 16:9 window sizes in Window mode (only the monitor's modes were listed). Next: Harry's recheck.
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

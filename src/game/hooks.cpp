@@ -226,15 +226,20 @@ X86_FUNC(sub_001859A0) {
 }
 
 // ultrawide: the game's widescreen 3D views (race cameras 0x1857F0, garage, showroom: 0x88480, 0x16E960, 0x184530)
-// take their aspect from the constant 0x2790F8 (16:9; 0x2790FC is 4:3) when the widescreen flag 0x48614C is set;
-// it is set to the shape the frame is shown at, so the view widens instead of stretching
+// take their aspect from the constant 0x2790F8 (16:9) when the widescreen flag 0x48614C is set, else from 0x2790FC
+// (4:3; 0x88AD0 reads only that one); the one in use is set to the shape the frame is shown at, so the view widens
+// instead of stretching. A 16:10 screen runs the 4:3 mode widened to 1.6 (GameInfo::fills_narrow_screens).
 void ApplyAspect() {
-    float want = std::max(app::FrameAspect(), 16.0f / 9.0f);
-    float cur;
-    std::memcpy(&cur, &kernel::G<uint32_t>(0x2790F8), 4);
-    if (std::fabs(cur - want) < 1e-4f) return;
-    std::memcpy(&kernel::G<uint32_t>(0x2790F8), &want, 4);
-    LOGR("pgr2: widescreen 3D views at %.3f:1", want);
+    const float frame = app::FrameAspect();
+    const float aspects[2] = {std::max(frame, 16.0f / 9.0f), app::Widescreen() ? 4.0f / 3.0f : std::max(frame, 4.0f / 3.0f)};
+    const uint32_t at[2] = {0x2790F8, 0x2790FC};
+    for (int i = 0; i < 2; i++) {
+        float cur;
+        std::memcpy(&cur, &kernel::G<uint32_t>(at[i]), 4);
+        if (std::fabs(cur - aspects[i]) < 1e-4f) continue;
+        std::memcpy(&kernel::G<uint32_t>(at[i]), &aspects[i], 4);
+        LOGR("pgr2: %s 3D views at %.3f:1", i ? "4:3" : "widescreen", aspects[i]);
+    }
 }
 
 // ultrawide: a camera (0x1857F0, thiscall: x, y, w, h of its box on the 640 wide screen, ..., an aspect or 0 at +0x1C)
@@ -254,10 +259,13 @@ X86_FUNC(sub_001857F0) {
     uint32_t given = kernel::R32(ctx.esp + 0x1C);
     __imp__sub_001857F0(ctx, base);
     narrowed.erase(cam);
+    // the mode's aspect and the shape its 2D is laid out for: 16:9 widescreen, 4:3 widened to a 16:10 screen
+    const bool wide = kernel::G<uint8_t>(0x48614C) != 0;
+    const float laid = wide ? 16.0f / 9.0f : 4.0f / 3.0f;
     float aspect;
-    std::memcpy(&aspect, &kernel::G<uint32_t>(0x2790F8), 4);
-    if (!kernel::G<uint8_t>(0x48614C) || given || aspect <= 16.0f / 9.0f + 1e-3f || x <= 0 || x + w >= 640) return;
-    float k = 16.0f / 9.0f / aspect, own;
+    std::memcpy(&aspect, &kernel::G<uint32_t>(wide ? 0x2790F8 : 0x2790FC), 4);
+    if (given || aspect <= laid + 1e-3f || x <= 0 || x + w >= 640) return;
+    float k = laid / aspect, own;
     int32_t nx = int32_t(std::lround(320 + (x - 320) * k)), nw = std::max(1, int32_t(std::lround(w * k)));
     narrowed[cam] = {nx, nw};
     std::memcpy(&own, &kernel::G<uint32_t>(cam + 0x38), 4);

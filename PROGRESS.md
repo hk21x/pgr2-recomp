@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-05 - 16:10 screens filled, not letterboxed (branch aspect-16x10; SDK branch aspect-16x10)
+- A player asked for 16:10 (the Steam Deck's 1280x800) without bars: the SDK showed every screen narrower than 16:9 as
+  16:9 with bars above and below (app::FrameAspect never went under 16:9).
+- SDK 3c99e73 (on the all-games candidate): a title setting GameInfo::fills_narrow_screens gets, on a screen between 4:3
+  and 16:9 with "From the screen's shape" or "Fill the screen", a 4:3 TV reported to the game, FrameAspect the screen's
+  and its 2D kept 4:3 in the middle (app::HudAspect, the HUD squeeze). Other titles are unchanged. Harness: OUTPUT=1280x800.
+- PGR2: its 4:3 mode's views read 0x2790FC (0x88480, 0x88AD0, 0x16E960, 0x184530, 0x1857F0), set to the frame's shape as
+  0x2790F8 is in widescreen; the rear view mirror's viewport is narrowed for the 4:3 layout as it is for 16:9.
+- Headless at 1280x800: SMOKE OK, "4:3 3D views at 1.600:1", mirror 200 wide narrowed to 167; race frames shown at 16:10
+  keep the rev counter round and the HUD's corner panels on the edges. 16:9 (1280x720): SMOKE OK, unchanged.
+- Next: Harry on a 16:10 screen (or a 1280x800 / 1920x1200 window): race, mirror view, menus, garage and showroom.
+
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the
   compiler; no game code), its .json matching size and SHA-256 as downloaded here. Harry re-tested the release: "Works great".

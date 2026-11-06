@@ -144,6 +144,15 @@ extern uint32_t fov_percent, draw_distance_percent;
 void ApplySettingsEntry();  // src/game/settings_entry.cpp
 }
 
+// the intro movies are 640x480 4:3 pictures the XMV player draws as one screen quad from a YUY2 texture: on a wider
+// frame they are pillarboxed, not stretched (gpu::State::pillar_aspect). Only draws spanning the frame from a YUY2
+// texture: the title's movie panel (title_new3.xmv, under a vignette drawn at its size), its backdrop (another
+// format) and the 2D stay as they are, as the console's widescreen mode draws them.
+void Pillarbox() {
+    d3d::State().pillar_aspect = 4.0f / 3.0f;
+    d3d::State().pillar_format = 0x24;  // D3DFMT_YUY2
+}
+
 // skip_intro: the boot sequence 0x13DB90 plays Intro1, Intro2, the language's movie and Intro3 through the movie
 // player 0x13C810 (stdcall: path, flag; true when played), waiting for the cache copy between them. Those four
 // report "played" at once, so the waits stay. (Frontend.ini's IntroMovies, the byte 0x291AB6, is never read.)
@@ -168,6 +177,7 @@ X86_FUNC(sub_0013C810) {
                 return;
             }
     }
+    Pillarbox();
     __imp__sub_0013C810(ctx, base);
 }
 
@@ -422,6 +432,7 @@ X86_FUNC(sub_000D90F0) {
     was = pgr2::hide_hud;
     pgr2::ApplySettingsEntry();
     ApplyDrawDistance();
+    Pillarbox();
     ApplyAspect();
     __imp__sub_000D90F0(ctx, base);
     ApplyFov();

@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-06 - Issues 30 and 26: speed camera photo, intro movies pillarboxed (branch fixes-1.6.1; SDK pgr2-1.6.1)
+- 30, the speed camera photo grey: 0x16E960 locks the frame, aliases it as a texture and draws it shrunk into the photo
+  (160x120, 32 bit) on the GPU; 0x16E670 locks the photo seconds later and copies it into the profile. The renderers'
+  read-back skipped any target unused for 8 frames (TargetStale), so grey went into the profile and the result page.
+  SDK 236e929: a long unused target is read back when its memory is as it last matched (not reused), up to 1 MB, logged.
+  Headless cannot show it (the reference renderer draws into guest memory). Windows to confirm.
+- 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
+  texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
+  4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros
+  pillarboxed, the title unchanged. The title's car (title_new3.xmv, a 480x320 panel) narrowed in place showed hard edges
+  inside the vignette drawn over it at its old size, so it stays as the console's widescreen mode draws it. Upscaling:
+  the movies are 640x480 low bitrate WMV2; nothing to recover beyond the sharpening already there.
+
 ### 2026-11-06 - Ultrawide by default (issue 33)
 Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not
 in a release): reproduced by Harry on v1.6.0 built on the Windows VM (C:\Work\PGR2-v1.6.0). In 1.6.0 only "Fill the

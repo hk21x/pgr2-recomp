@@ -103,5 +103,7 @@ const app::GameInfo app::kGame = {
     .send_level = pgr2::MusicLevel,  // the radio, heard through the effect sends, at the music volume
     .sharpen_2d = true,
     .languages = {1, 2, 3, 4, 5, 6, 7, 8},  // the disc's; Portuguese has text files but the game runs it as English              // menus, HUD and text drawn from enlarged, sharpened copies of their textures
+    .auto_fills_screen = true,  // "From Screen" on an ultrawide: the 3D views widened to it, the HUD 16:9 (hooks.cpp ApplyAspect)
+    .fill_follows_live = true,  // its views are reshaped when that changes in play (hooks.cpp Reshape)
     .fills_narrow_screens = true,  // a 16:10 screen: the 4:3 mode, its 3D views widened (src/game/hooks.cpp ApplyAspect)
 };

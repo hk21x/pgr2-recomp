@@ -37,6 +37,32 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-06 - 16:10 brought onto main's ultrawide fix (branch aspect-16x10)
+- main's view tracking (Track, Fit, Reshape) now follows the booted mode: the views read 0x2790FC in the 4:3 mode
+  (16:10) as 0x2790F8 in widescreen, the mirror is narrowed for the mode's 2D (4:3 or 16:9), and ApplyAspect reshapes
+  the views when the constant in use changes (a 16:10 window resized to 16:9 in play). GameInfo: auto_fills_screen,
+  fill_follows_live and fills_narrow_screens all set. SDK aspect-16x10 4a9e592 (fork main ad707e8 in it).
+- Next: headless 16:10 and 16:9 smoke, then Harry's recheck at 1280x800 and 3440x1440.
+
+### 2026-11-06 - Ultrawide by default (issue 33)
+Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not
+in a release): reproduced by Harry on v1.6.0 built on the Windows VM (C:\Work\PGR2-v1.6.0). In 1.6.0 only "Fill the
+screen" widens the view; the default "From the screen's shape" is 16:9. And the setting is read live by the renderers
+(app::FrameAspect) and by ApplyAspect, while each camera keeps the aspect it was set up with (0x1857F0, +0x38): changed in
+play, the frame is shown at the new shape over views of the old one, stretched, until a restart (Harry's log flips
+2.389 and 1.778 with each change). PGR2 now sets GameInfo::auto_fills_screen: "From the screen's shape" widens to an
+ultrawide screen too (HUD kept 16:9). Harness cannot show it (its FrameAspect ignores the setting). Windows to confirm.
+SDK branch aspect-latch-1.6 (0da83f4, on the released 97b1654): the aspect choice kept from the start (as F1 says),
+so a change in play waits for a restart instead of stretching; the screen size stays live (the same as the SDK session's
+be36701 on aspect-16x10). Then Harry asked for live switching: SDK GameInfo::fill_follows_live (the current choice
+between 16:9 and fill, in a widescreen boot; 4:3 still at the next start), and PGR2 keeps each view it sets up from 0x2790F8
+(0x1857F0 boxes, the garage 0x88480, the full screen view 0x184530 with its save and restore) and reshapes them when the
+shape changes, the mirror's narrowing with them. Headless, the shape flipped every 10 s in a race: "2 views reshaped"
+each time, the mirror narrowed and back. Not covered: 0x16E960's small view. Harry on Windows (d83c7f3, 3440x1440):
+"Works as expected": the default fills, 16:9 and Fill switch live without stretching; 4:3 waits for a restart, as the row
+says. SDK: aspect-latch-1.6 merged into fork main as ad707e8 after the six-game gate (PGR1 with aspect-16x10, EoN with
+eon-merge-main-1fd7e54; PGR1's repro.sh a live race).
+
 ### 2026-11-05 - 16:10 screens filled, not letterboxed (branch aspect-16x10; SDK branch aspect-16x10)
 - A player asked for 16:10 (the Steam Deck's 1280x800) without bars: the SDK showed every screen narrower than 16:9 as
   16:9 with bars above and below (app::FrameAspect never went under 16:9).

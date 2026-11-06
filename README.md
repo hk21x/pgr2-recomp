@@ -206,7 +206,7 @@ frame at 3440x1440.
 ### Display
 - **Display Modes** - Fullscreen, borderless window or window, at any resolution the monitor offers, applied at once.
 - **Widescreen** - The game's own 16:9 mode (wider field of view, HUD at the edges), chosen from the screen's shape or set to 4:3 or 16:9.
-- **Ultrawide** - Aspect ratio "Fill the screen": 21:9 and wider, the 3D views widened to the screen's shape at full sharpness, the HUD and menus kept in a centred 16:9 area.
+- **Ultrawide** - Aspect ratio "From the screen's shape" (the default) or "Fill the screen": 21:9 and wider, the 3D views widened to the screen's shape at full sharpness, the HUD and menus kept in a centred 16:9 area.
 - **Frame Pacing** - Runs at the game's own rate, menus at 60 and races at 30 as on the console, with vsync and a frame rate cap.
 - **Monitor** - Chooses which display the game uses.
 - **FPS Counter** - Shows the frame rate in a corner.

@@ -37,6 +37,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-06 - Ultrawide by default (issue 33)
+Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not
+in a release): reproduced by Harry on v1.6.0 built on the Windows VM (C:\Work\PGR2-v1.6.0). In 1.6.0 only "Fill the
+screen" widens the view; the default "From the screen's shape" is 16:9. And the setting is read live by the renderers
+(app::FrameAspect) and by ApplyAspect, while each camera keeps the aspect it was set up with (0x1857F0, +0x38): changed in
+play, the frame is shown at the new shape over views of the old one, stretched, until a restart (Harry's log flips
+2.389 and 1.778 with each change). PGR2 now sets GameInfo::auto_fills_screen: "From the screen's shape" widens to an
+ultrawide screen too (HUD kept 16:9). Harness cannot show it (its FrameAspect ignores the setting). Windows to confirm.
+Next: the aspect setting kept from the start in the SDK, as F1 says, so a change in play no longer stretches.
+
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the
   compiler; no game code), its .json matching size and SHA-256 as downloaded here. Harry re-tested the release: "Works great".

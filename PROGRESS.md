@@ -42,7 +42,8 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   (16:10) as 0x2790F8 in widescreen, the mirror is narrowed for the mode's 2D (4:3 or 16:9), and ApplyAspect reshapes
   the views when the constant in use changes (a 16:10 window resized to 16:9 in play). GameInfo: auto_fills_screen,
   fill_follows_live and fills_narrow_screens all set. SDK aspect-16x10 4a9e592 (fork main ad707e8 in it).
-- Next: headless 16:10 and 16:9 smoke, then Harry's recheck at 1280x800 and 3440x1440.
+- Headless: 1280x800 SMOKE OK ("4:3 3D views at 1.600:1", mirror narrowed to 167), 1280x720 SMOKE OK, unchanged.
+  Next: Harry's recheck at 1280x800 (live switch to 1280x720 and back) and 3440x1440 (the ultrawide fix still holds).
 
 ### 2026-11-06 - Ultrawide by default (issue 33)
 Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not

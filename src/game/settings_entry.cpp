@@ -224,7 +224,7 @@ const std::vector<Row> kDisplay = {
     {u"Vertical Sync", u"Off can tear, and lowers delay.", OnOff,
      [] { return uint32_t(app::Get().vsync); },
      [](uint32_t i) { app::Get().vsync = i != 0; }},
-    {u"Aspect Ratio", u"At the next start. From Screen widens the view on ultrawide screens.",
+    {u"Aspect Ratio", u"16:9 and Fill at once, 4:3 at the next start. From Screen fills ultrawide.",
      [] { return Choices{u"From Screen", u"4:3", u"16:9", u"Fill Screen"}; },
      [] { return app::Get().aspect % 4; },
      [](uint32_t i) { app::Get().aspect = i; }},

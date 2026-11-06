@@ -47,7 +47,11 @@ play, the frame is shown at the new shape over views of the old one, stretched, 
 ultrawide screen too (HUD kept 16:9). Harness cannot show it (its FrameAspect ignores the setting). Windows to confirm.
 SDK branch aspect-latch-1.6 (0da83f4, on the released 97b1654): the aspect choice kept from the start (as F1 says),
 so a change in play waits for a restart instead of stretching; the screen size stays live (the same as the SDK session's
-be36701 on aspect-16x10). Windows to confirm both.
+be36701 on aspect-16x10). Then Harry asked for live switching: SDK GameInfo::fill_follows_live (the current choice
+between 16:9 and fill, in a widescreen boot; 4:3 still at the next start), and PGR2 keeps each view it sets up from 0x2790F8
+(0x1857F0 boxes, the garage 0x88480, the full screen view 0x184530 with its save and restore) and reshapes them when the
+shape changes, the mirror's narrowing with them. Headless, the shape flipped every 10 s in a race: "2 views reshaped"
+each time, the mirror narrowed and back. Not covered: 0x16E960's small view. Windows to confirm.
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

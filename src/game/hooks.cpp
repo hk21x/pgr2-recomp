@@ -227,7 +227,11 @@ X86_FUNC(sub_001859A0) {
 
 // ultrawide: the game's widescreen 3D views (race cameras 0x1857F0, garage, showroom: 0x88480, 0x16E960, 0x184530)
 // take their aspect from the constant 0x2790F8 (16:9; 0x2790FC is 4:3) when the widescreen flag 0x48614C is set;
-// it is set to the shape the frame is shown at, so the view widens instead of stretching
+// it is set to the shape the frame is shown at, so the view widens instead of stretching. Each view keeps the aspect it
+// was set up with at +0x38, so when the shape changes in play (16:9 against filling the screen: GameInfo::
+// fill_follows_live) the views set up since are reshaped too (Views below), not left stretched until the next start.
+void Reshape(float aspect);
+
 void ApplyAspect() {
     float want = std::max(app::FrameAspect(), 16.0f / 9.0f);
     float cur;
@@ -235,6 +239,7 @@ void ApplyAspect() {
     if (std::fabs(cur - want) < 1e-4f) return;
     std::memcpy(&kernel::G<uint32_t>(0x2790F8), &want, 4);
     LOGR("pgr2: widescreen 3D views at %.3f:1", want);
+    Reshape(want);
 }
 
 // ultrawide: a camera (0x1857F0, thiscall: x, y, w, h of its box on the 640 wide screen, ..., an aspect or 0 at +0x1C)
@@ -244,9 +249,72 @@ void ApplyAspect() {
 // is narrowed about the centre by 16:9 / the aspect used, as the HUD is (gpu::HudSqueeze). The box itself stays: the
 // mirror's 2D frame is placed from it and squeezed with the HUD, so narrowing the box squeezed the frame twice.
 // Full width and split screen views reach a side and keep theirs.
+// The garage's view (0x88480, thiscall on the camera) and the full screen view 0x184530 (thiscall: 1 saves the camera's
+// box and aspect in 0x49DFFC.. and makes it full screen at 0x2790F8, 0 puts them back) set +0x38 to 0x2790F8 itself.
 namespace {
 std::unordered_map<uint32_t, std::pair<int32_t, int32_t>> narrowed;  // camera: viewport x, w
+
+struct View {
+    float shape;  // +0x38 / 0x2790F8 as the game set it up
+    int32_t x, w;
+    bool box;     // a 0x1857F0 box, narrowed when it touches neither side
+    float own;    // +0x38 as last written: a camera whose value changed since was set up again or freed, and is dropped
+};
+std::unordered_map<uint32_t, View> views;
+std::pair<uint32_t, View> saved{0, {}};  // 0x184530's saved camera
+
+float Aspect() {
+    float a;
+    std::memcpy(&a, &kernel::G<uint32_t>(0x2790F8), 4);
+    return a;
 }
+
+void Fit(uint32_t cam, View& v, float aspect) {
+    float own = v.shape * aspect;
+    narrowed.erase(cam);
+    if (v.box && aspect > 16.0f / 9.0f + 1e-3f && v.x > 0 && v.x + v.w < 640) {
+        float k = 16.0f / 9.0f / aspect;
+        int32_t nx = int32_t(std::lround(320 + (v.x - 320) * k)), nw = std::max(1, int32_t(std::lround(v.w * k)));
+        narrowed[cam] = {nx, nw};
+        own *= k;
+        static int said = 0;
+        if (said++ < 8) LOGR("pgr2: camera box %d,%u %dx%u: viewport narrowed to %d wide at %d for the %.3f:1 frame", v.x,
+                             kernel::R32(cam + 0x2C), v.w, kernel::R32(cam + 0x34), nw, nx, aspect);
+    }
+    std::memcpy(&kernel::G<uint32_t>(cam + 0x38), &own, 4);
+    v.own = own;
+}
+
+// a view the game just set up from 0x2790F8: kept, and fitted to the frame
+void Track(uint32_t cam, bool box, int32_t x, int32_t w) {
+    float aspect = Aspect(), own;
+    std::memcpy(&own, &kernel::G<uint32_t>(cam + 0x38), 4);
+    View v{own / aspect, x, w, box, own};
+    Fit(cam, v, aspect);
+    views[cam] = v;
+}
+
+bool Same(uint32_t cam, float own) {
+    float now;
+    std::memcpy(&now, &kernel::G<uint32_t>(cam + 0x38), 4);
+    return now == own;
+}
+}  // namespace
+
+void Reshape(float aspect) {
+    int n = 0;
+    for (auto it = views.begin(); it != views.end();) {
+        if (!Same(it->first, it->second.own)) {
+            narrowed.erase(it->first);
+            it = views.erase(it);
+            continue;
+        }
+        Fit(it->first, it->second, aspect);
+        ++it, ++n;
+    }
+    if (n) LOGR("pgr2: %d views reshaped to %.3f:1", n, aspect);
+}
+
 X86_EXTERN_FUNC(__imp__sub_001857F0);
 X86_FUNC(sub_001857F0) {
     uint32_t cam = ctx.ecx;
@@ -254,18 +322,40 @@ X86_FUNC(sub_001857F0) {
     uint32_t given = kernel::R32(ctx.esp + 0x1C);
     __imp__sub_001857F0(ctx, base);
     narrowed.erase(cam);
-    float aspect;
-    std::memcpy(&aspect, &kernel::G<uint32_t>(0x2790F8), 4);
-    if (!kernel::G<uint8_t>(0x48614C) || given || aspect <= 16.0f / 9.0f + 1e-3f || x <= 0 || x + w >= 640) return;
-    float k = 16.0f / 9.0f / aspect, own;
-    int32_t nx = int32_t(std::lround(320 + (x - 320) * k)), nw = std::max(1, int32_t(std::lround(w * k)));
-    narrowed[cam] = {nx, nw};
-    std::memcpy(&own, &kernel::G<uint32_t>(cam + 0x38), 4);
-    own *= k;
-    std::memcpy(&kernel::G<uint32_t>(cam + 0x38), &own, 4);
-    static int said = 0;
-    if (said++ < 8) LOGR("pgr2: camera box %d,%u %dx%u: viewport narrowed to %d wide at %d for the %.3f:1 frame", x,
-                         kernel::R32(cam + 0x2C), w, kernel::R32(cam + 0x34), nw, nx, aspect);
+    views.erase(cam);
+    if (!kernel::G<uint8_t>(0x48614C) || given) return;
+    Track(cam, true, x, w);
+}
+
+X86_EXTERN_FUNC(__imp__sub_00088480);
+X86_FUNC(sub_00088480) {
+    uint32_t cam = ctx.ecx;
+    __imp__sub_00088480(ctx, base);
+    narrowed.erase(cam);
+    views.erase(cam);
+    if (kernel::G<uint8_t>(0x48614C) && Same(cam, Aspect())) Track(cam, false, 0, 640);
+}
+
+X86_EXTERN_FUNC(__imp__sub_00184530);
+X86_FUNC(sub_00184530) {
+    uint32_t cam = ctx.ecx;
+    bool full = (kernel::R32(ctx.esp + 4) & 0xFF) != 0;
+    if (full) {
+        auto it = views.find(cam);
+        saved = it != views.end() ? std::pair<uint32_t, View>{cam, it->second} : std::pair<uint32_t, View>{0, {}};
+    }
+    __imp__sub_00184530(ctx, base);
+    narrowed.erase(cam);
+    views.erase(cam);
+    if (!kernel::G<uint8_t>(0x48614C)) return;
+    if (full) {
+        Track(cam, false, 0, 640);
+    } else if (saved.first == cam) {  // the camera's own view back, fitted to the frame as it is now
+        View v = saved.second;
+        Fit(cam, v, Aspect());
+        views[cam] = v;
+        saved.first = 0;
+    }
 }
 
 X86_EXTERN_FUNC(__imp__sub_00185640);

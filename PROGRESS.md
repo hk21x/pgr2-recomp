@@ -51,7 +51,10 @@ be36701 on aspect-16x10). Then Harry asked for live switching: SDK GameInfo::fil
 between 16:9 and fill, in a widescreen boot; 4:3 still at the next start), and PGR2 keeps each view it sets up from 0x2790F8
 (0x1857F0 boxes, the garage 0x88480, the full screen view 0x184530 with its save and restore) and reshapes them when the
 shape changes, the mirror's narrowing with them. Headless, the shape flipped every 10 s in a race: "2 views reshaped"
-each time, the mirror narrowed and back. Not covered: 0x16E960's small view. Windows to confirm.
+each time, the mirror narrowed and back. Not covered: 0x16E960's small view. Harry on Windows (d83c7f3, 3440x1440):
+"Works as expected": the default fills, 16:9 and Fill switch live without stretching; 4:3 waits for a restart, as the row
+says. SDK: aspect-latch-1.6 merged into fork main as ad707e8 after the six-game gate (PGR1 with aspect-16x10, EoN with
+eon-merge-main-1fd7e54; PGR1's repro.sh a live race).
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

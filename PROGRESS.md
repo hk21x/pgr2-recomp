@@ -43,7 +43,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   the views when the constant in use changes (a 16:10 window resized to 16:9 in play). GameInfo: auto_fills_screen,
   fill_follows_live and fills_narrow_screens all set. SDK aspect-16x10 4a9e592 (fork main ad707e8 in it).
 - Headless: 1280x800 SMOKE OK ("4:3 3D views at 1.600:1", mirror narrowed to 167), 1280x720 SMOKE OK, unchanged.
-  Next: Harry's recheck at 1280x800 (live switch to 1280x720 and back) and 3440x1440 (the ultrawide fix still holds).
+- Windows recheck (d22a2dc, SDK 4a9e592): "All looks great". 1280x800 at 1.600:1 (race, mirror 167, garage, showroom);
+  F1 to 1280x720 and back, "3 views reshaped" each way (mirror 150, then 167); live to borderless 3440x1440 from the
+  16:10 boot: the 4:3 mode widened to 2.389, mirror 112. No errors. Next: fork main takes the candidate, then the SDK
+  branch aspect-16x10, then this branch into main.
 
 ### 2026-11-06 - Ultrawide by default (issue 33)
 Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not

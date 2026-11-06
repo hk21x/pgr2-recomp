@@ -45,7 +45,9 @@ screen" widens the view; the default "From the screen's shape" is 16:9. And the 
 play, the frame is shown at the new shape over views of the old one, stretched, until a restart (Harry's log flips
 2.389 and 1.778 with each change). PGR2 now sets GameInfo::auto_fills_screen: "From the screen's shape" widens to an
 ultrawide screen too (HUD kept 16:9). Harness cannot show it (its FrameAspect ignores the setting). Windows to confirm.
-Next: the aspect setting kept from the start in the SDK, as F1 says, so a change in play no longer stretches.
+SDK branch aspect-latch-1.6 (0da83f4, on the released 97b1654): the aspect choice kept from the start (as F1 says),
+so a change in play waits for a restart instead of stretching; the screen size stays live (the same as the SDK session's
+be36701 on aspect-16x10). Windows to confirm both.
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

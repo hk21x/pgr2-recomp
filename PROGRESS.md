@@ -37,6 +37,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Release 1.6.1
+Notes in docs/releases/v1.6.1.md: ultrawide by default and the live 16:9 / fill switch (issue 33), issues 26, 28, 30,
+32, all confirmed on Harry's PC. SDK at the fork's main 5bcd974. A tag makes a draft: Harry builds PGR2-package.zip
+(build.bat, release-package.bat), attaches it and its .json, and publishes. Next: render thread throughput (stutter at 120).
+
 ### 2026-11-07 - Issue 28: Washington's dome see-through, a likely cause (branch fixes-1.6.1; SDK pgr2-1.6.1)
 - A player's screenshot: the Capitol dome's surface missing (sky through it), only its windows drawn. Headless, Time
   Attack on route 1 (Washington routes are 0 to 9 in Routes.Ini; PGR2_ROUTE takes in Time Attack, not Instant Action,

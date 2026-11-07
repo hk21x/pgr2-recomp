@@ -37,6 +37,33 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Render thread: headless checks, and a prep thread for assembly (render-mt; SDK eb1db71)
+- Marked the last state Harry tested without flicker: branch `render-mt-good` in both repos (PGR2 a6bdfd0, SDK 5ced337).
+- Headless render thread: the harness already builds render_thread.cpp; `XBE_RENDER_THREAD=1` runs it over the null
+  backend. Two new checks:
+  - `XBE_CHECK_STATE=1`: each draw's state on the render thread is checked against the title's (hash of the plain
+    ranges), and the vertex constant count must never go back or stand for other constants. With c3f1385's bug put
+    back it reports 4 stale counts in 800000 draws of the race. With the fix: 3.8 million draws, 0 and 0.
+  - `XBE_CHECK_PRE=1`: see below.
+  The null backend prints the render thread's times with XBE_PERF: applying state changes costs about 0.19 ms a
+  frame at 2757 draws.
+- Prep thread (multi-core): a second thread takes the title's batches before the render thread. It keeps its own
+  copy of the state and assembles every draw into a ring of 2048 slots, and the render thread's backend takes the
+  result (Backend::DrawAssembled; D3D12 skips its own Assemble). Assembly was 1.76 ms of a heavy frame on Harry's
+  PC (5ced337).
+  - A command that may write guest memory (read-backs, copies, presents, reports) leaves the rest of its batch to
+    the render thread. The prep thread then waits for the render thread to run that batch before assembling the
+    next, so no draw reads vertices from before a read-back.
+  - `XBE_PRE_ASSEMBLE=0` turns it off.
+  - Evidence: the null backend assembles each draw again and compares. Race: 3.6 million raw draws and 5.6 million
+    converted draws, 0 different; with the wait, 2.8 million, 0 different. One run had 8 different draws after the
+    harness's end line, while it shut down.
+  - SMOKE OK with the render thread off (the default headless) and on (XBE_RENDER_THREAD=1, prep thread on).
+- Queued for Harry (D3D12, XBE_PERF, same track and car):
+  1. The newest build: flicker gone (the count fix, 328326d); the timers line; assemble about 0 in the draw step;
+     whether the heavy seconds rise.
+  2. If anything looks wrong, `XBE_PRE_ASSEMBLE=0`, and then `render-mt-good`, to bisect.
+
 ### 2026-11-07 - Render thread: finer XBE_PERF timers, vertex constants counted (render-mt; SDK c3f1385)
 - Harry's run of 5ced337 (log .local/win/5ced337-pgr2.log), against 4b89ca1:
   - every draw raw (from 66-87%); assemble in the heaviest seconds 2.35 to 1.76 ms;

@@ -49,7 +49,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   copies a frame. CopyCubeTargets shrinks each upscaled face through Shrink, which made a new render target texture per
   face per frame. Tried: one shrunk copy kept per size, drawn over for each face (db53a7d). Harry's run: the GPU hung at
   a cube face's shrink blit (887A0006, the game froze off the start line), and the cube copies still cost 2.2 ms a
-  frame: the new textures were not the cost. Reverted (c064476). Next: the cube copy's steps timed.
+  frame. Reverted (c064476). Timed (1fb19b1, 111 busy s): cube copies 1.58 ms, all in the shrink, and 1.51 of it
+  Shrink's CreateCommittedResource (2.9 shrinks a frame, about 0.5 ms each). So the textures were the cost; the shared
+  copy was the wrong reuse. Now a pool: each shrink its own texture within a frame, a finished frame's (after its fence)
+  reused by the next shrink of their size.
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

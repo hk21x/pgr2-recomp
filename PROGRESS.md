@@ -89,6 +89,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   every pixel read texel 0,0. SDK 670e174: the 2 and 4 short forms read like the others. Harry on Windows (adf400b):
   "It's finally showing" (the car from behind, at night). Diagnostics taken out again (SDK da98c6d); kept: the read-back
   right after the photo is drawn, the read-back of an unused target whose memory is unchanged, SDK LOGR_FIRST.
+- SDK pgr2-1.6.1 merged into fork main as 5bcd974 (with fork main 29bfd24) after the six-game gate from separate
+  folders (gate-pgr2.sh, smoke-ui-pgr2: a first run collided with the SDK session's gate in the shared folders); PGR1
+  on aspect-16x10 76dde10, EoN with eon-merge-main-1fd7e54; PGR1's repro.sh a live race.
+- Stutter (Harry, 120 in races): his logs show 1 to 3% of frames over 12.5 ms and a 75 to 140 ms hitch now and then,
+  as in v1.6.0. Headless at 120: the game locks only CPU-filled movie textures, about 25 a second, cheap; the hitches
+  need XBE_PERF on Windows. No quick fix for this release.
 - 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
   texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
   4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros

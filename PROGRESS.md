@@ -83,6 +83,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   view in the frame's top left corner), then the 640x480 quad into the 160x120 photo: only its top left 160x120 lands
   there, the corner at 1:1, as designed. All in the right frame; the photo still near-black. Next: the frame's own
   pixels as its lock read them back, inside and outside that corner.
+  Frame pixels (12fd0da): the corner holds the camera's (night) view, outside it black: the photo is one colour all
+  over, so the photo draw sampled one place. Its texture coordinates come from 0x1C0CB0, SetVertexData2s (method
+  0x1900 + register x 4, two shorts in one word), which the SDK's push reader (d3d8.cpp Walk) did not know: dropped,
+  every pixel read texel 0,0. SDK: the 2 and 4 short forms read like the others. Windows to confirm.
 - 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
   texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
   4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros

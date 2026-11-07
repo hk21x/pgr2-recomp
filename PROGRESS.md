@@ -37,6 +37,23 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Render thread: finer XBE_PERF timers, vertex constants counted (render-mt; SDK c3f1385)
+- Harry's run of 5ced337 (log .local/win/5ced337-pgr2.log), against 4b89ca1:
+  - every draw raw (from 66-87%); assemble in the heaviest seconds 2.35 to 1.76 ms;
+  - 2000-3500 draws 109.8 to 116.7 fps, heaviest 71.5 to 72.7, light about the same;
+  - busy summary 141.1 and 124.9 fps. A 32.9 fps second was the race loading (12 textures and 29 pipelines a
+    frame), not a dip.
+- What: new XBE_PERF line "draw's other steps":
+  - Draw's untimed parts: before assembly, targets, the skip checks and note, after geometry;
+  - consts split into vertex constants, filled and uploaded;
+  - the render thread's state changes and batches.
+  The render thread now counts vertex constant changes (State::vsc_gen, bumped when a state change touches vsc).
+  A draw with the same count reuses the last upload without comparing 3 KB of constants, which was about 14 MB of
+  compares a heavy frame. Without a render thread the count stays 0 and the compare is kept.
+- Evidence: wincheck clean, the harness builds. Smoke was skipped at Harry's request, for a build he could test
+  that night; run it before this reaches main.
+- Next: Harry's XBE_PERF run: which step is biggest, and whether consts dropped.
+
 ### 2026-11-07 - Render thread: stage A, the D3D12 command recorder (render-mt; SDK 4b89ca1)
 - What: the draw path no longer writes the command list itself. It writes its commands to `D3D12Rec`
   (`runtime/gpu/d3d12_rec.h`), in order: pipeline, root arguments, vertex and index buffers, viewport, scissor,

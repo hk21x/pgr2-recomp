@@ -5,7 +5,7 @@ rem the release beside PGR2Launcher.exe. Holds the runtime and the compiler, and
 cd /d "%~dp0"
 set "STAGE=out\package"
 if exist "%STAGE%" rd /s /q "%STAGE%"
-call prebuilt-test.bat "%STAGE%" || exit /b 1
+call "%~dp0prebuilt-test.bat" "%STAGE%" || exit /b 1
 rd /s /q "%STAGE%\assets" 2>nul
 del /q PGR2-package.zip PGR2-package.zip.json 2>nul
 tar -a -c -f PGR2-package.zip -C "%STAGE%" . || (echo Making the zip failed. & exit /b 1)

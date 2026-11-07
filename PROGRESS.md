@@ -37,6 +37,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - release-package.bat finds prebuilt-test.bat by its own folder
+Making 1.6.1's package on the Windows VM, `call prebuilt-test.bat` failed in a shell with NoDefaultCurrentDirectoryInExePath
+set (cmd then does not look in the current folder); now `call "%~dp0prebuilt-test.bat"`.
+
 ### 2026-11-07 - Release 1.6.1
 Notes in docs/releases/v1.6.1.md: ultrawide by default and the live 16:9 / fill switch (issue 33), issues 26, 28, 30,
 32, all confirmed on Harry's PC. SDK at the fork's main 5bcd974. A tag makes a draft: Harry builds PGR2-package.zip

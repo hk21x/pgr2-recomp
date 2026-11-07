@@ -37,6 +37,24 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Render thread: deferred batch completion and parallel vertex copies (render-mt; SDK 55f72cb)
+- What: the render thread no longer tells the title a batch is done as soon as its commands ran. D3D12 now puts
+  off each draw's copy of guest vertex bytes into upload memory (`CopyPool`, `runtime/gpu/copy_pool.cpp`) and runs
+  them together on up to 4 helper threads. A batch is reported done (`done_`) only after `Backend::Settle` ran
+  them: when no batch is queued, after 16 batches, or as soon as the title waits for a batch already run. Every
+  `Submit` runs them first, since the GPU reads that memory. Gathered or converted vertices and all indices are
+  copied at once, because their source is scratch or batch memory that gets reused.
+- Why: a busy frame copies about 25 MB of vertices, one draw's few KB at a time, all on the render thread. That is
+  part of the 3.2 ms "geometry" step in the heaviest seconds.
+- Controls: `XBE_DEFER_COPIES=0` restores the old path (copies at once, a batch done once its commands ran);
+  `XBE_COPY_THREADS=N` sets the helper threads. XBE_PERF adds a line: put off copies, ms between lists, MB, runs.
+- Evidence so far: a TSAN stress test of the pool, 3000 rounds at 0, 1 and 4 helpers, is clean. On this VM a
+  25 MB frame of 3 KB copies takes 4.3 ms inline and 3.1 ms through the pool (memory bound). wincheck is clean, and
+  the headless harness builds (it has no render thread, so smoke does not exercise this path).
+- Next: a windows-vm build, then Harry's XBE_PERF run on the same track and car, against the shrink-pool baseline
+  (busy summary 109 fps; heaviest seconds about 63 fps). Check that geometry drops and title waits do not rise.
+  Then try an `XBE_DEFER_COPIES=0` run for comparison.
+
 ### 2026-11-07 - Render thread performance: baseline (branches render-mt, PGR2 and SDK)
 - Harry's XBE_PERF baseline (b454f0d, race at 120, 109 busy seconds): 84 fps, host 11.3 ms/frame, 2600 draws/frame,
   draw 9.9 ms: assemble 1.86, bind 2.84, shaders 0.48, pso 0.25, consts 0.98, tables 0.77, geometry 1.16; present 1.43.

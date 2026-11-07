@@ -41,7 +41,9 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 The render-mt finding without its timers and experiments, on fork main 5bcd974 (render-mt sits on the all-games candidate):
 D3D12's cube face shrinks reuse a finished frame's shrunk copies (a pool); D3D11 keeps one per size with its view (its
 context orders the copy before the next shrink). Harry's D3D12 result on render-mt: busy seconds 84-91 to 108-113 fps.
-Next: Harry's check on D3D12 and D3D11 from this branch, then the six-game gate and fork main. The remaining dips
+Harry on Windows (bed8ba8): D3D12 busy seconds 108.9 fps (host 7.9 ms, 2545 draws/frame; baseline 84, 11.3), D3D11 clean,
+reflections right in both. Six-game gate on 77b18eb (EoN and PGR1 with DropGarbage then RecycleShrinks): all smoke
+OK, PGR1's repro.sh a live race. Fork main fast-forwarded to 77b18eb. The remaining dips
 (about 5000 draws a frame) are next on render-mt: parallel command recording.
 
 ### 2026-11-07 - release-package.bat finds prebuilt-test.bat by its own folder

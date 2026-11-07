@@ -63,6 +63,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   State::base_vertex, not in the draw's start, so a run breaks at each change of it; joining across it would need
   the state compared without base_vertex and the indices moved. Not done: the dips need the per draw cost spread over
   threads (phase 3, parallel command lists).
+- Vertex ranges reused within a ring (9b83a9c, Harry's run 4ab3019): no faults, but only 88 ranges a frame reused
+  (0.08 MB of 13 to 26 MB uploaded): the reflection faces do not draw the same ranges again. Reverted. Busy 108 fps, the
+  heaviest seconds (4556 draws a frame) 63 fps: draw 14.2 ms (assemble 2.1, bind 2.2, consts 1.7, tables 1.3,
+  geometry 3.2). The cheap trims are spent: the dips need the per draw work on several threads.
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

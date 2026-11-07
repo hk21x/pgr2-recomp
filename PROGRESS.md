@@ -65,6 +65,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   before the result page, then "sampled target 81F89000 160x120 reloaded from guest memory": zeros over the GPU's photo.
   Now 0x16E960 is followed by D3D_BlockOnResource (0x1C61C0) on the photo texture, the read-back a lock does, so guest
   memory holds the photo before anything reloads or saves it.
+  Windows (8da2e96, 15f3054): the read-back now runs, but the photo is one flat colour (FF060404, then FF110B09; the
+  second take's alpha BF, the quad's diffuse alpha). The draw (0x16EF07..0x16EFA6): Begin(8), a pretransformed quad
+  0..640 x 0..480 (SetVertexShader 0x44: XYZRHW, diffuse) with pixel texture coordinates into the 160x120 photo target,
+  stage 0 the XGSetTextureHeader texture laid over the locked frame (the frame's own format, from GetDesc). The new
+  d3d12 "small target drawn from texture" log never fired: the draw's stage 0 never reached the target match, so the
+  renderer likely rejects that header (Describe) or takes the stage memo before it. Also open: the quad is four times
+  the photo's size; the console presumably scales it (a supersample or viewport setting not found yet).
+  Stopped after two fixes (stale read-back, read-back at once), both kept: they are needed once the draw works.
+  Next: log Describe's result and the header words for that texture, or capture that frame with F4 on Windows.
 - 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
   texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
   4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros

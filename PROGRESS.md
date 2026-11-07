@@ -37,6 +37,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Issue 32: the Recomp page from the pause menu keeps the pause frame (branch fixes-1.6.1)
+- Player: Recomp from the pause menu does not dim the race, white text on bright sky. Headless, a race paused: the pause
+  menu, its Options page and the Sound page (rows, as ours) keep the pause frame (the race dimmed with scan lines, PAUSE
+  MENU and its red lines); Recomp lost it, and so does the game's own Restart Race? dialog.
+- Each pause page makes an object of vtable 0x27953C with the page objects' allocator 0x4E5F0 on [0x2F4CC4], a row of the
+  page at +0x30 (0x8F820, 0x8ED10, 0x8D660, 0x8DF70). The Recomp page from the pause menu now makes one: frame kept on the
+  landing page and the sections; a setting changed, Back twice to the pause menu, B resumes; no errors.
+
 ### 2026-11-06 - Issues 30 and 26: speed camera photo, intro movies pillarboxed (branch fixes-1.6.1; SDK pgr2-1.6.1)
 - 30, the speed camera photo grey: 0x16E960 locks the frame, aliases it as a texture and draws it shrunk into the photo
   (160x120, 32 bit) on the GPU; 0x16E670 locks the photo seconds later and copies it into the profile. The renderers'

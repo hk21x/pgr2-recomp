@@ -411,6 +411,11 @@ void LogPhoto(const char* what, uint32_t obj) {
     LOGR("pgr2: speed camera photo %s: object %08X texture %08X (format %08X) data %08X pixels %08X %08X %08X; frame %08X data %08X",
          what, obj, tex, fmt, data, data ? kernel::R32(data) : 0, data ? kernel::R32(data + 60 * 0x280 + 320) : 0,
          data ? kernel::R32(data + 119 * 0x280 + 636) : 0, frame, frame ? kernel::R32(frame + 4) : 0);
+    // the frame as its lock read it back (640x480, pitch 2560): inside the camera's 160x120 corner and outside it
+    if (uint32_t f = frame ? mem::VirtualFromPhysical(kernel::R32(frame + 4)) : 0)
+        LOGR("pgr2: speed camera frame %08X pixels at 10,10 %08X, 80,60 %08X, 150,110 %08X; outside 400,300 %08X, 600,450 %08X", f,
+             kernel::R32(f + 10 * 2560 + 40), kernel::R32(f + 60 * 2560 + 320), kernel::R32(f + 110 * 2560 + 600),
+             kernel::R32(f + 300 * 2560 + 1600), kernel::R32(f + 450 * 2560 + 2400));
 }
 }  // namespace
 

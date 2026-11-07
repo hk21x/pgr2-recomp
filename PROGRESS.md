@@ -45,6 +45,9 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   is a full bind. Its steps (second run, 112 busy s): describe 0.03, replacement 0.01, sharpen 0.01, palette 0.01,
   view 0.01, the texture entry step 1.97 ms. That step: find, make (1221 textures made in two minutes of racing, the
   city streaming new shapes into the same memory), the change check and upload, the cube copies; split for a third run.
+  Third run (111 busy s): find 0.03, make 0.24 (0.27 made a frame), check and upload 0.27, cube copies 1.63 ms for 2.0
+  copies a frame. CopyCubeTargets shrinks each upscaled face through Shrink, which made a new render target texture per
+  face per frame. Now one shrunk copy kept per size, drawn over for each face (SDK render-mt). Next: the same run.
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

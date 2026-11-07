@@ -37,6 +37,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Issue 28: Washington's dome see-through, a likely cause (branch fixes-1.6.1; SDK pgr2-1.6.1)
+- A player's screenshot: the Capitol dome's surface missing (sky through it), only its windows drawn. Headless, Time
+  Attack on route 1 (Washington routes are 0 to 9 in Routes.Ini; PGR2_ROUTE takes in Time Attack, not Instant Action,
+  which picks its own): the reference renderer draws the dome whole, DLC on or off (the error material filter leaves out
+  nothing there). So the Windows renderers.
+- Washington's alpha tested draws (logged headless): all greater-or-equal (0x206), 35 references, 0 among them.
+  Smooth alpha edges (alpha to coverage, gpu shaders.cpp alphacover) discarded alpha 0 texels whatever the test, though
+  greater-or-equal 0 passes them: SDK 1a68cd2 gives that test full coverage. Not proven to be the dome: Harry to look at
+  Washington with Smooth Alpha Edges on and MSAA on, before and after.
+
 ### 2026-11-07 - Issue 32: the Recomp page from the pause menu keeps the pause frame (branch fixes-1.6.1)
 - Player: Recomp from the pause menu does not dim the race, white text on bright sky. Headless, a race paused: the pause
   menu, its Options page and the Sound page (rows, as ours) keep the pause frame (the race dimmed with scan lines, PAUSE

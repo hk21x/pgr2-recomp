@@ -58,6 +58,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   remain: seconds of 5200 to 5700 draws a frame (5086 raw) at 14 to 16 ms, the cost spread over every step. In 4403 of
   5744 draws the vertex constants are the last draw's. Trying: XBE_MERGE_DRAWS=2 merges vertex program draws too
   (not for titles squeezing program 2D).
+  Harry's run (cc0287b, XBE_MERGE_DRAWS=2): no texture flicker or other faults seen; the dip seconds at 4800 to 5100
+  draws a frame instead of 5200 to 5700 (about 12% fewer), still about 63 fps. Indexed draws carry their base vertex in
+  State::base_vertex, not in the draw's start, so a run breaks at each change of it; joining across it would need
+  the state compared without base_vertex and the indices moved. Not done: the dips need the per draw cost spread over
+  threads (phase 3, parallel command lists).
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

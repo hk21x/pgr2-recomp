@@ -42,7 +42,9 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   draw 9.9 ms: assemble 1.86, bind 2.84, shaders 0.48, pso 0.25, consts 0.98, tables 0.77, geometry 1.16; present 1.43.
 - Bind by path: stage binds per frame last 3318 (0.12 ms), memo 1606 (0.11), target 792 (0.09), full 299 (2.08 ms,
   about 7 us each): three quarters of bind. The stage memo is cleared each frame, so each texture's first use in a frame
-  is a full bind. Next: the full bind's steps timed (SDK 3d9a8cb.. , one more run).
+  is a full bind. Its steps (second run, 112 busy s): describe 0.03, replacement 0.01, sharpen 0.01, palette 0.01,
+  view 0.01, the texture entry step 1.97 ms. That step: find, make (1221 textures made in two minutes of racing, the
+  city streaming new shapes into the same memory), the change check and upload, the cube copies; split for a third run.
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

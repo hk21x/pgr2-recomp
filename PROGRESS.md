@@ -49,8 +49,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
     The crash-report draw notes reuse that range instead of scanning the indices a second time.
 - Evidence: a TSAN test of 20000 tickets at 1 and 3 helpers (each ticket's bytes checked in its done callback) has
   no warnings and no mismatches. wincheck is clean. SMOKE OK: same draws as before (race 2009 a frame).
-- Next: Harry's XBE_PERF run on D3D12, compared with 55f72cb. The new line reports the MB handed off and how long
-  lists waited for them.
+- Harry's run (log .local/win/f097372-pgr2.log): no flicker, but slower than 55f72cb:
+  - light busy seconds 142.0 to 127.9 fps;
+  - heaviest seconds 66.3 to 61.5 fps, 3.27 to 3.34 us a draw.
+  Lists waited 0.01 ms for the helpers, so the copies were off the render thread (9.2 MB a heavy frame). But the
+  render thread's own steps grew: assemble 2.22 to 2.71 ms, other 0.93 to 1.71. That points at the helpers
+  competing with it (spinning on a shared core, or memory traffic), not at the copies themselves.
+- Reverted to 55f72cb's pool (copies run together at settle points). The index scan trims stay (SDK
+  e5a06a3). Lesson for stage B: work handed to helpers must come in large pieces, with helpers that
+  sleep rather than spin, and must not run beside the render thread's own memory-heavy steps.
 
 ### 2026-11-07 - Render thread: deferred batch completion and parallel vertex copies (render-mt; SDK 55f72cb)
 - What: the render thread no longer tells the title a batch is done as soon as its commands ran. D3D12 now puts

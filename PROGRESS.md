@@ -51,9 +51,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Evidence so far: a TSAN stress test of the pool, 3000 rounds at 0, 1 and 4 helpers, is clean. On this VM a
   25 MB frame of 3 KB copies takes 4.3 ms inline and 3.1 ms through the pool (memory bound). wincheck is clean, and
   the headless harness builds (it has no render thread, so smoke does not exercise this path).
-- Next: a windows-vm build, then Harry's XBE_PERF run on the same track and car, against the shrink-pool baseline
-  (busy summary 109 fps; heaviest seconds about 63 fps). Check that geometry drops and title waits do not rise.
-  Then try an `XBE_DEFER_COPIES=0` run for comparison.
+- Harry's XBE_PERF run on D3D12 (2026-11-07, logs kept as .local/win/55f72cb-pgr2.log), compared with the 4ab3019
+  run on the same track and car:
+  - Busy summary: 124.8 and 128.8 fps, up from 102.5 to 115.0.
+  - Light busy seconds (500-2000 draws): 117.8 to 142.0 fps at the same draws. Host time is about the same (6.62
+    ms against 6.78), but the render thread's idle gaps went from 1.8 ms a frame to 0.6. The title now waits more
+    (fence, 0.9 to 4.2 ms), because it is ahead of a render thread that no longer idles.
+  - Heavy seconds (4000+ draws): about the same, 61-63 fps, 3.27 against 3.30 us a draw. Geometry fell from 3.17
+    to 1.99 ms, but the settles take about 0.6 ms between lists, plus their share inside Submit. Only about 9 of
+    the 30 MB uploaded a heavy frame is raw guest vertices; the rest is converted vertices, indices and constants.
+- Next: the heavy seconds need the draws recorded in parallel (docs/render-parallel.md, stage A, then B).
 
 ### 2026-11-07 - Render thread performance: baseline (branches render-mt, PGR2 and SDK)
 - Harry's XBE_PERF baseline (b454f0d, race at 120, 109 busy seconds): 84 fps, host 11.3 ms/frame, 2600 draws/frame,

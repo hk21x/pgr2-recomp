@@ -61,6 +61,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   read-back skipped any target unused for 8 frames (TargetStale), so grey went into the profile and the result page.
   SDK 236e929: a long unused target is read back when its memory is as it last matched (not reused), up to 1 MB, logged.
   Headless cannot show it (the reference renderer draws into guest memory). Windows to confirm.
+  Windows: still black. Logged (ca2a88e): the photo taken twice (both swap buffers), its guest memory zeros, no lock
+  before the result page, then "sampled target 81F89000 160x120 reloaded from guest memory": zeros over the GPU's photo.
+  Now 0x16E960 is followed by D3D_BlockOnResource (0x1C61C0) on the photo texture, the read-back a lock does, so guest
+  memory holds the photo before anything reloads or saves it.
 - 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
   texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
   4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros

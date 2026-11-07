@@ -414,10 +414,16 @@ void LogPhoto(const char* what, uint32_t obj) {
 }
 }  // namespace
 
+// The photo is drawn by the GPU and shown on the result page from guest memory, which the renderer reloads seconds
+// later: zeros, a black photo (Harry's log: no lock of it before then). So it is brought back at once, as a lock
+// would: D3D_BlockOnResource (0x1C61C0, stdcall) on the photo texture reads the target back into guest memory.
 X86_EXTERN_FUNC(__imp__sub_0016E960);
 X86_FUNC(sub_0016E960) {
     uint32_t obj = ctx.ecx;
     __imp__sub_0016E960(ctx, base);
+    uint32_t eax = ctx.eax;
+    if (uint32_t tex = kernel::R32(obj + 4)) kernel::CallGuest(ctx, 0x1C61C0, {tex});
+    ctx.eax = eax;
     LogPhoto("taken", obj);
 }
 

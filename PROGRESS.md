@@ -47,7 +47,9 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   city streaming new shapes into the same memory), the change check and upload, the cube copies; split for a third run.
   Third run (111 busy s): find 0.03, make 0.24 (0.27 made a frame), check and upload 0.27, cube copies 1.63 ms for 2.0
   copies a frame. CopyCubeTargets shrinks each upscaled face through Shrink, which made a new render target texture per
-  face per frame. Now one shrunk copy kept per size, drawn over for each face (SDK render-mt). Next: the same run.
+  face per frame. Tried: one shrunk copy kept per size, drawn over for each face (db53a7d). Harry's run: the GPU hung at
+  a cube face's shrink blit (887A0006, the game froze off the start line), and the cube copies still cost 2.2 ms a
+  frame: the new textures were not the cost. Reverted (c064476). Next: the cube copy's steps timed.
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

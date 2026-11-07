@@ -52,7 +52,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   compares a heavy frame. Without a render thread the count stays 0 and the compare is kept.
 - Evidence: wincheck clean, the harness builds. Smoke was skipped at Harry's request, for a build he could test
   that night; run it before this reaches main.
-- Next: Harry's XBE_PERF run: which step is biggest, and whether consts dropped.
+- Harry's run: a lot of flickering. Cause: State::vsc_gen sits next to vsc, inside the range the title's state
+  changes are sent in; changes go in whole 64 byte chunks, so a chunk ending vsc carried the title's 0 over the
+  count. The count started again at 1 and a draw could match an old count, reusing stale vertex constants.
+  Fixed (SDK 328326d): the render thread keeps its own count, which only goes up, and sets it after every change.
+- Next: Harry's run of the fix: flicker gone; then the timers.
 
 ### 2026-11-07 - Render thread: stage A, the D3D12 command recorder (render-mt; SDK 4b89ca1)
 - What: the draw path no longer writes the command list itself. It writes its commands to `D3D12Rec`

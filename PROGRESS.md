@@ -53,6 +53,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   Shrink's CreateCommittedResource (2.9 shrinks a frame, about 0.5 ms each). So the textures were the cost; the shared
   copy was the wrong reuse. Now a pool: each shrink its own texture within a frame, a finished frame's (after its fence)
   reused by the next shrink of their size.
+  Harry's run (2bcf744): busy summaries 108 to 113 fps (from 84 to 91), host 6.9 to 7.4 ms/frame (from 10.2 to 11.2),
+  3.0 to 3.4 us a draw; cube copies 0.04 ms, no new shrink textures; reflections look right, "felt better". Big dips
+  remain: seconds of 5200 to 5700 draws a frame (5086 raw) at 14 to 16 ms, the cost spread over every step. In 4403 of
+  5744 draws the vertex constants are the last draw's. Trying: XBE_MERGE_DRAWS=2 merges vertex program draws too
+  (not for titles squeezing program 2D).
 - A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
   trims first, parallel command lists only if they are not enough.
 

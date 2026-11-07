@@ -420,7 +420,9 @@ void LogPhoto(const char* what, uint32_t obj) {
 X86_EXTERN_FUNC(__imp__sub_0016E960);
 X86_FUNC(sub_0016E960) {
     uint32_t obj = ctx.ecx;
+    gpu::g_trace_draws++;  // TEMPORARY (issue 30): the draws and clears the photo's function records
     __imp__sub_0016E960(ctx, base);
+    gpu::g_trace_draws--;
     uint32_t eax = ctx.eax;
     if (uint32_t tex = kernel::R32(obj + 4)) kernel::CallGuest(ctx, 0x1C61C0, {tex});
     ctx.eax = eax;

@@ -73,7 +73,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   renderer likely rejects that header (Describe) or takes the stage memo before it. Also open: the quad is four times
   the photo's size; the console presumably scales it (a supersample or viewport setting not found yet).
   Stopped after two fixes (stale read-back, read-back at once), both kept: they are needed once the draw works.
-  Next: log Describe's result and the header words for that texture, or capture that frame with F4 on Windows.
+  The d3d12 diagnostics used LOG_FIRST, info level, which a release build never writes: now LOGR_FIRST (report). Then
+  (6faf89b): the photo draw is found and binds the frame (83D86000 / 83EB3000, 640x480 guest, host 3440x1440) as a
+  target, and the read-back works, but the frame holds a flat near-black (070301). 0x16E960 sets the frame as target
+  (0x177B70), clears it black (0x177B50: 0xF3, 0xFF000000), renders the camera's view ([0x3B59C4] vtable +8), then
+  shrinks it: the camera view's draws do not reach that frame. Next: trace every draw and clear the function records
+  (gpu::g_trace_draws, switched on by the 0x16E960 hook).
 - 26, intro movies stretched: the intros are 640x480 4:3 WMV drawn by the XMV player as one screen quad from a YUY2
   texture (format 0x24). SDK State::pillar_aspect / pillar_format: full screen draws from that format squeezed whole to
   4:3 on a wider frame; PGR2 sets 4:3 and YUY2 (hooks.cpp Pillarbox). Headless REF at 16:9 and 21:9: the intros

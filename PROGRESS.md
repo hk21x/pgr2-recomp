@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Render thread: stage A, the D3D12 command recorder (render-mt; SDK 4b89ca1)
+- What: the draw path no longer writes the command list itself. It writes its commands to `D3D12Rec`
+  (`runtime/gpu/d3d12_rec.h`), in order: pipeline, root arguments, vertex and index buffers, viewport, scissor,
+  blend factor, stencil reference, targets, barriers, texture views, draws and Aftermath markers. The recorder is
+  replayed into the list by `FlushRec`, called before anything writes to the list directly (`CL()`, also behind
+  `Context::List()` for extensions) and before the list is sent. The order the GPU sees is unchanged.
+- Why: the recorded runs are what stage B replays on helper threads, each into a list of its own. XBE_PERF now
+  reports the replay time (the most stage B can take off the render thread, plus whatever moves into Record later)
+  and the runs per frame with their draws (how often a direct write cuts a run).
+- Evidence: wincheck clean. Not exercised headless (D3D12 only).
+- Next: Harry's XBE_PERF run on D3D12. Pictures and speed should match the last build. Read the new line's replay
+  ms and draws per run, to size stage B.
+
 ### 2026-11-07 - Render thread: copies fully on helper threads, index scan trims (render-mt; SDK f097372)
 - What:
   - The copy pool is now asynchronous. The render thread closes a ticket per batch and goes straight on to the

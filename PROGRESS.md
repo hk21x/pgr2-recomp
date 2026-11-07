@@ -47,8 +47,32 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   reports the replay time (the most stage B can take off the render thread, plus whatever moves into Record later)
   and the runs per frame with their draws (how often a direct write cuts a run).
 - Evidence: wincheck clean. Not exercised headless (D3D12 only).
-- Next: Harry's XBE_PERF run on D3D12. Pictures and speed should match the last build. Read the new line's replay
-  ms and draws per run, to size stage B.
+- Harry's run (2 laps, log .local/win/4b89ca1-pgr2.log), against 55f72cb:
+  - faster, not only the same: busy summary 131.8 and 134.6 fps (was 124.8, 128.8);
+  - light busy seconds 142.0 to 152.9 fps; heaviest seconds 66.3 to 71.5 (3.27 to 3.07 us a draw);
+  - writing a run of commands at once costs less than writing them one by one.
+- Recorder sizing: heavy seconds replay 1.1 ms a frame in 18 runs of about 240 draws. Runs are long enough, but
+  the replay itself is small: stage B as designed (replay on helpers) would save about 1 ms. The cost is in Plan.
+  A heavy second's draw time (11.9 ms): assemble 2.75, bind 2.27, consts 1.83, tables 0.90, geometry 0.93,
+  shaders 0.72, pso 0.33, setup 0.20; about 2 ms in Draw outside the timed steps.
+
+### 2026-11-07 - Vertices: 10 byte strides repacked instead of converted (render-mt; SDK 5ced337)
+- Found: assembly, profiled headless with cycle timers (perf is not allowed in this VM, perf_event_paranoid 4), costs
+  about 170 cycles a raw draw and 7500 a converted one. On Harry's PC 624 of 4534 heavy-second draws were
+  converted: about 1.6 ms of the 2.75 ms assemble, plus their copies.
+- Cause: PGR2's meshes with 10 byte vertices (NORMSHORT3 position, NORMSHORT2 at 6, a NORMPACKED3 at byte 10 that
+  reads the next vertex's bytes). The input assembler needs strides in whole dwords, so every element of every
+  vertex was converted to a float4.
+- Fix (vertex.cpp): such a stream is repacked (AddRepacked). Each vertex's elements are copied to aligned places in
+  a whole dword vertex (16 bytes here); an element past the stride takes the next vertex's bytes, as the console
+  does. The 64 KB element offset limit is now checked past the stream's shift, which makes PGR2's last converted
+  draws (FLOAT3 at offsets over 1 MB, stride 28) raw too.
+- Evidence: harness audit (AUDIT=100, the race), which compares each draw's raw and converted vertices:
+  - before: 49625 of 67365 draws raw, no mismatches;
+  - after: 65643 of 65643 raw, 0 mismatches, none reading past a buffer.
+  SMOKE OK. wincheck clean.
+- Next: Harry's XBE_PERF run. Assemble and geometry should drop in the heavy seconds; check the meshes look right
+  (they include buildings or scenery drawn with those 10 byte vertices).
 
 ### 2026-11-07 - Render thread: copies fully on helper threads, index scan trims (render-mt; SDK f097372)
 - What:

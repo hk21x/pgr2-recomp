@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Render thread performance: baseline (branches render-mt, PGR2 and SDK)
+- Harry's XBE_PERF baseline (b454f0d, race at 120, 109 busy seconds): 84 fps, host 11.3 ms/frame, 2600 draws/frame,
+  draw 9.9 ms: assemble 1.86, bind 2.84, shaders 0.48, pso 0.25, consts 0.98, tables 0.77, geometry 1.16; present 1.43.
+- Bind by path: stage binds per frame last 3318 (0.12 ms), memo 1606 (0.11), target 792 (0.09), full 299 (2.08 ms,
+  about 7 us each): three quarters of bind. The stage memo is cleared each frame, so each texture's first use in a frame
+  is a full bind. Next: the full bind's steps timed (SDK 3d9a8cb.. , one more run).
+- A read-only review put a preparation thread at about 20% of draw time and cheap single-thread trims at about 25%:
+  trims first, parallel command lists only if they are not enough.
+
 ### 2026-11-07 - release-package.bat finds prebuilt-test.bat by its own folder
 Making 1.6.1's package on the Windows VM, `call prebuilt-test.bat` failed in a shell with NoDefaultCurrentDirectoryInExePath
 set (cmd then does not look in the current folder); now `call "%~dp0prebuilt-test.bat"`.

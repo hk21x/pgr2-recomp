@@ -37,6 +37,21 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Render thread: copies fully on helper threads, index scan trims (render-mt; SDK f097372)
+- What:
+  - The copy pool is now asynchronous. The render thread closes a ticket per batch and goes straight on to the
+    next one; up to 3 helpers copy in the background. A batch is held, and reported done, once its ticket's copies
+    are finished (a callback from the helper). D3D12 waits for the helpers only in Submit, before a list goes to
+    the GPU.
+  - The title's own indices are handed off too: they live in the render thread's batch, which is now kept until
+    its copies are done.
+  - Index range scan: 8 indices at a time with SSE2, checked against the plain loop over 200000 random cases.
+    The crash-report draw notes reuse that range instead of scanning the indices a second time.
+- Evidence: a TSAN test of 20000 tickets at 1 and 3 helpers (each ticket's bytes checked in its done callback) has
+  no warnings and no mismatches. wincheck is clean. SMOKE OK: same draws as before (race 2009 a frame).
+- Next: Harry's XBE_PERF run on D3D12, compared with 55f72cb. The new line reports the MB handed off and how long
+  lists waited for them.
+
 ### 2026-11-07 - Render thread: deferred batch completion and parallel vertex copies (render-mt; SDK 55f72cb)
 - What: the render thread no longer tells the title a batch is done as soon as its commands ran. D3D12 now puts
   off each draw's copy of guest vertex bytes into upload memory (`CopyPool`, `runtime/gpu/copy_pool.cpp`) and runs

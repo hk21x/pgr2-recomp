@@ -20,6 +20,7 @@
 #include "app/app.h"
 #include "core/log.h"
 #include "kernel/kernel.h"
+#include "kernel/memory.h"
 #include "xdk/d3d8.h"
 #include "xdk/hle.h"
 
@@ -396,6 +397,36 @@ X86_FUNC(sub_0018BC16) {
     if (std::memcmp(digest, stored, 20) == 0) return;
     std::memcpy(digest, stored, 20);
     LOGR("pgr2: a profile signed by another console (an Xbox's save): signature accepted, the profile's own checks follow");
+}
+
+// the speed camera photo (issue 30): 0x16E960 (thiscall on the photo object) locks the frame target [0x485DFC], lays
+// a texture over its memory and draws it shrunk into the photo, the 160x120 texture at the object's +4; 0x16E670 locks
+// the photo and copies it into the profile. Logged, a few times each, with the photo's pixels as guest memory has them
+namespace {
+void LogPhoto(const char* what, uint32_t obj) {
+    static int said = 0;
+    if (said++ >= 12) return;
+    uint32_t tex = kernel::R32(obj + 4), data = tex ? mem::VirtualFromPhysical(kernel::R32(tex + 4)) : 0;
+    uint32_t fmt = tex ? kernel::R32(tex + 12) : 0, frame = kernel::R32(0x485DFC);
+    LOGR("pgr2: speed camera photo %s: object %08X texture %08X (format %08X) data %08X pixels %08X %08X %08X; frame %08X data %08X",
+         what, obj, tex, fmt, data, data ? kernel::R32(data) : 0, data ? kernel::R32(data + 60 * 0x280 + 320) : 0,
+         data ? kernel::R32(data + 119 * 0x280 + 636) : 0, frame, frame ? kernel::R32(frame + 4) : 0);
+}
+}  // namespace
+
+X86_EXTERN_FUNC(__imp__sub_0016E960);
+X86_FUNC(sub_0016E960) {
+    uint32_t obj = ctx.ecx;
+    __imp__sub_0016E960(ctx, base);
+    LogPhoto("taken", obj);
+}
+
+X86_EXTERN_FUNC(__imp__sub_0016E670);
+X86_FUNC(sub_0016E670) {
+    uint32_t obj = ctx.ecx;
+    LogPhoto("to save", obj);
+    __imp__sub_0016E670(ctx, base);
+    LogPhoto("saved", obj);
 }
 
 // the music volume (Options > Sound / Music; 0x367528, 0 to 1, read by 0x5DD70 and others). In races the radio plays

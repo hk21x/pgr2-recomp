@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-07 - Cube face shrinks reuse textures, on fork main (branch shrink-pool, PGR2 and SDK)
+The render-mt finding without its timers and experiments, on fork main 5bcd974 (render-mt sits on the all-games candidate):
+D3D12's cube face shrinks reuse a finished frame's shrunk copies (a pool); D3D11 keeps one per size with its view (its
+context orders the copy before the next shrink). Harry's D3D12 result on render-mt: busy seconds 84-91 to 108-113 fps.
+Next: Harry's check on D3D12 and D3D11 from this branch, then the six-game gate and fork main. The remaining dips
+(about 5000 draws a frame) are next on render-mt: parallel command recording.
+
 ### 2026-11-07 - release-package.bat finds prebuilt-test.bat by its own folder
 Making 1.6.1's package on the Windows VM, `call prebuilt-test.bat` failed in a shell with NoDefaultCurrentDirectoryInExePath
 set (cmd then does not look in the current folder); now `call "%~dp0prebuilt-test.bat"`.

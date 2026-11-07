@@ -399,47 +399,22 @@ X86_FUNC(sub_0018BC16) {
     LOGR("pgr2: a profile signed by another console (an Xbox's save): signature accepted, the profile's own checks follow");
 }
 
-// the speed camera photo (issue 30): 0x16E960 (thiscall on the photo object) locks the frame target [0x485DFC], lays
-// a texture over its memory and draws it shrunk into the photo, the 160x120 texture at the object's +4; 0x16E670 locks
-// the photo and copies it into the profile. Logged, a few times each, with the photo's pixels as guest memory has them
-namespace {
-void LogPhoto(const char* what, uint32_t obj) {
-    static int said = 0;
-    if (said++ >= 12) return;
-    uint32_t tex = kernel::R32(obj + 4), data = tex ? mem::VirtualFromPhysical(kernel::R32(tex + 4)) : 0;
-    uint32_t fmt = tex ? kernel::R32(tex + 12) : 0, frame = kernel::R32(0x485DFC);
-    LOGR("pgr2: speed camera photo %s: object %08X texture %08X (format %08X) data %08X pixels %08X %08X %08X; frame %08X data %08X",
-         what, obj, tex, fmt, data, data ? kernel::R32(data) : 0, data ? kernel::R32(data + 60 * 0x280 + 320) : 0,
-         data ? kernel::R32(data + 119 * 0x280 + 636) : 0, frame, frame ? kernel::R32(frame + 4) : 0);
-    // the frame as its lock read it back (640x480, pitch 2560): inside the camera's 160x120 corner and outside it
-    if (uint32_t f = frame ? mem::VirtualFromPhysical(kernel::R32(frame + 4)) : 0)
-        LOGR("pgr2: speed camera frame %08X pixels at 10,10 %08X, 80,60 %08X, 150,110 %08X; outside 400,300 %08X, 600,450 %08X", f,
-             kernel::R32(f + 10 * 2560 + 40), kernel::R32(f + 60 * 2560 + 320), kernel::R32(f + 110 * 2560 + 600),
-             kernel::R32(f + 300 * 2560 + 1600), kernel::R32(f + 450 * 2560 + 2400));
-}
-}  // namespace
-
+// the speed camera photo (issue 30): 0x16E960 (thiscall on the photo object) clears the frame target [0x485DFC], draws
+// the camera's view into its top left 160x120, locks it, lays a texture over its memory and draws it into the photo, the
+// 160x120 texture at the object's +4 (texture coordinates by SetVertexData2s); 0x16E670 locks the photo for the profile.
 // The photo is drawn by the GPU and shown on the result page from guest memory, which the renderer reloads seconds
 // later: zeros, a black photo (Harry's log: no lock of it before then). So it is brought back at once, as a lock
 // would: D3D_BlockOnResource (0x1C61C0, stdcall) on the photo texture reads the target back into guest memory.
 X86_EXTERN_FUNC(__imp__sub_0016E960);
 X86_FUNC(sub_0016E960) {
     uint32_t obj = ctx.ecx;
-    gpu::g_trace_draws++;  // TEMPORARY (issue 30): the draws and clears the photo's function records
     __imp__sub_0016E960(ctx, base);
-    gpu::g_trace_draws--;
     uint32_t eax = ctx.eax;
     if (uint32_t tex = kernel::R32(obj + 4)) kernel::CallGuest(ctx, 0x1C61C0, {tex});
     ctx.eax = eax;
-    LogPhoto("taken", obj);
-}
-
-X86_EXTERN_FUNC(__imp__sub_0016E670);
-X86_FUNC(sub_0016E670) {
-    uint32_t obj = ctx.ecx;
-    LogPhoto("to save", obj);
-    __imp__sub_0016E670(ctx, base);
-    LogPhoto("saved", obj);
+    static bool said = false;
+    if (!said) LOGR("pgr2: speed camera photo read back after it was drawn");
+    said = true;
 }
 
 // the music volume (Options > Sound / Music; 0x367528, 0 to 1, read by 0x5DD70 and others). In races the radio plays

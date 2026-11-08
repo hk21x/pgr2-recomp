@@ -37,6 +37,23 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - The lows, measured: heavy stretches and hitches (render-mt; SDK 60863d7)
+- Harry's two runs of 764e60a (logs .local/win/764e60a-run1-pgr2.log, run2):
+  - Run 1 had XBE_MERGE_DRAWS=2 set from an earlier test (the log's Environment line); run 2 had it cleared.
+  - Merging cuts the busy average from 2460 to 2165 draws a frame (12%), but the heavy stretches only 4792 to 4649
+    (3%): both are at 73.0 to 73.1 fps there. No gain for the lows.
+  - Second busy summary of each run: 1% low 61.7 and 62.0, 0.1% low 30.6 and 30.8, slowest frame 55.5 and 51.9 ms.
+    The first summary of each run holds a 396 to 415 ms frame near the race start (0.1% low 5.6 to 5.7).
+- Two problems:
+  1. The 1% low (about 62) is the heavy stretches themselves, steady 14 to 16 ms frames at about 5000 draws.
+     Planning draws on several threads is the fix for that.
+  2. The 0.1% low (about 31) is single hitches of 30 to 55 ms, and one of about 400 ms near the start. Cause not
+     known yet.
+- New (60863d7): XBE_PERF logs each slow frame in a busy scene (25 ms or more, 300 draws or more; the first 200) with
+  what it did: draw and bind time, compiles, new textures and targets, texture uploads, new shaders and pipelines,
+  GPU waits (Submit(true), now counted), clear, copy, sync, present, and the title's recording and waiting.
+- Next: Harry's run of it with XBE_PERF (merging off), to name the hitches' cause.
+
 ### 2026-11-08 - Harry's run of d8a6414 (prep thread); the lows measured (render-mt; SDK 764e60a)
 - Run (log .local/win/d8a6414-pgr2.log, D3D12, XBE_PERF): nothing looked wrong; the flicker is gone. Harry: the 1%
   lows are still very low against the rest of the run.

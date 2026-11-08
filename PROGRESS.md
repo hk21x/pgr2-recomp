@@ -56,6 +56,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
     prep thread off: AUF merges draws (GameInfo::merge_draws), which only the render thread does.
   - True Crime and PGR1: SDK merge conflict (their pins are on side lines). They need combined branches before
     render-mt goes to fork main.
+- Merging render-mt with main or the candidate (from the SDK session's test merge of 09b8fe4 with aspect-16x10, which
+  holds PGR1's pin 23486d6 and the candidate 07e7f34):
+  - d3d12.cpp CopyCubeTargets: a textual conflict at the end of the face loop; keep `step(g_perf.c_copy);`.
+  - A silent duplicate git merges without complaint. render-mt recycles the shrink pool inside DropGarbage; main
+    has RecycleShrinks(Frame&) called after DropGarbage at both call sites. The merge keeps both, and declares
+    kShrinkPool and shrink_pool_ twice, which does not compile. Keep one form, then run scripts/wincheck.sh on
+    d3d12.cpp; the Linux gate does not build it.
+  - PGR1 is clean once render-mt contains aspect-16x10. True Crime's pin f40c281 is its own line.
 - PGR2 SMOKE OK with the render thread off (2010 draws a frame; one run 1959, run to run variation) and on.
 
 ### 2026-11-08 - Render thread: headless checks, and a prep thread for assembly (render-mt; SDK eb1db71)

@@ -52,8 +52,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
     face is uploaded, missing rows zeroed;
   - textures over 16 MB, a heap that cannot be made, or XBE_PLACED_TEXTURES=0: committed as before.
 - Evidence: wincheck clean. Not exercised headless (D3D12 only).
-- Next: Harry's run. The slow frames' bind time should drop to near their uploads; check textures look right
-  (streamed scenery, menus) and that video memory use stays reasonable.
+- Harry's run (log .local/win/f7fa195-pgr2.log): the hitches inside the race are gone.
+  - Only 2 slow frames, both at the race start: 68.9 ms (399 new textures, bind 24.5 ms; was 242 and 206) and
+    48.3 ms (141, bind 13.5; was 118 and 90). About 0.06 ms a new texture, from 0.5.
+  - Second busy summary: 149.9 fps, 1% low 58.9, 0.1% low 51.6, slowest frame 21.3 ms (was 142.8, 57.2, 34.2,
+    47.2 ms). The first summary holds the race start (0.1% low 22.2).
+  - One 64 MB texture heap covered the whole run.
+- Left: the race start's one frame (textures, 25 pipelines and uploads together), and the 1% low (about 59), which
+  is the heavy stretches at about 5000 draws: planning draws on several threads.
 
 ### 2026-11-08 - Hitches: texture creation, and the log flushed per line (render-mt; SDK 6625e61)
 - Harry's run of 60863d7 (log .local/win/60863d7-pgr2.log): 7 slow frames, each one making textures:

@@ -37,6 +37,26 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Release 1.6.2: issue 36 (branch fixes-1.6.2, from main)
+- Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the
+  boot sequence 0x13DB90 plays the intros (hooks.cpp; the same change as render-mt2's bf12da9, where it is written
+  up). SMOKE OK; headless the intros' window is 0.06 to 100.9 s on a first boot.
+- 1.6.2 is main: 1.6.1, release-package.bat's path fix, the cube face shrink pool (SDK 77b18eb, gated, on Harry's
+  PC), and issue 36. The SDK is as main had it: no new gate. Notes in docs/releases/v1.6.2.md.
+- Harry confirmed on Windows (095d6b9 built on the VM): the intros pillarboxed, the menu fades reaching the edges.
+  main fast-forwarded to it; tag v1.6.2 made the draft (workflow run 42514725024). The VM built the package from the
+  tag (PGR2-package.zip 63,466,678 bytes; its json matches), and Harry published it on 2026-11-08 with the launcher.
+- Next: the multi-core renderer (render-mt, render-mt2) toward the next release. render-mt2 must take main's 1.6.2
+  (issue 36 is already in it as bf12da9), then the SDK lines of PGR1 and True Crime, and the six-game gate.
+
+### 2026-11-07 - Cube face shrinks reuse textures, on fork main (branch shrink-pool, PGR2 and SDK)
+The render-mt finding without its timers and experiments, on fork main 5bcd974 (render-mt sits on the all-games candidate):
+D3D12's cube face shrinks reuse a finished frame's shrunk copies (a pool); D3D11 keeps one per size with its view (its
+context orders the copy before the next shrink). Harry's D3D12 result on render-mt: busy seconds 84-91 to 108-113 fps.
+Harry on Windows (bed8ba8): D3D12 busy seconds 108.9 fps (host 7.9 ms, 2545 draws/frame; baseline 84, 11.3), D3D11 clean,
+reflections right in both. Six-game gate on 77b18eb (EoN and PGR1 with DropGarbage then RecycleShrinks): all smoke
+OK, PGR1's repro.sh a live race. Fork main fast-forwarded to 77b18eb. The remaining dips
+(about 5000 draws a frame) are next on render-mt: parallel command recording.
 ### 2026-11-08 - Issue 36: menu fades squeezed to 4:3, a 1.6.1 regression (render-mt2)
 - Report (Kumubou): in 16:9 and 21:9 the menus' fade effects leave the screen's edges unfaded; not so in 1.6.0.
 - Cause: issue 26's fix (1.6.1, 74164bd) pillarboxes full screen draws from YUY2 movie textures to 4:3. Pillarbox()

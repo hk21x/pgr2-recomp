@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Issue 36: menu fades squeezed to 4:3, a 1.6.1 regression (render-mt2)
+- Report (Kumubou): in 16:9 and 21:9 the menus' fade effects leave the screen's edges unfaded; not so in 1.6.0.
+- Cause: issue 26's fix (1.6.1, 74164bd) pillarboxes full screen draws from YUY2 movie textures to 4:3. Pillarbox()
+  ran in the movie player and in every frame step, so it held for the whole game. The menus draw movies full screen
+  too (pbg.xmv and others, opened on another thread, not through 0x13C810), and those were squeezed.
+- Fix (hooks.cpp): pillarboxing only while the boot sequence 0x13DB90 runs.
+  - Headless: 0x13C810 blocks for each movie (Intro1 0 to 10 s, Intro2 to 30 s, English.xmv to 41 s, Intro3 to
+    101 s on a first boot), and 0x13DB90 returns right after Intro3.
+  - Logged: "boot intros: movies pillarboxed" and "boot intros done".
+  - SMOKE OK.
+- Next: Harry to confirm on Windows (16:9 or wider: the menu fades reach the edges, the intros still pillarboxed).
+  Then the release: render-mt and render-mt2 merged, PGR1's and True Crime's SDK lines, the six-game gate, main.
+
 ### 2026-11-08 - Log writes off the game's threads; where record's waits come from (render-mt2)
 - Harry's run of 127afb2 (log .local/win/127afb2-pgr2.log):
   - racing-only summary: 172.6 fps, 1% low 77.0, 0.1% low 72.8, slowest frame 14.0 ms;

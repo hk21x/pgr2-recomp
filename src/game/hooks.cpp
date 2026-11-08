@@ -149,9 +149,24 @@ void ApplySettingsEntry();  // src/game/settings_entry.cpp
 // frame they are pillarboxed, not stretched (gpu::State::pillar_aspect). Only draws spanning the frame from a YUY2
 // texture: the title's movie panel (title_new3.xmv, under a vignette drawn at its size), its backdrop (another
 // format) and the 2D stay as they are, as the console's widescreen mode draws them.
+// Only while the boot sequence (0x13DB90) plays them (it returns once Intro3 has: 0x13C810 blocks for each movie):
+// the menus draw movies full screen too (pbg.xmv and others, opened on another thread: their backdrop and the fades
+// between pages), and squeezed to 4:3 those left the screen's edges still (issue 36, a 1.6.1 regression)
+static bool g_intros = false;
 void Pillarbox() {
-    d3d::State().pillar_aspect = 4.0f / 3.0f;
+    d3d::State().pillar_aspect = g_intros ? 4.0f / 3.0f : 0.0f;
     d3d::State().pillar_format = 0x24;  // D3DFMT_YUY2
+}
+
+X86_EXTERN_FUNC(__imp__sub_0013DB90);
+X86_FUNC(sub_0013DB90) {
+    g_intros = true;
+    Pillarbox();
+    LOGR("pgr2: boot intros: movies pillarboxed to 4:3");
+    __imp__sub_0013DB90(ctx, base);
+    g_intros = false;
+    Pillarbox();
+    LOGR("pgr2: boot intros done: movies drawn as the title draws them");
 }
 
 // skip_intro: the boot sequence 0x13DB90 plays Intro1, Intro2, the language's movie and Intro3 through the movie

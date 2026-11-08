@@ -37,6 +37,25 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Harry's run of d8a6414 (prep thread); the lows measured (render-mt; SDK 764e60a)
+- Run (log .local/win/d8a6414-pgr2.log, D3D12, XBE_PERF): nothing looked wrong; the flicker is gone. Harry: the 1%
+  lows are still very low against the rest of the run.
+  - Busy summary 164.6 and 151.3 fps (5ced337: 141.1 and 124.9); 2.25 to 2.41 us a draw (from 2.63 to 3.07).
+  - Assemble about 0 in the draw step: the prep thread does it.
+  - The heaviest seconds, at the same places each lap (50-53 s and 84-88 s): 64 to 71 fps at 4750 to 5100 draws.
+    Host 12.3 to 13.7 ms; the render thread's batches 13.6 to 14.8 ms of a 14.3 to 15.5 ms frame; the title waits
+    8 to 9 ms. About 2.7 us a draw there.
+  - A heavy frame (5114 draws, draw 11.07 ms): bind 2.50 (full 0.97), consts 2.09 (vertex constants 0.32, filled
+    0.44, uploaded 0.56), tables 1.03, shaders 0.79, geometry 0.53, checks and note 0.48, pso 0.37, before assembly
+    0.33, targets 0.32. Clear 1.24 and present 0.79 hold most of the replay (1.41).
+  - XBE_PERF's own clock reads (about 20 a draw) are part of these times.
+- The lows are those heavy seconds: there the render thread is the limit at about 5000 draws a frame. 120 fps
+  needs about 1.6 us a draw. The per draw cost is spread over many steps, each under 2.5 ms.
+- New: the busy summary gives the 1% and 0.1% lows (slowest frames' rate, from each busy second's frame times) and
+  the slowest frame.
+- Next, for Harry: a run of the next build with XBE_PERF, then one with XBE_MERGE_DRAWS=2 (about 12% fewer draws
+  in earlier tests), to compare the lows. Beyond that: planning draws on several threads at once (the large change).
+
 ### 2026-11-08 - Title recording and texture signatures faster (render-mt; SDK 09b8fe4)
 - Title thread: headless (render thread on), its recording costs 5.2-5.7 ms a frame at 2500-2750 draws; Harry's PC
   showed 3.85 ms in heavy seconds. Cycle timers put SendState, the state compare, at 3967 of 4792 cycles a draw:

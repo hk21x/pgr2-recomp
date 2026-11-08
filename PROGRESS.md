@@ -82,6 +82,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
     do not slow the race.
 - Left as the likely cause of the feel: a varying delay between the title setting a frame up (its clock) and the
   frame's present. New: XBE_PERF's "title to present" line, the average delay and its frame-to-frame change.
+- Harry's run of 5e4c68d (log .local/win/5e4c68d-pgr2.log; display still 280 Hz):
+  - The delay is 2 to 4 ms at 200 fps and 11 to 12 ms in the heaviest seconds, changing only 0.5 to 1.1 ms from
+    frame to frame. Pacing 0.8 to 0.9 ms. Both smooth frame to frame.
+  - What changes is the frame rate over seconds: 200 to about 85 and back, the delay drifting with it.
+  - Racing-only summaries: 1% low 79.0 and 77.9, 0.1% low 74.5 and 74.1, slowest frame about 13.5 ms.
+  - Waits for record: 51.7 a frame, 1.02 ms (31.4 list writes, 8.5 state resets, 7.9 full rings, 1 present,
+    1.4 submits).
+- New: run logs are kept (log.cpp: pgr2.log moves to pgr2.1.log and on, five kept). Twice a test run was lost to
+  the next start. XBE_PERF names the functions whose direct list writes drained record.
 
 ### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
 - Draws are decided on the render thread and recorded on a new record thread, side by side

@@ -64,8 +64,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - D3D11, one race (log .local/win/f01ce5c-d3d11-pgr2.log): raced, no errors, the prep thread on. Record is
     D3D12's only. XBE_PERF reports only on D3D12.
   - Reflections looked right in both (Harry).
-- An EoN comparison run is asked of the EoN session: its current build against one with the SDK at render-mt2,
-  XBE_PERF on D3D12.
+- EoN comparison (the EoN session; Harry's PC, D3D12, the same save and level, about 75 s on foot each):
+  - pc-controls 21d6c30 (SDK f9112ac) against perf-render-mt2 bd90cb9 (SDK 5114ead).
+  - 60 fps in both: on foot EoN is paced at 60, with about 560 draws.
+  - Host 7.14 to 6.56 ms; draw 2.48 to 1.84 ms (-26%).
+  - With render-mt2: busy summary 1% low 50.5, 0.1% low 47.7, pacing 0.0% uneven; waiting for record 0.34 ms.
+  - One 222 ms frame, its new folder's cold shader cache (compile and pipelines).
+  - Correct, cheaper on the CPU, no visible gain at its frame-locked 60.
 - Next: the EoN result, then Harry's go for fork main. That go also takes the all-games candidate, which render-mt2
   contains.
 

@@ -49,7 +49,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   were fences, about ten a race frame (the six reflection faces, the view, the mirror), each making the render
   thread wait for record to drain. XBE_PERF now times those waits ("waiting for record") and counts them.
 - Evidence: XBE_CHECK_RECORD (clears checked too): 1.8 million draws, none wrong; SMOKE OK with the record thread.
-- Next: Harry's run. How long the render thread still waits, and the heaviest seconds.
+- Harry's run (log .local/win/3af63ca-pgr2.log, two laps): no clear problems seen.
+  - Racing-only busy summary: 1% low 97.9 (87.7), lowest second 114.9 (92.7), 0.1% low 84.5, slowest frame
+    13.8 ms.
+  - The 8 heaviest seconds: 90.7 fps at 5065 draws (96.3 at 4919): about the same a draw.
+  - The render thread still waits for record 53 times a heavy frame, 2.07 ms.
+- Change: visibility tests through the record thread.
+  - Their queries are recorded (D3D12Rec BeginQuery, and EndQuery with the resolve).
+  - The draw's samples per pixel come in its packet.
+  - ClearReport and GetReport run on the record thread, in order with the draws.
+  Before, a counted draw was recorded inline after a drain, and every report call drained.
+- SMOKE OK with the record thread (4.2 million draws checked, none wrong).
+- Next: Harry's run. The waits a frame, and what is left of them.
 
 ### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
 - Draws are decided on the render thread and recorded on a new record thread, side by side

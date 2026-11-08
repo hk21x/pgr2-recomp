@@ -59,8 +59,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - average 142.8 to 152.9 fps.
 - Changed (872dc7e): faces rest only while frames run late (the last slower than 120 a second), and PGR2's rate is 60.
   Frames on time draw every face, so reflections are as before outside the heaviest scenes.
-- Next: the two stage pipeline. The render thread keeps the binding decisions; a second thread does constants,
-  tables, viewport, geometry and recording. About 5 ms of a 12 ms heavy frame.
+- Harry's run of 872dc7e (log .local/win/872dc7e-pgr2.log): reflections fixed (they look as before).
+  - 8 heaviest seconds 82.7 fps at 4218 draws (86 draws and clears left out a frame); 80.1 with faces always
+    capped at 30, 70.6 before.
+  - A short run: 36 busy seconds, average 140.0 fps.
+- Next: the decide and record pipeline (docs/render-parallel.md, revision), step 1: the split on one thread.
 
 ### 2026-11-08 - Hitches: textures placed in heaps (render-mt; SDK f7fa195)
 - Harry's run of 6625e61 (log .local/win/6625e61-pgr2.log), with the log flushing every 250 ms:

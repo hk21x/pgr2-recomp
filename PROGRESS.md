@@ -37,6 +37,22 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Hitches: texture creation, and the log flushed per line (render-mt; SDK 6625e61)
+- Harry's run of 60863d7 (log .local/win/60863d7-pgr2.log): 7 slow frames, each one making textures:
+  - 389 ms with 399 new textures (the race start); 174 ms with 143; 62 ms with 56; 56 ms with 48; 28 to 32 ms with
+    14 to 29;
+  - the time is in the bind step (334, 132, 50, 43 ms), while their uploads take 15, 6, 3, 2 ms;
+  - so about 0.85 ms a new texture, outside the upload.
+  Busy summaries: 141.4 and 143.7 fps; 1% low 43.8 and 59.1; 0.1% low 13.6 and 31.3.
+- Cause found in that step: every texture made writes a report line (`texture N made`), and report lines were
+  flushed to the file one by one. Harry runs the game from the VM's share, so each flush is a network write.
+- Fix (log.cpp): report lines are flushed at most every 250 ms; warnings and errors still at once. A crash, an exit
+  and a relaunch flush the rest. A hard kill can lose up to the last 250 ms of report lines. This applies to every
+  game's log.
+- SMOKE OK.
+- Next: Harry's run. The slow frames' bind time should fall toward the uploads' time. If texture creation itself
+  (CreateCommittedResource) is still slow, allocate textures from large heaps (placed resources).
+
 ### 2026-11-08 - The lows, measured: heavy stretches and hitches (render-mt; SDK 60863d7)
 - Harry's two runs of 764e60a (logs .local/win/764e60a-run1-pgr2.log, run2):
   - Run 1 had XBE_MERGE_DRAWS=2 set from an earlier test (the log's Environment line); run 2 had it cleared.

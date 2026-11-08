@@ -37,6 +37,29 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - The next release's candidate: render-mt2 merged, six-game gate passed (SDK render-mt2 5114ead)
+- render-mt2 now holds 1.6.2:
+  - SDK: fork main 77b18eb merged (f01ce5c). The shrink pool appeared twice; render-mt2's DropGarbage recycling
+    kept, main's RecycleShrinks and its second kShrinkPool and shrink_pool_ dropped. Every Windows file passes
+    wincheck.
+  - PGR2: main (1.6.2) merged (3ee923f); issue 36 was already in both. SMOKE OK, also with the render thread and
+    XBE_CHECK_RECORD.
+- render-mt2 already holds the SDK session's all-games candidate (render-mt started from it), and the AUF,
+  NightFire and EoN pins. PGR1's (aspect-16x10) and True Crime's (truecrime) lines are not cleared for fork main:
+  gated on local throwaway combines only, gate-pgr1 and gate-tc, not pushed.
+  - gate-pgr1: render-mt2 with origin/aspect-16x10 89cafb8 (its old pin 23486d6 conflicted with 1.6.1's aspect
+    work, which 89cafb8 already resolves). app.h kept both new fields; d3d12.cpp kept render-mt2's pool.
+  - gate-tc: render-mt2 with origin/truecrime. Both includes kept, and its unknown texture format check after
+    f_palette's step. SurfaceSig merged clean (its committed-memory cut, then SigHash).
+- The six-game gate (gate-pgr2.sh), twice, all SMOKE OK:
+  - by default (render thread off): PGR2, AUF (all four), NightFire, EoN (11512 draws a frame), True Crime, PGR1;
+  - with XBE_RENDER_THREAD=1: the same six.
+  - PGR1's repro.sh in its gate clone (paths changed): the race loads, 86570 draws in a second, after.png right.
+- The Windows build's four old warnings fixed (screenshot.cpp, xnet.cpp; 5114ead).
+- The VM built the candidate (PGR2 3ee923f, SDK f01ce5c) for Harry's test.
+- Next: Harry's test of the candidate, and his go for fork main. That go also takes the all-games candidate, which
+  render-mt2 contains.
+
 ### 2026-11-08 - Release 1.6.2: issue 36 (branch fixes-1.6.2, from main)
 - Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the
   boot sequence 0x13DB90 plays the intros (hooks.cpp; the same change as render-mt2's bf12da9, where it is written

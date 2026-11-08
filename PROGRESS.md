@@ -37,6 +37,24 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Hitches: textures placed in heaps (render-mt; SDK f7fa195)
+- Harry's run of 6625e61 (log .local/win/6625e61-pgr2.log), with the log flushing every 250 ms:
+  - slow frames 242 ms (399 new textures; was 389), 118 ms (151; was 174), 40 to 47 ms (43 to 60), 27 ms (28);
+  - busy summaries 139.6 and 142.8 fps; 1% low 54.6 and 57.2; 0.1% low 40.7 and 34.2 (was 13.6 and 31.3).
+  - New textures still cost about 0.5 ms each in the bind step (206 ms for 399, 26 ms for 43): that is
+    CreateCommittedResource itself, as the shrink textures measured (0.5 ms).
+- Fix: textures up to 16 MB are placed in 64 MB heaps (CreatePlacedResource):
+  - heaps flagged ALLOW_ONLY_NON_RT_DS_TEXTURES, so tier 1 hardware takes them;
+  - the 4 KB alignment where GetResourceAllocationInfo allows it, else 64 KB;
+  - first fit, and a range is joined with its neighbours when freed;
+  - freed from DropGarbage once the GPU is done and nothing else holds the texture (placed_wait_ keeps the others);
+  - an aliasing barrier before each new texture is written (the range may have held an older one); every level and
+    face is uploaded, missing rows zeroed;
+  - textures over 16 MB, a heap that cannot be made, or XBE_PLACED_TEXTURES=0: committed as before.
+- Evidence: wincheck clean. Not exercised headless (D3D12 only).
+- Next: Harry's run. The slow frames' bind time should drop to near their uploads; check textures look right
+  (streamed scenery, menus) and that video memory use stays reasonable.
+
 ### 2026-11-08 - Hitches: texture creation, and the log flushed per line (render-mt; SDK 6625e61)
 - Harry's run of 60863d7 (log .local/win/60863d7-pgr2.log): 7 slow frames, each one making textures:
   - 389 ms with 399 new textures (the race start); 174 ms with 143; 62 ms with 56; 56 ms with 48; 28 to 32 ms with

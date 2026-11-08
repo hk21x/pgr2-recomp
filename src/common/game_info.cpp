@@ -105,4 +105,7 @@ const app::GameInfo app::kGame = {
     .languages = {1, 2, 3, 4, 5, 6, 7, 8},  // the disc's; Portuguese has text files but the game runs it as English              // menus, HUD and text drawn from enlarged, sharpened copies of their textures
     .auto_fills_screen = true,  // "From Screen" on an ultrawide: the 3D views widened to it, the HUD 16:9 (hooks.cpp ApplyAspect)
     .fill_follows_live = true,  // its views are reshaped when that changes in play (hooks.cpp Reshape)
+    // the cars' reflections: six cube faces of about 100 draws each, every frame. The console drew them 30 times a
+    // second; a quarter of a race frame's draws at 120 fps and more otherwise
+    .cube_face_hz = 30,
 };

@@ -37,6 +37,25 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Heavy stretches: reflections at the console's rate (branch render-mt2; SDK a01d7ba)
+- Harry chose to go after the heavy stretches (the 1% low, about 59 fps at about 5000 draws). New branches
+  render-mt2 (PGR2 and SDK), from render-mt.
+- Headless draw lists (CAP=1, the race, every frame): each race frame draws its main view (about 2000 draws at
+  640x480), six 256x256 cube faces (about 600 to 650, a car's reflections) and a 256x128 target (about 125), in every
+  frame. The reflections are about a quarter of the draws.
+- The console drew those faces once a frame at 30 fps, 30 times a second. At 120 fps and more they are drawn 120+
+  times a second.
+- New, GameInfo::cube_face_hz (XBE_CUBE_FACE_HZ overrides it; 0, the default, keeps every frame):
+  - each cube face the GPU draws is drawn at most that often a second;
+  - faces are staggered and keep their last picture in between: their draws and clears are left out in D3D12;
+  - faces are found by CopyCubeTargets; a present plans the next frame's;
+  - at the rate or below it, every face draws every frame.
+  PGR2 sets 30. Expected at 120 fps: 1 or 2 faces a frame instead of 6, about 450 fewer draws a frame.
+- XBE_PERF's "draw's other steps" line counts the draws and clears left out.
+- Evidence: wincheck clean; the harness builds; SMOKE OK (headless has no D3D12, so this is untested there).
+- Next: Harry's run: reflections must still look right (car paint, the cars' reflections moving); draws a frame
+  and the 1% low.
+
 ### 2026-11-08 - Hitches: textures placed in heaps (render-mt; SDK f7fa195)
 - Harry's run of 6625e61 (log .local/win/6625e61-pgr2.log), with the log flushing every 250 ms:
   - slow frames 242 ms (399 new textures; was 389), 118 ms (151; was 174), 40 to 47 ms (43 to 60), 27 ms (28);

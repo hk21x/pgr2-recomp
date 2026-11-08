@@ -37,6 +37,21 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Pipeline step 1: decide and record halves on one thread (render-mt2; SDK 51152c3)
+- D3D12Backend::Draw is now the decide half: targets, textures, shaders, pipeline, and the constants' wdepth and
+  hud (they read the bound targets). It hands a DrawPacket to Record, the record half: constants, views and
+  samplers, viewport and scissor, blend and stencil, the skip checks and note, geometry, captures. Both run at once
+  on the same thread.
+- Decide writes the packet's stages, pixel key and constants in place: the constants alone are 2.8 KB a draw, so a
+  copy would have cost about 1.5 ms a heavy frame.
+- Still shared, for step 2 and 3:
+  - the bound targets, read by PointScale and SetViewportScissor;
+  - stage0_, written by EnsureStageSamplers and read by the note;
+  - the upload ring and descriptor slots, also used by binding;
+  - queries (BeginCountedDraw writes the list directly).
+- Evidence: wincheck clean. D3D12 only, so untested headless.
+- Next: Harry's run: pictures and speed as before (872dc7e: heaviest seconds 82.7 fps).
+
 ### 2026-11-08 - Heavy stretches: reflections at the console's rate (branch render-mt2; SDK a01d7ba)
 - Harry chose to go after the heavy stretches (the 1% low, about 59 fps at about 5000 draws). New branches
   render-mt2 (PGR2 and SDK), from render-mt.

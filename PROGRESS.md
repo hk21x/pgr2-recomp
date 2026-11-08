@@ -37,6 +37,34 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
+- Draws are decided on the render thread and recorded on a new record thread, side by side
+  (docs/render-parallel.md, revision). XBE_RECORD_THREAD=0 records inline, as step 1.
+- Threaded (render_thread.cpp):
+  - the render thread hands record each batch in segments: up to a command that writes the list, and the rest
+    with the batch's last;
+  - record keeps its own state copy from those segments, calls RecordNext per draw, frees the prep ring's slots,
+    and finishes the batch (done_, settles);
+  - the render thread waits for record to drain before such a command, and whenever the backend asks (drain).
+- D3D12:
+  - decide's own commands go into the draw's packet (a ring of 64), and record appends them first;
+  - record owns rec_ and the draw caches, and writes rec_ into the list every 64 draws, so the replay is off the
+    render thread too;
+  - CL(), Submit and ForgetDrawState drain first;
+  - locks on the upload ring and views' slots, the copy pool and resource names; Upload's own buffers join the
+    frame's garbage at the next Submit; ring_gen_ is atomic;
+  - a full packet ring drains (spinning would deadlock: a batch's draws reach record only at its end or a fence);
+  - visibility tested draws and captures record inline after a drain; draws not assembled ahead are assembled into
+    their packet.
+- Evidence (headless; D3D12 itself only on Windows):
+  - XBE_CHECK_RECORD=1 makes the null backend take the record thread, keep each draw's state hash, and drain
+    every 97th draw (and on a full ring). Race: 2 million draws recorded, none with another state than decided.
+  - XBE_CHECK_STATE: 0 different.
+  - SMOKE OK with the record thread on, with the render thread alone, and by default.
+  - wincheck clean (it caught an atomic in a conditional).
+- Next: Harry's run. Pictures as before; the heaviest seconds (about 83 to 88 fps); the 1% low. If anything is
+  wrong, XBE_RECORD_THREAD=0 and compare.
+
 ### 2026-11-08 - Pipeline step 1: decide and record halves on one thread (render-mt2; SDK 51152c3)
 - D3D12Backend::Draw is now the decide half: targets, textures, shaders, pipeline, and the constants' wdepth and
   hud (they read the bound targets). It hands a DrawPacket to Record, the record half: constants, views and

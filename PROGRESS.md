@@ -44,8 +44,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - 1.6.2 is main: 1.6.1, release-package.bat's path fix, the cube face shrink pool (SDK 77b18eb, gated, on Harry's
   PC), and issue 36. The SDK is as main had it: no new gate. Notes in docs/releases/v1.6.2.md.
 - Harry confirmed on Windows (095d6b9 built on the VM): the intros pillarboxed, the menu fades reaching the edges.
-  main fast-forwarded to it; tag v1.6.2 makes the draft. The package is built (build.bat, release-package.bat) and
-  attached by the VM or Harry, who publishes.
+  main fast-forwarded to it; tag v1.6.2 made the draft (workflow run 42514725024). The VM built the package from the
+  tag (PGR2-package.zip 63,466,678 bytes; its json matches), and Harry published it on 2026-11-08 with the launcher.
+- Next: the multi-core renderer (render-mt, render-mt2) toward the next release. render-mt2 must take main's 1.6.2
+  (issue 36 is already in it as bf12da9), then the SDK lines of PGR1 and True Crime, and the six-game gate.
 
 ### 2026-11-07 - Cube face shrinks reuse textures, on fork main (branch shrink-pool, PGR2 and SDK)
 The render-mt finding without its timers and experiments, on fork main 5bcd974 (render-mt sits on the all-games candidate):

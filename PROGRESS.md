@@ -60,7 +60,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - ClearReport and GetReport run on the record thread, in order with the draws.
   Before, a counted draw was recorded inline after a drain, and every report call drained.
 - SMOKE OK with the record thread (4.2 million draws checked, none wrong).
-- Next: Harry's run. The waits a frame, and what is left of them.
+- Harry's run (log .local/win/3686f8b-pgr2.log): nothing wrong seen, but he asks whether the game feels worse than
+  its fps says (micro-stutter).
+  - Waits barely fell: 44 a heavy frame (2.03 ms), 50.7 a busy frame on average.
+  - The heaviest seconds 96.0 fps at 4906 draws.
+  - Racing-only summary: 164.9 fps, 1% low 79.2, 0.1% low 73.7, slowest frame 14.4 ms.
+  - The game races uncapped (200) with vsync off.
+- Thinking on the feel: an fps counter does not show uneven frame times, frames reaching the screen at uneven
+  times after the game set them up (the prep, render and record threads queue frames), or tearing.
+- New in XBE_PERF:
+  - pacing in the busy summary: the average change from frame to frame, and the share of frames 1.5 times both
+    neighbours;
+  - what makes the render thread wait for record, by cause.
+- Asked Harry: his monitor's refresh and FreeSync, and whether to try vsync on, capped at the refresh rate.
 
 ### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
 - Draws are decided on the render thread and recorded on a new record thread, side by side

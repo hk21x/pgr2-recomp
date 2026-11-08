@@ -48,6 +48,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - Result: 3.2 MB in 0.133 ms, from 0.349 on this VM. A test of 20000 single byte changes at random sizes and
     places missed none. Texture replacements keep Hash (their keys are unchanged).
 - Not done: the binding fast paths (last, memo) are already cached. Larger D3D12 changes need Harry's PC to test.
+- Other games headless on render-mt (gate-pgr2.sh) with XBE_RENDER_THREAD=1, XBE_CHECK_STATE=1 and XBE_CHECK_PRE=1:
+  - EoN smoke OK (frame blending on): 4 million draws, 0 state and 0 assembly differences.
+  - NightFire smoke OK.
+  - AUF: bond_fre missed its mouse hook with the checks on (they are slow). OK with the render thread on and no
+    checks, and OK with it off. Its bond stage draws 752 a frame threaded against 2741 unthreaded, the same with the
+    prep thread off: AUF merges draws (GameInfo::merge_draws), which only the render thread does.
+  - True Crime and PGR1: SDK merge conflict (their pins are on side lines). They need combined branches before
+    render-mt goes to fork main.
+- PGR2 SMOKE OK with the render thread off (2010 draws a frame; one run 1959, run to run variation) and on.
 
 ### 2026-11-08 - Render thread: headless checks, and a prep thread for assembly (render-mt; SDK eb1db71)
 - Marked the last state Harry tested without flicker: branch `render-mt-good` in both repos (PGR2 a6bdfd0, SDK 5ced337).

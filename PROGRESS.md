@@ -62,8 +62,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - XBE_CHECK_STATE: 0 different.
   - SMOKE OK with the record thread on, with the render thread alone, and by default.
   - wincheck clean (it caught an atomic in a conditional).
-- Next: Harry's run. Pictures as before; the heaviest seconds (about 83 to 88 fps); the 1% low. If anything is
-  wrong, XBE_RECORD_THREAD=0 and compare.
+- Harry's run (log .local/win/3c4dd86-pgr2.log): no graphical glitches.
+  - 8 heaviest seconds 112.3 fps at 4083 draws (step 1: 88.2 at 3961; 872dc7e: 82.7 at 4218);
+  - the render thread's batches 9.0 ms a heavy frame (11.4); decide 1.52 us a draw (2.24);
+  - busy average 167.9 fps (135.1); busy summary 178.6 fps, 1% low 53.0 (that summary holds the race start's
+    75 ms frame, 399 textures).
+  - A short run: one busy summary only.
+- b1defc4: the batches' settle is SettleBatches (clang warned it overrode Backend::Settle by accident; nothing
+  called it through a Backend). XBE_PERF reports the record thread's time a frame.
+- Next: which half limits the heavy frames now (the record thread's time against the render thread's), then the
+  larger of decide's steps (texture binding 2.5 ms, shaders and pipeline, targets).
 
 ### 2026-11-08 - Pipeline step 1: decide and record halves on one thread (render-mt2; SDK 51152c3)
 - D3D12Backend::Draw is now the decide half: targets, textures, shaders, pipeline, and the constants' wdepth and

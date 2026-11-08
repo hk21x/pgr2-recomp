@@ -37,6 +37,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Release 1.6.2 prepared: issue 36 (branch fixes-1.6.2, from main)
+- Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the
+  boot sequence 0x13DB90 plays the intros (hooks.cpp; the same change as render-mt2's bf12da9, where it is written
+  up). SMOKE OK; headless the intros' window is 0.06 to 100.9 s on a first boot.
+- 1.6.2 is main: 1.6.1, release-package.bat's path fix, the cube face shrink pool (SDK 77b18eb, gated, on Harry's
+  PC), and issue 36. The SDK is as main had it: no new gate. Notes in docs/releases/v1.6.2.md.
+- Next: Harry confirms issue 36 on Windows with this branch's build. Then main moves to it, the tag v1.6.2 makes the
+  draft, and the package is built (build.bat, release-package.bat) and attached.
+
 ### 2026-11-07 - Cube face shrinks reuse textures, on fork main (branch shrink-pool, PGR2 and SDK)
 The render-mt finding without its timers and experiments, on fork main 5bcd974 (render-mt sits on the all-games candidate):
 D3D12's cube face shrinks reuse a finished frame's shrunk copies (a pool); D3D11 keeps one per size with its view (its

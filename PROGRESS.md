@@ -37,6 +37,20 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Pipeline: the long run; clears no longer stop the render thread (render-mt2)
+- Harry's long run of ce1dee5 (log .local/win/ce1dee5-pgr2.log):
+  - second busy summary (racing only): 174.5 fps, 1% low 87.7, 0.1% low 82.5, slowest frame 12.7 ms (before
+    the record thread: about 59 to 67, 52 to 61, 18 to 21 ms);
+  - the first summary holds the race start: 1% low 62.5, 0.1% low 24.5, 76.5 ms (399 textures).
+  - Heaviest second, 5707 draws: frame 12.0 ms; render thread batches 11.8 ms, of which decide 7.9; record thread
+    9.3. The render thread is the limit.
+  - Harry's Task Manager: GPU 3D about 20 to 25%, no core flat at 100% (busy threads spread over the cores).
+- Change: clears are decided and handed to record like draws (D3D12Rec ClearRtv and ClearDsv in the packet). They
+  were fences, about ten a race frame (the six reflection faces, the view, the mirror), each making the render
+  thread wait for record to drain. XBE_PERF now times those waits ("waiting for record") and counts them.
+- Evidence: XBE_CHECK_RECORD (clears checked too): 1.8 million draws, none wrong; SMOKE OK with the record thread.
+- Next: Harry's run. How long the render thread still waits, and the heaviest seconds.
+
 ### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
 - Draws are decided on the render thread and recorded on a new record thread, side by side
   (docs/render-parallel.md, revision). XBE_RECORD_THREAD=0 records inline, as step 1.

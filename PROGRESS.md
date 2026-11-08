@@ -37,6 +37,23 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Log writes off the game's threads; where record's waits come from (render-mt2)
+- Harry's run of 127afb2 (log .local/win/127afb2-pgr2.log):
+  - racing-only summary: 172.6 fps, 1% low 77.0, 0.1% low 72.8, slowest frame 14.0 ms;
+  - but one frame took 426.9 ms at 46 s, with a single new texture: about 400 ms in the texture "make" step;
+  - texture creation is cheap now (placed). Most likely its report line's write went to the network share (Harry
+    runs from it) and stalled; any fwrite also writes when its 4 KB buffer fills.
+- Fix (log.cpp): lines are queued. A writer thread puts them in the file and stderr every 250 ms, warnings and
+  errors at once. Flush (exit, crash, relaunch) writes the rest itself, in order. No game thread waits on the disk
+  or the network any more. SMOKE OK.
+- Record's waits, by function, a frame:
+  - DrawFullScreen 7 to 12, SetFullViewport 3 to 6, SetBlitTarget 1 to 3 (blits within the frame), CopyRegion 3 to
+    4, Begin 3;
+  - DrawFrame, BlitFrame and RenderUi 2 each, at the present.
+  Each pass's first list write waits; the writes after it find record idle. The whole is about 1 ms a frame.
+- Where the heaviest seconds stand: decide about 7.9 ms and record 9.3 ms of a 12 ms frame at 5700 draws. Both
+  halves are now close.
+
 ### 2026-11-08 - Pipeline: the long run; clears no longer stop the render thread (render-mt2)
 - Harry's long run of ce1dee5 (log .local/win/ce1dee5-pgr2.log):
   - second busy summary (racing only): 174.5 fps, 1% low 87.7, 0.1% low 82.5, slowest frame 12.7 ms (before

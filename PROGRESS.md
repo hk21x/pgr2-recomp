@@ -37,6 +37,30 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Release blocker: AUF dies silently on render-mt2's SDK (render-mt2; SDK b77a36b)
+- From the SDK session, on Harry's PC:
+  - AUF main 2a9236f on SDK render-mt2 5114ead ends about 0.4 s into bond_eng.xbe, after its second frame's draw.
+  - No error line, no crash dump.
+  - The same with XBE_PRE_ASSEMBLE=0, XBE_RECORD_THREAD=0 and XBE_PLACED_TEXTURES=0 (old.bat).
+  - Logs: .local/win/auf/new.log, old.log.
+  - AUF's release (SDK 97b1654) at 3440x1440 works; so does AUF-16x10 (359eb0c) windowed at 1280x800.
+  - So: the SDK after those, or the borderless 3440x1440 path.
+- Read so far: the new instance dies right at its handover (Relaunch waits for its first frames, then ends the old
+  one). Relaunch never kills it. A plain abort or terminate would have dumped (SIGABRT handler), so it looks like a
+  fast-fail (the C runtime's invalid parameter, a /GS check) or an exit that skips the log.
+  - The background log writer can lose up to 250 ms of lines on such an exit, so the true last lines may be later.
+- Diagnostics (b77a36b):
+  - the invalid parameter handler logs and dumps;
+  - XBE_LOG_SYNC=1 writes every line at once;
+  - Relaunch logs whether the new instance took over or ended first, with its exit code (0xC0000409 would be a
+    fast-fail);
+  - the new instance logs its handover.
+- render-mt2 does not go to fork main until this is found.
+- Next, when Harry picks AUF up again:
+  1. the same build with XBE_LOG_SYNC=1 (the exit code, the real last lines);
+  2. Windows' Event Viewer (Application, "Application Error" at the time: its exception code and faulting module);
+  3. the SDK session's plan: windowed 1280x800, then the SDK at fork main 77b18eb, then bisect.
+
 ### 2026-11-08 - The next release's candidate: render-mt2 merged, six-game gate passed (SDK render-mt2 5114ead)
 - render-mt2 now holds 1.6.2:
   - SDK: fork main 77b18eb merged (f01ce5c). The shrink pool appeared twice; render-mt2's DropGarbage recycling

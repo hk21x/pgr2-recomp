@@ -50,7 +50,20 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - the upload ring and descriptor slots, also used by binding;
   - queries (BeginCountedDraw writes the list directly).
 - Evidence: wincheck clean. D3D12 only, so untested headless.
-- Next: Harry's run: pictures and speed as before (872dc7e: heaviest seconds 82.7 fps).
+- Harry's run (log .local/win/51152c3-pgr2.log): neutral, as meant. 2.24 us a draw in the draw step (872dc7e:
+  2.23). The 8 heaviest seconds were 88.2 fps at 3961 draws (82.7 at 4218).
+- Step 3's plan (step 2 folded in):
+  - The record thread is Threaded's: it keeps its own state copy from the batches' changes and calls the backend's
+    record half per Draw command. Decide pushes exactly one packet per top-level draw (an empty one when it leaves
+    the draw out).
+  - Decide's own commands (barriers, targets, pipeline) go into the packet's small recorder; record appends them
+    first, so rec_ is record's alone.
+  - Fence points: anything the render thread writes to the list directly (CL(), the non-draw commands, queries,
+    MakeDescriptorRoom's and the full ring's flushes) first waits for record to drain.
+  - Upload ring and descriptor slots: a lock.
+  - The packet carries what record read of decide's members: the bound targets' sizes, stage0.
+  - The prep ring's slots, the batches and done_ are released after record.
+  - Extensions and captures record inline. XBE_RECORD_THREAD=0 records inline.
 
 ### 2026-11-08 - Heavy stretches: reflections at the console's rate (branch render-mt2; SDK a01d7ba)
 - Harry chose to go after the heavy stretches (the 1% low, about 59 fps at about 5000 draws). New branches

@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-08 - Title recording and texture signatures faster (render-mt; SDK 09b8fe4)
+- Title thread: headless (render thread on), its recording costs 5.2-5.7 ms a frame at 2500-2750 draws; Harry's PC
+  showed 3.85 ms in heavy seconds. Cycle timers put SendState, the state compare, at 3967 of 4792 cycles a draw:
+  15 KB of state checked in 233 calls of 64 bytes each.
+  - Fix (13b19ed): one SSE pass per range, stopping only at a changed 64 byte piece; the same pieces are sent.
+  - Result: 1982 cycles a draw. XBE_CHECK_STATE: 3.8 million draws, 0 different.
+- Texture change checks: SurfaceSig hashes about 3.1 MB a heavy frame on Harry's PC.
+  - Fix (09b8fe4): SigHash, the same multiply mix in four independent lanes.
+  - Result: 3.2 MB in 0.133 ms, from 0.349 on this VM. A test of 20000 single byte changes at random sizes and
+    places missed none. Texture replacements keep Hash (their keys are unchanged).
+- Not done: the binding fast paths (last, memo) are already cached. Larger D3D12 changes need Harry's PC to test.
+
 ### 2026-11-08 - Render thread: headless checks, and a prep thread for assembly (render-mt; SDK eb1db71)
 - Marked the last state Harry tested without flicker: branch `render-mt-good` in both repos (PGR2 a6bdfd0, SDK 5ced337).
 - Headless render thread: the harness already builds render_thread.cpp; `XBE_RENDER_THREAD=1` runs it over the null

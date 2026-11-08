@@ -53,8 +53,14 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   PGR2 sets 30. Expected at 120 fps: 1 or 2 faces a frame instead of 6, about 450 fewer draws a frame.
 - XBE_PERF's "draw's other steps" line counts the draws and clears left out.
 - Evidence: wincheck clean; the harness builds; SMOKE OK (headless has no D3D12, so this is untested there).
-- Next: Harry's run: reflections must still look right (car paint, the cars' reflections moving); draws a frame
-  and the 1% low.
+- Harry's run (log .local/win/a01d7ba-pgr2.log): reflections on the player's car looked worse, but:
+  - the 8 heaviest seconds went from 70.6 to 80.1 fps (5007 to 4566 draws);
+  - second busy summary: 1% low 58.9 to 67.1, 0.1% low 51.6 to 60.6, slowest frame 21.3 to 17.9 ms;
+  - average 142.8 to 152.9 fps.
+- Changed (872dc7e): faces rest only while frames run late (the last slower than 120 a second), and PGR2's rate is 60.
+  Frames on time draw every face, so reflections are as before outside the heaviest scenes.
+- Next: the two stage pipeline. The render thread keeps the binding decisions; a second thread does constants,
+  tables, viewport, geometry and recording. About 5 ms of a 12 ms heavy frame.
 
 ### 2026-11-08 - Hitches: textures placed in heaps (render-mt; SDK f7fa195)
 - Harry's run of 6625e61 (log .local/win/6625e61-pgr2.log), with the log flushing every 250 ms:

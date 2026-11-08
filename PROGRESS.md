@@ -57,8 +57,17 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - PGR1's repro.sh in its gate clone (paths changed): the race loads, 86570 draws in a second, after.png right.
 - The Windows build's four old warnings fixed (screenshot.cpp, xnet.cpp; 5114ead).
 - The VM built the candidate (PGR2 3ee923f, SDK f01ce5c) for Harry's test.
-- Next: Harry's test of the candidate, and his go for fork main. That go also takes the all-games candidate, which
-  render-mt2 contains.
+- Harry's test of the candidate (VM build 3ee923f, SDK f01ce5c):
+  - D3D12, long race (log .local/win/f01ce5c-pgr2.log): busy summaries 179.7 and 171.3 fps; 1% low 92.0 and 80.3;
+    0.1% low 83.9 and 75.8; slowest frame 12.3 and 13.9 ms. Slow frames only at the race start (71 and 45 ms,
+    loading textures). Pacing 0.8 to 1.1 ms.
+  - D3D11, one race (log .local/win/f01ce5c-d3d11-pgr2.log): raced, no errors, the prep thread on. Record is
+    D3D12's only. XBE_PERF reports only on D3D12.
+  - Reflections looked right in both (Harry).
+- An EoN comparison run is asked of the EoN session: its current build against one with the SDK at render-mt2,
+  XBE_PERF on D3D12.
+- Next: the EoN result, then Harry's go for fork main. That go also takes the all-games candidate, which render-mt2
+  contains.
 
 ### 2026-11-08 - Release 1.6.2: issue 36 (branch fixes-1.6.2, from main)
 - Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the

@@ -73,6 +73,15 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
     neighbours;
   - what makes the render thread wait for record, by cause.
 - Asked Harry: his monitor's refresh and FreeSync, and whether to try vsync on, capped at the refresh rate.
+- Harry: a 360 Hz monitor with FreeSync on; vsync on felt better (log .local/win/522fdd0-vsync-pgr2.log). Run 1's
+  log was overwritten by that run (not copied first).
+  - That log shows the display at 280 Hz. D3D12's Present ignores vsync when the refresh is not a multiple of 60
+    and the tearing flag is supported (PresentUnsynced), so vsync on presented exactly as off.
+  - Its pacing: 0.80 ms frame-to-frame change, 0.3% uneven frames. Not uneven.
+  - Speed: the races already use the clock for game time above 30 (0x2919AD, hooks.cpp), so frames running late
+    do not slow the race.
+- Left as the likely cause of the feel: a varying delay between the title setting a frame up (its clock) and the
+  frame's present. New: XBE_PERF's "title to present" line, the average delay and its frame-to-frame change.
 
 ### 2026-11-08 - Pipeline step 3: the record thread (render-mt2; SDK 3c4dd86)
 - Draws are decided on the render thread and recorded on a new record thread, side by side

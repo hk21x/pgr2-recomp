@@ -466,6 +466,20 @@ void Build(X86Context& ctx, int focus, uint32_t port) {
         kernel::W32(rows + i * 4, g_row_va[i]);
     }
     g_row_count = count;
+    // from the pause menu: the object each of its pages makes with a row (0x8F820, 0x8ED10, the Sound page 0x8DF70:
+    // vtable 0x27953C from the page objects' allocator 0x4E5F0 on [0x2F4CC4], the row at +0x30). Without it the pause
+    // frame went with the pause menu: the race behind showed undimmed, the title and its lines gone (issue 32)
+    if (g_from_pause && count) {
+        ctx.ecx = kernel::R32(0x2F4CC4);
+        uint32_t obj = CallGuest(ctx, 0x4E5F0, {});
+        if (obj) {
+            kernel::G<uint8_t>(obj + 4) = 0;
+            kernel::W32(obj + 0x28, 0);
+            kernel::W32(obj + 0x2C, 0);
+            kernel::W32(obj, 0x27953C);
+            kernel::W32(obj + 0x30, g_row_va[count - 1]);
+        }
+    }
     // the button legend
     kernel::W32(0x28A720, 1);
     kernel::W32(kLegend, 0);

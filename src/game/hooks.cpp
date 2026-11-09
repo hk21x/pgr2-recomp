@@ -20,6 +20,7 @@
 #include "app/app.h"
 #include "core/log.h"
 #include "kernel/kernel.h"
+#include "kernel/memory.h"
 #include "xdk/d3d8.h"
 #include "xdk/hle.h"
 
@@ -144,6 +145,30 @@ extern uint32_t fov_percent, draw_distance_percent;
 void ApplySettingsEntry();  // src/game/settings_entry.cpp
 }
 
+// the intro movies are 640x480 4:3 pictures the XMV player draws as one screen quad from a YUY2 texture: on a wider
+// frame they are pillarboxed, not stretched (gpu::State::pillar_aspect). Only draws spanning the frame from a YUY2
+// texture: the title's movie panel (title_new3.xmv, under a vignette drawn at its size), its backdrop (another
+// format) and the 2D stay as they are, as the console's widescreen mode draws them.
+// Only while the boot sequence (0x13DB90) plays them (it returns once Intro3 has: 0x13C810 blocks for each movie):
+// the menus draw movies full screen too (pbg.xmv and others, opened on another thread: their backdrop and the fades
+// between pages), and squeezed to 4:3 those left the screen's edges still (issue 36, a 1.6.1 regression)
+static bool g_intros = false;
+void Pillarbox() {
+    d3d::State().pillar_aspect = g_intros ? 4.0f / 3.0f : 0.0f;
+    d3d::State().pillar_format = 0x24;  // D3DFMT_YUY2
+}
+
+X86_EXTERN_FUNC(__imp__sub_0013DB90);
+X86_FUNC(sub_0013DB90) {
+    g_intros = true;
+    Pillarbox();
+    LOGR("pgr2: boot intros: movies pillarboxed to 4:3");
+    __imp__sub_0013DB90(ctx, base);
+    g_intros = false;
+    Pillarbox();
+    LOGR("pgr2: boot intros done: movies drawn as the title draws them");
+}
+
 // skip_intro: the boot sequence 0x13DB90 plays Intro1, Intro2, the language's movie and Intro3 through the movie
 // player 0x13C810 (stdcall: path, flag; true when played), waiting for the cache copy between them. Those four
 // report "played" at once, so the waits stay. (Frontend.ini's IntroMovies, the byte 0x291AB6, is never read.)
@@ -168,6 +193,7 @@ X86_FUNC(sub_0013C810) {
                 return;
             }
     }
+    Pillarbox();
     __imp__sub_0013C810(ctx, base);
 }
 
@@ -399,6 +425,24 @@ X86_FUNC(sub_0018BC16) {
     LOGR("pgr2: a profile signed by another console (an Xbox's save): signature accepted, the profile's own checks follow");
 }
 
+// the speed camera photo (issue 30): 0x16E960 (thiscall on the photo object) clears the frame target [0x485DFC], draws
+// the camera's view into its top left 160x120, locks it, lays a texture over its memory and draws it into the photo, the
+// 160x120 texture at the object's +4 (texture coordinates by SetVertexData2s); 0x16E670 locks the photo for the profile.
+// The photo is drawn by the GPU and shown on the result page from guest memory, which the renderer reloads seconds
+// later: zeros, a black photo (Harry's log: no lock of it before then). So it is brought back at once, as a lock
+// would: D3D_BlockOnResource (0x1C61C0, stdcall) on the photo texture reads the target back into guest memory.
+X86_EXTERN_FUNC(__imp__sub_0016E960);
+X86_FUNC(sub_0016E960) {
+    uint32_t obj = ctx.ecx;
+    __imp__sub_0016E960(ctx, base);
+    uint32_t eax = ctx.eax;
+    if (uint32_t tex = kernel::R32(obj + 4)) kernel::CallGuest(ctx, 0x1C61C0, {tex});
+    ctx.eax = eax;
+    static bool said = false;
+    if (!said) LOGR("pgr2: speed camera photo read back after it was drawn");
+    said = true;
+}
+
 // the music volume (Options > Sound / Music; 0x367528, 0 to 1, read by 0x5DD70 and others). In races the radio plays
 // only through effect send 14 at full level and the DSP image puts it into the speakers at this volume (the menus'
 // music has it in its mix bin levels instead: -577 mB full, -1179 half); the mixer stands in for the image
@@ -433,6 +477,7 @@ X86_FUNC(sub_000D90F0) {
     was = pgr2::hide_hud;
     pgr2::ApplySettingsEntry();
     ApplyDrawDistance();
+    Pillarbox();
     ApplyAspect();
     __imp__sub_000D90F0(ctx, base);
     ApplyFov();

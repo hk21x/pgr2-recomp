@@ -109,4 +109,5 @@ const app::GameInfo app::kGame = {
     // In frames running late (the heaviest stretches) each face draws at most 60 times a second; the console drew them
     // 30 times a second. 30 here lifted the heaviest seconds from 70.6 to 80.1 fps, but looked worse on the player's car
     .cube_face_hz = 60,
+    .fills_narrow_screens = true,  // a 16:10 screen: the 4:3 mode, its 3D views widened (src/game/hooks.cpp ApplyAspect)
 };

@@ -122,6 +122,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   - Correct, cheaper on the CPU, no visible gain at its frame-locked 60.
 - Next: the EoN result, then Harry's go for fork main. That go also takes the all-games candidate, which render-mt2
   contains.
+### 2026-11-09 - 16:10 on fork main 89cafb8 (branch aspect-16x10)
+- Fork main fast-forwarded to SDK aspect-16x10 89cafb8 with Harry's go (the all-games candidate and 16:10); six-game
+  gate: PGR1, AUF, NightFire on their pins, PGR2 and EoN at their mains smoke OK; True Crime's main builds only on its
+  own line (interp_copy_changed, interp_kept_bytes), as expected.
+- This branch: main 3453de4 (1.6.2) merged in, SDK pinned at 89cafb8. Headless: 1280x800 SMOKE OK ("4:3 3D views at
+  1.600:1", mirror narrowed to 167), 1280x720 SMOKE OK, unchanged. Next: the PGR2 session fast-forwards main to it.
 
 ### 2026-11-08 - Release 1.6.2: issue 36 (branch fixes-1.6.2, from main)
 - Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the
@@ -664,6 +670,17 @@ Notes in docs/releases/v1.6.1.md: ultrawide by default and the live 16:9 / fill 
   inside the vignette drawn over it at its old size, so it stays as the console's widescreen mode draws it. Upscaling:
   the movies are 640x480 low bitrate WMV2; nothing to recover beyond the sharpening already there.
 
+### 2026-11-06 - 16:10 brought onto main's ultrawide fix (branch aspect-16x10)
+- main's view tracking (Track, Fit, Reshape) now follows the booted mode: the views read 0x2790FC in the 4:3 mode
+  (16:10) as 0x2790F8 in widescreen, the mirror is narrowed for the mode's 2D (4:3 or 16:9), and ApplyAspect reshapes
+  the views when the constant in use changes (a 16:10 window resized to 16:9 in play). GameInfo: auto_fills_screen,
+  fill_follows_live and fills_narrow_screens all set. SDK aspect-16x10 4a9e592 (fork main ad707e8 in it).
+- Headless: 1280x800 SMOKE OK ("4:3 3D views at 1.600:1", mirror narrowed to 167), 1280x720 SMOKE OK, unchanged.
+- Windows recheck (d22a2dc, SDK 4a9e592): "All looks great". 1280x800 at 1.600:1 (race, mirror 167, garage, showroom);
+  F1 to 1280x720 and back, "3 views reshaped" each way (mirror 150, then 167); live to borderless 3440x1440 from the
+  16:10 boot: the 4:3 mode widened to 2.389, mirror 112. No errors. Next: fork main takes the candidate, then the SDK
+  branch aspect-16x10, then this branch into main.
+
 ### 2026-11-06 - Ultrawide by default (issue 33)
 Issue 33: on 3440x1440 the picture is stretched 16:9, not widened. Not the 16:10 work (that is on branch aspect-16x10, not
 in a release): reproduced by Harry on v1.6.0 built on the Windows VM (C:\Work\PGR2-v1.6.0). In 1.6.0 only "Fill the
@@ -682,6 +699,27 @@ each time, the mirror narrowed and back. Not covered: 0x16E960's small view. Har
 "Works as expected": the default fills, 16:9 and Fill switch live without stretching; 4:3 waits for a restart, as the row
 says. SDK: aspect-latch-1.6 merged into fork main as ad707e8 after the six-game gate (PGR1 with aspect-16x10, EoN with
 eon-merge-main-1fd7e54; PGR1's repro.sh a live race).
+
+### 2026-11-05 - 16:10 screens filled, not letterboxed (branch aspect-16x10; SDK branch aspect-16x10)
+- A player asked for 16:10 (the Steam Deck's 1280x800) without bars: the SDK showed every screen narrower than 16:9 as
+  16:9 with bars above and below (app::FrameAspect never went under 16:9).
+- SDK 3c99e73 (on the all-games candidate): a title setting GameInfo::fills_narrow_screens gets, on a screen between 4:3
+  and 16:9 with "From the screen's shape" or "Fill the screen", a 4:3 TV reported to the game, FrameAspect the screen's
+  and its 2D kept 4:3 in the middle (app::HudAspect, the HUD squeeze). Other titles are unchanged. Harness: OUTPUT=1280x800.
+- PGR2: its 4:3 mode's views read 0x2790FC (0x88480, 0x88AD0, 0x16E960, 0x184530, 0x1857F0), set to the frame's shape as
+  0x2790F8 is in widescreen; the rear view mirror's viewport is narrowed for the 4:3 layout as it is for 16:9.
+- Headless at 1280x800: SMOKE OK, "4:3 3D views at 1.600:1", mirror 200 wide narrowed to 167; race frames shown at 16:10
+  keep the rev counter round and the HUD's corner panels on the edges. 16:9 (1280x720): SMOKE OK, unchanged.
+- Windows (Harry's RX 7900 XT, D3D12, 1280x800 window, from the VM's build): car select, race intro, chase and bumper
+  views, mirror, garage and showroom fill without bars or stretching; the HUD's corner panels reach the edges (the
+  bottom-left lap panel stops about 30 px short, as at 16:9); 1280x720 unchanged; the F1 window stays on screen.
+- Found there: a resolution changed in play (16:10 to 16:9) set the 4:3 views back to 1.333 with the frame shown 16:9.
+  SDK fix: the TV mode the game booted with is kept, and a title widening its 4:3 views fills the new screen; F1 now
+  offers 16:10 and 16:9 window sizes in Window mode (only the monitor's modes were listed).
+- Recheck on Windows (f8bd45d, SDK 359eb0c): "Looks great". 1280x800 at 1.600:1, F1 to 1280x720 at 1.778:1 (the race
+  fills 16:9, HUD 4:3 in the middle), back to 1.600:1; F1 window on screen; no errors. Seen in the log: for about 17
+  presents after a switch the targets are made at a mixed size (1422x800, 1152x720) before the swap chain reaches the
+  new one; nothing visible, left. Next: the all-games gate on SDK aspect-16x10, after the candidate reaches fork main.
 
 ### 2026-11-03 - Release 1.6.0: the prebuilt model
 - Published by Harry from main 93de261 (SDK 97b1654): PGR2Launcher.exe 2.4 MB, PGR2-package.zip 73.3 MB (41 entries, PGR2.exe and the

@@ -54,6 +54,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   result, the quit code, whether the window is still there).
 - Next: Harry's go for fork main and the 1.7.0 release (all tests done: six-game gate twice, PGR1's frame check,
   PGR2 on D3D12 and D3D11, EoN's comparison, AUF on render-mt2's SDK).
+- From EoN (driving, in-between frames, D3D12, sdk eon-interp-mt2 d9c7ac4 = render-mt2 bd6fc8c plus interp fixes):
+  - Open: a floor light pool (a pass sampling an off-screen target) shows in one frame and is gone in the next.
+    The reference renderer does not do it. Harry runs XBE_RECORD_THREAD=0 and XBE_PRE_ASSEMBLE=0 to see whether
+    render-mt2's threads are in it. The release waits for that.
+  - Later (not for 1.7.0): an in-between frame costs the render side as much as a real one (host 5 to 6 ms, bind
+    2.5 to 3.8 ms), so interp backs off from about 115 to 60 fps. Its draws bind the same as the frame before
+    (only vertex constants blended): binding could be skipped or remembered for them.
 
 ### 2026-11-08 - Release blocker: AUF dies silently on render-mt2's SDK (render-mt2; SDK b77a36b)
 - From the SDK session, on Harry's PC:

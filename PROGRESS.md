@@ -37,6 +37,24 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-09 - AUF's deaths not render-mt2's; its quit diagnostics taken (render-mt2; SDK 03346e8)
+- The SDK session's findings, with Harry's runs:
+  - Event Viewer for the crashing 5114ead runs: twice 0xC0000005 in AgentUnderFireBond.dll at __imp__sub_00165D40's
+    first guest load. The current map's pointer 0x374404 was cleared (unload 0x165E60 through 0x15EB20 on another
+    guest thread) between map load 0x15E5D0 setting it (0x15E9E6) and using it (0x15EAB1): AUF's own latent race.
+  - Once 0xC0000006: an SMB in-page error, running a freshly built tree off the share.
+  - The exact 5114ead rebuild is clean 8 of 8 tonight: 4 with everything on, 4 with XBE_PRE_ASSEMBLE,
+    XBE_RECORD_THREAD, XBE_PLACED_TEXTURES and XBE_DEFER_COPIES all 0. The 03346e8 build is 0 of 21.
+  - So last night's deaths depended on that night's conditions, not on render-mt2. The race is noted for the AUF
+    session. render-mt2's later done_ (deferred copies, then record) does shift guest thread timing around fences,
+    one way such a race shows.
+  - The one clean early quit before a handover (auf-async-2, the VM) is separate and not seen again.
+- Taken into render-mt2 (fast-forward to the SDK session's auf-quit-diag 03346e8, logging only): WM_CLOSE (sent
+  from another thread or process, during or after the handover), WM_DESTROY, and the main loop's end (GetMessage's
+  result, the quit code, whether the window is still there).
+- Next: Harry's go for fork main and the 1.7.0 release (all tests done: six-game gate twice, PGR1's frame check,
+  PGR2 on D3D12 and D3D11, EoN's comparison, AUF on render-mt2's SDK).
+
 ### 2026-11-08 - Release blocker: AUF dies silently on render-mt2's SDK (render-mt2; SDK b77a36b)
 - From the SDK session, on Harry's PC:
   - AUF main 2a9236f on SDK render-mt2 5114ead ends about 0.4 s into bond_eng.xbe, after its second frame's draw.

@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-09 - 16:10 on fork main 89cafb8 (branch aspect-16x10)
+- Fork main fast-forwarded to SDK aspect-16x10 89cafb8 with Harry's go (the all-games candidate and 16:10); six-game
+  gate: PGR1, AUF, NightFire on their pins, PGR2 and EoN at their mains smoke OK; True Crime's main builds only on its
+  own line (interp_copy_changed, interp_kept_bytes), as expected.
+- This branch: main 3453de4 (1.6.2) merged in, SDK pinned at 89cafb8. Headless: 1280x800 SMOKE OK ("4:3 3D views at
+  1.600:1", mirror narrowed to 167), 1280x720 SMOKE OK, unchanged. Next: the PGR2 session fast-forwards main to it.
+
 ### 2026-11-08 - Release 1.6.2: issue 36 (branch fixes-1.6.2, from main)
 - Issue 36 (menu fades squeezed to 4:3 on wide screens, a 1.6.1 regression): movies are pillarboxed only while the
   boot sequence 0x13DB90 plays the intros (hooks.cpp; the same change as render-mt2's bf12da9, where it is written

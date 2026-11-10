@@ -135,8 +135,10 @@ std::vector<achievements::Def> AchievementSet() {
         {"rank20", "Crowd Pleaser", "Reach Kudos Rank 20", 5, PGR2_TOTAL_KUDOS ">=194250"},
         {"rank30", "Showman", "Reach Kudos Rank 30", 10, PGR2_TOTAL_KUDOS ">=382500"},
         {"rank40", "Kudos King", "Reach Kudos Rank 40", 10, PGR2_TOTAL_KUDOS ">=575000"},
-        {"rank50", "Living Legend", "Reach Kudos Rank 50", 25, PGR2_TOTAL_KUDOS ">=1520000"},
-        {"rank60", "Gotham's Finest", "Reach Kudos Rank 60", 50, PGR2_TOTAL_KUDOS ">=8153000"},
+        // issue 38: rank 50 is about the most a player can reach (every World Series and Arcade race at Platinum), so the
+        // last two are ranks 45 and 50; the ids stay as they were so unlocks already earned are kept
+        {"rank50", "Living Legend", "Reach Kudos Rank 45", 25, PGR2_TOTAL_KUDOS ">=953500"},
+        {"rank60", "Gotham's Finest", "Reach Kudos Rank 50", 50, PGR2_TOTAL_KUDOS ">=1520000"},
     };
     // two for each class: every race with a medal, every race at Platinum
     static const char* const kClass[14][3] = {

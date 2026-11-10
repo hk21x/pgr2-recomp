@@ -101,6 +101,7 @@ const app::GameInfo app::kGame = {
                   "acd776330a9b903fd567b544cf7ece0f612f6c7d", "702b79fd3bc844a413cbc26404718b1bf7e44e87"},  // a package is built from one of them
     .wheel = pgr2::WheelFeel,  // a steering wheel's force feedback follows the player's car
     .send_level = pgr2::MusicLevel,  // the radio, heard through the effect sends, at the music volume
+    .edge_fills = false,  // ultrawide: the HUD's dark backdrops squeezed with its text, not reaching the screen's sides
     .sharpen_2d = true,
     .languages = {1, 2, 3, 4, 5, 6, 7, 8},  // the disc's; Portuguese has text files but the game runs it as English              // menus, HUD and text drawn from enlarged, sharpened copies of their textures
     .auto_fills_screen = true,  // "From Screen" on an ultrawide: the 3D views widened to it, the HUD 16:9 (hooks.cpp ApplyAspect)

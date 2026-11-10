@@ -152,10 +152,14 @@ void ApplySettingsEntry();  // src/game/settings_entry.cpp
 // Only while the boot sequence (0x13DB90) plays them (it returns once Intro3 has: 0x13C810 blocks for each movie):
 // the menus draw movies full screen too (pbg.xmv and others, opened on another thread: their backdrop and the fades
 // between pages), and squeezed to 4:3 those left the screen's edges still (issue 36, a 1.6.1 regression)
+// The menus' own full screen movies (pbg.xmv, the backdrop) fill the frame's width at their shape, cropped top and
+// bottom (State::pillar_fill): stretched they were distorted (issue 37), pillarboxed their fades left the sides
+// still (issue 36).
 static bool g_intros = false;
 void Pillarbox() {
-    d3d::State().pillar_aspect = g_intros ? 4.0f / 3.0f : 0.0f;
+    d3d::State().pillar_aspect = 4.0f / 3.0f;
     d3d::State().pillar_format = 0x24;  // D3DFMT_YUY2
+    d3d::State().pillar_fill = !g_intros;
 }
 
 X86_EXTERN_FUNC(__imp__sub_0013DB90);

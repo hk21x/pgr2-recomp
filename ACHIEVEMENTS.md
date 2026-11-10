@@ -85,8 +85,11 @@ Points across all 28: 21 + 28 + 35 + 70 = 154.
 | Crowd Pleaser | Reach Kudos Rank 20 | 5 |
 | Showman | Reach Kudos Rank 30 | 10 |
 | Kudos King | Reach Kudos Rank 40 | 10 |
-| Living Legend | Reach Kudos Rank 50 | 25 |
-| Gotham's Finest | Reach Kudos Rank 60 | 50 |
+| Living Legend | Reach Kudos Rank 45 | 25 |
+| Gotham's Finest | Reach Kudos Rank 50 | 50 |
+
+Rank 60 is out of reach: rank 50 already takes about every race at Platinum, and each rank after it needs far more
+Kudos than the game has left to give (issue 38).
 
 Points: 105.
 

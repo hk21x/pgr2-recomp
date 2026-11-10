@@ -37,6 +37,25 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-09 - Issues 37, 35, 34 and 38 for 1.6.3 (branch fixes-1.6.3; SDK pgr2-1.6.3)
+- 37, the menu backdrop stretched since 1.6.2: SDK State::pillar_fill, a pillar_aspect picture enlarged about the centre
+  to fill the frame's width, top and bottom cropped (Pillarbox sets zclip[2..3], the pretransformed shader scales y;
+  the reference renderer the same). PGR2 pillarboxes the boot intros (0x13DB90) and fills with every other full screen
+  YUY2 movie. Headless 21:9 (FRAME_ASPECT_X100=239): menus' 2D in the 16:9 middle, the backdrop the full width.
+- 34, result and pause screens at 21:9: the game blurs the frozen frame into a 320x240 target and draws it back tinted
+  (FF666666) as one quad from x -1 to 639. Half a pixel short of the right edge it was squeezed into the middle, the
+  unblurred frame left bright at the sides. SDK gpu::kEdgeNear 1.5: a vertex within 1.5 pixels of an edge is on it
+  (DrawSpan, both 2D shader paths, reference renderer). Headless, replay.txt to the Timed Run result at 21:9: dimmed and
+  blurred across the whole width.
+- 38: Gotham's Finest needs rank 50 (1,520,000), Living Legend rank 45 (953,500); ids kept, so earned unlocks stay.
+  Full House left as it is (reachable, if late).
+- 35, HUD backdrops reaching the screen's sides at 21:9: the race HUD draws its translucent black boxes (tfactor
+  FF020202, alpha 0x22) as one untextured quad list of five, some from x 0 and some to 640; together they spanned the
+  frame, so each kept its edge corner. SDK GameInfo::edge_fills (PGR2 off): such a draw spans only where one triangle
+  reaches both edges (a full screen quad's each do), and the one-edge untextured fill rule (EoN's scope) is off too.
+  Headless 21:9: the boxes stop at the 16:9 edges with the text.
+- Smoke OK. Next: all-games gate of SDK pgr2-1.6.3, a Windows build for Harry, then release 1.6.3.
+
 ### 2026-11-09 - 16:10 on fork main 89cafb8 (branch aspect-16x10)
 - Fork main fast-forwarded to SDK aspect-16x10 89cafb8 with Harry's go (the all-games candidate and 16:10); six-game
   gate: PGR1, AUF, NightFire on their pins, PGR2 and EoN at their mains smoke OK; True Crime's main builds only on its

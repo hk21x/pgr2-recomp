@@ -54,7 +54,10 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   frame, so each kept its edge corner. SDK GameInfo::edge_fills (PGR2 off): such a draw spans only where one triangle
   reaches both edges (a full screen quad's each do), and the one-edge untextured fill rule (EoN's scope) is off too.
   Headless 21:9: the boxes stop at the 16:9 edges with the text.
-- Smoke OK. Next: all-games gate of SDK pgr2-1.6.3, a Windows build for Harry, then release 1.6.3.
+- Smoke OK. All-games gate: PGR2, NightFire and PGR1 on pgr2-1.6.3; AUF, EoN and True Crime (pinned on render-mt2)
+  on gate-163-mt2, pgr2-1.6.3 merged into render-mt2 (one conflict: the Pillarbox call in the split Draw), all SMOKE OK.
+- Windows build for Harry: C:\Work\PGR2-fixes-1.6.3 (clang 19.1.5, as 1.6.2's package). Next: Harry's test, then
+  release 1.6.3; gate-163-mt2's merge is what render-mt2 takes.
 
 ### 2026-11-09 - 16:10 on fork main 89cafb8 (branch aspect-16x10)
 - Fork main fast-forwarded to SDK aspect-16x10 89cafb8 with Harry's go (the all-games candidate and 16:10); six-game

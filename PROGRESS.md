@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-11 - Release 1.6.3 published
+- Tag v1.6.3 moved to 905eb42 (fixes-next; SDK fork main 26f372b) after Harry deleted the first draft; the workflow
+  remade the draft; the windows-vm built the package (clang 19.1.5, 63,555,981 bytes, the same 41 entries as 1.6.2);
+  Harry published it. Closing comments for issues 15, 19, 34, 35, 37 and 38 and the issue 29 reply are in
+  .local/issues for Harry to post. Next: issue 29 headless at race_fps 60; issue 34's frame rate on those screens.
+
 ### 2026-11-11 - 1.6.3 grows to fixes-next (Harry): fork main 26f372b
 - Harry: ship fixes-next as 1.6.3 (the tag moves; he deletes the first v1.6.3 draft). SDK crash-dump-guest gated:
   PGR2, AUF, NightFire, EoN, PGR1 SMOKE OK; True Crime conflicts in app.h with fork main 40a735b itself (its own line);

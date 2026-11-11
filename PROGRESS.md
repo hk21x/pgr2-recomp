@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-11 - 1.6.3 grows to fixes-next (Harry): fork main 26f372b
+- Harry: ship fixes-next as 1.6.3 (the tag moves; he deletes the first v1.6.3 draft). SDK crash-dump-guest gated:
+  PGR2, AUF, NightFire, EoN, PGR1 SMOKE OK; True Crime conflicts in app.h with fork main 40a735b itself (its own line);
+  launcher_cli links; fork main fast-forwarded 40a735b..26f372b. Notes docs/releases/v1.6.3.md list the multi-core
+  renderer, Alt+Enter, 16:10 and 3:2, crash dumps, disc read retries and issues 34, 35, 37, 38.
+
 ### 2026-11-11 - Issues 15 and 19 (branch fixes-next; SDK crash-dump-guest)
 - 15, a 3:2 laptop screen boxed: already fixed by the 16:10 work (on main since 7fbc135, so in the 1.6.3 tag; its
   notes do not say so). Headless OUTPUT=1500x1000: "4:3 3D views at 1.500:1", menus and race fill the frame.

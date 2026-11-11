@@ -37,6 +37,13 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-11 - Issues 15 and 19 (branch fixes-next; SDK crash-dump-guest)
+- 15, a 3:2 laptop screen boxed: already fixed by the 16:10 work (on main since 7fbc135, so in the 1.6.3 tag; its
+  notes do not say so). Headless OUTPUT=1500x1000: "4:3 3D views at 1.500:1", menus and race fill the frame.
+- 19, a key for the display mode: SDK Alt+Enter (main.cpp WndProc, before the settings window's keys) switches between
+  a window and the full screen mode last used, saved and applied as F1's choice; WM_SYSCHAR swallowed (no beep).
+  wincheck clean; Windows to try (needs a run). README lists it.
+
 ### 2026-11-11 - Issue 29 reviewed: an AI car's track section entry gave a wild list index (branch issue29-dumps)
 - The reporter's crash (1.6.0 era, race_fps 60, DLC on, Yokohama street race): an access violation in PGR2.dll on the
   title's thread, read of guest 4823D028. 0xBEAB0 (from 0xBEAF0, the AI's lane choice under 0xBECFA): the car's track

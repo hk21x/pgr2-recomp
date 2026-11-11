@@ -42,7 +42,11 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   notes do not say so). Headless OUTPUT=1500x1000: "4:3 3D views at 1.500:1", menus and race fill the frame.
 - 19, a key for the display mode: SDK Alt+Enter (main.cpp WndProc, before the settings window's keys) switches between
   a window and the full screen mode last used, saved and applied as F1's choice; WM_SYSCHAR swallowed (no beep).
-  wincheck clean; Windows to try (needs a run). README lists it.
+  README lists it. Harry on Windows (C:\Work\PGR2-fixes-next, clang 19): window and borderless back and forth, in
+  menus and with the settings window, clean exits.
+- Issue 29's dumps on Windows: XBE_TEST_CRASH=600 faulted at swap 600 (21 s); the dump, 282 MB, written in 9 s with
+  265 MB of guest memory in 15 runs; read back here (python minidump): guest 0x10000 is "XBEH" at host 0x100010000.
+  Larger than first thought (265 MB committed, not 64): a reporter would zip it or share it outside GitHub.
 
 ### 2026-11-11 - Issue 29 reviewed: an AI car's track section entry gave a wild list index (branch issue29-dumps)
 - The reporter's crash (1.6.0 era, race_fps 60, DLC on, Yokohama street race): an access violation in PGR2.dll on the

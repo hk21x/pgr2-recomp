@@ -37,6 +37,19 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-11 - Issue 29 reviewed: an AI car's track section entry gave a wild list index (branch issue29-dumps)
+- The reporter's crash (1.6.0 era, race_fps 60, DLC on, Yokohama street race): an access violation in PGR2.dll on the
+  title's thread, read of guest 4823D028. 0xBEAB0 (from 0xBEAF0, the AI's lane choice under 0xBECFA): the car's track
+  section [car+0x28] indexes 0xF4-byte entries at [0x376DC4]; +4 is an index into -1 terminated lists of 0x14 bytes at
+  [0x376DCC]. The dump's registers: edx 00720768 the list base, ecx 0395B070 the index read (a guest pointer, not an
+  index): 00720768 + 0395B070 * 0x14 = 4823D028. Likely the section index past the table. The 361 s "errors" are F3's
+  thread stacks.
+- The dump had no guest memory to show which. SDK crash-dump-guest 5033230 (fork, from main 40a735b): dumps add the
+  guest's committed pages (MemoryCallback, 512 MB cap) and log how much; XBE_TEST_CRASH=N faults on the title's thread
+  at swap N (faults in the Linux harness). Windows check of the dump to do (needs Harry's OK to run on the VM).
+- Asked the reporter (comment text in .local/issues/i29-comment.md, for Harry to post) for the version and whether it
+  happens at race speed 30. Next: headless repro at race_fps 60, logging section indices out of range.
+
 ### 2026-11-09 - Issues 37, 35, 34 and 38 for 1.6.3 (branch fixes-1.6.3; SDK pgr2-1.6.3)
 - 37, the menu backdrop stretched since 1.6.2: SDK State::pillar_fill, a pillar_aspect picture enlarged about the centre
   to fill the frame's width, top and bottom cropped (Pillarbox sets zclip[2..3], the pretransformed shader scales y;

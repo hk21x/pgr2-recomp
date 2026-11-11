@@ -56,8 +56,8 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
   Headless 21:9: the boxes stop at the 16:9 edges with the text.
 - Smoke OK. All-games gate: PGR2, NightFire and PGR1 on pgr2-1.6.3; AUF, EoN and True Crime (pinned on render-mt2)
   on gate-163-mt2, pgr2-1.6.3 merged into render-mt2 (one conflict: the Pillarbox call in the split Draw), all SMOKE OK.
-- Windows build for Harry: C:\Work\PGR2-fixes-1.6.3 (clang 19.1.5, as 1.6.2's package). Next: Harry's test, then
-  release 1.6.3; gate-163-mt2's merge is what render-mt2 takes.
+- Windows build for Harry: C:\Work\PGR2-fixes-1.6.3 (clang 19.1.5, as 1.6.2's package); Harry: good. Release 1.6.3:
+  main fast-forwarded, tag v1.6.3 (SDK cb3a105, in fork main since 8d9815a). Package to follow at Harry's word.
 
 ### 2026-11-09 - 16:10 on fork main 89cafb8 (branch aspect-16x10)
 - Fork main fast-forwarded to SDK aspect-16x10 89cafb8 with Harry's go (the all-games candidate and 16:10); six-game

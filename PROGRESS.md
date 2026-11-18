@@ -37,6 +37,21 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-18 - README restyled (twine-pc layout), new shots from GPU-VM (branch readme-style)
+- Harry asked (via the juiced session) for every port's README in CipherNovaa/twine-pc's style, as juiced-recomp's
+  a826092: banner, badges, link row, hero, table of contents with back-to-top links, Xbox vs. PC wipe, a features
+  table, game sections (widescreen, Recomp), graphics close-ups, controls, requirements, getting started, FAQ in
+  details blocks, known issues, roadmap, building, credits with an AI disclosure. Every fact kept from the old README.
+- Shots: 1.6.3 built on GPU-VM (Intel Arc A750) in C:\Testing\pgr2-recomp from the PAL ISO (hard link in assets,
+  default.xbe moved out after the build, or the game reads assets as the disc), driven by C:\pgr2ctl\run.ps1 (task
+  PGR2Run). A 1920x800 window (21:9; the VM's screen is 1080p). The Time Attack route of scripts/pad/timeattack.txt
+  from a saved first-boot hdd lands on one still frame (Florence, MINI, Kudos street race) 33 s after Start Race, the
+  same in every run, so each setting is a fresh start. Keyboard throttle does not move the car there (as in Juiced and
+  PGR1); keys reach the game only after an Alt tap around SetForegroundWindow.
+- docs/images: banner, hero, wipe (66 frames), ultrawide (title menu), Recomp menu, edges, MSAA, SMAA, sharpening,
+  texture filtering. Dropped: the 3440x1440 car, alpha, scaling and world texture panels.
+- Next: Harry looks at the branch, then main.
+
 ### 2026-11-11 - Release 1.6.3 published
 - Tag v1.6.3 moved to 905eb42 (fixes-next; SDK fork main 26f372b) after Harry deleted the first draft; the workflow
   remade the draft; the windows-vm built the package (clang 19.1.5, 63,555,981 bytes, the same 41 entries as 1.6.2);

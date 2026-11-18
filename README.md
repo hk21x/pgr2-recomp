@@ -1,87 +1,385 @@
-# Project Gotham Racing 2 - XBE Recomp
+<p align="center">
+  <img src="docs/images/pgr2-banner.webp" alt="Project Gotham Racing 2, native PC port: cars on a city street at 21:9" width="100%">
+</p>
 
-![Project Gotham Racing 2 - native PC port](docs/images/pgr2-pc-port.webp)
+<p align="center">
+  <img alt="Platform: Windows" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-1f6feb?style=for-the-badge">
+  <img alt="Renderer: Direct3D 12 and 11" src="https://img.shields.io/badge/renderer-Direct3D%2012%20%2B%2011-b8860b?style=for-the-badge">
+  <img alt="Static recompilation of the Xbox game" src="https://img.shields.io/badge/Xbox-static%20recompilation-2ea043?style=for-the-badge">
+  <a href="https://github.com/hk21x/pgr2-recomp/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/hk21x/pgr2-recomp?style=for-the-badge&color=8957e5"></a>
+</p>
 
-An unofficial native PC port of the original Xbox version of Project Gotham Racing 2, with extended graphics options
-and other enhancements. The game's own x86 code is statically recompiled into a Windows executable with the
-[Xbox XBE Recomp](https://github.com/TGP482/XboxXBE-Recomp) tool; the Xbox's graphics, sound and system libraries are
-reimplemented for Windows (Direct3D 12 or 11, XAudio2, SDL). It is not an emulator.
+<p align="center">
+  <a href="#getting-started"><b>Getting started</b></a> &nbsp;·&nbsp;
+  <a href="#building"><b>Building</b></a> &nbsp;·&nbsp;
+  <a href="https://discord.gg/PQjkKsdtc"><b>Discord</b></a>
+</p>
+
+<p align="center">
+  <img src="docs/images/pgr2-hero.webp" alt="A black MINI Cooper S on the start line of a Florence street race, at 21:9 with the HUD in a centred 16:9 area" width="800">
+</p>
+
+**The 2003 Xbox street racer, running natively on PC.** This is not an emulator. The game's own x86 code is
+statically recompiled with the [Xbox XBE Recomp](https://github.com/TGP482/XboxXBE-Recomp) toolkit into a Windows
+program, with the Xbox's graphics, sound and system libraries rebuilt underneath (Direct3D 12 or 11, XAudio2, SDL):
+widescreen and ultrawide, races at up to 144 frames a second, sharper graphics, keyboard, modern pads and steering
+wheels, your own music, achievements, and settings inside the game's own menus.
 
 > [!NOTE]
-> This project does not include any game assets. You must provide the files from your own legally acquired copy of
-> the game to build and play.
+> This project does not include any game assets. You need your own copy of the Xbox game to play: the launcher
+> builds the game's code on your PC from your disc.
 
-## Supported Version
+## Table of contents
 
-The European (PAL) and North American (NTSC) Xbox releases of Project Gotham Racing 2 (title id 4D53004B):
+- [Xbox vs. PC](#xbox-vs-pc)
+- [Features](#features)
+- [Widescreen and ultrawide](#widescreen-and-ultrawide)
+- [Recomp: settings in the game's menus](#recomp-settings-in-the-games-menus)
+- [Graphics settings](#graphics-settings)
+- [Controls](#controls)
+- [Your music, DLC and system link](#your-music-dlc-and-system-link)
+- [Achievements](#achievements)
+- [Requirements](#requirements)
+- [Getting started](#getting-started)
+- [FAQ](#faq)
+- [Known issues](#known-issues)
+- [Roadmap](#roadmap)
+- [Community and support](#community-and-support)
+- [Building](#building)
+- [Credits and legal](#credits-and-legal)
 
-| Release | `default.xbe` SHA-1 |
-| --- | --- |
-| Europe (PAL), version 2 | `676895b86f01938804c5f1cdcad8b44044295cb4` |
-| North America (NTSC), version 5 | `ec6e902fc167de349f1dc1838a7441dfff932c62` |
-| Europe (PAL), media patched | `acd776330a9b903fd567b544cf7ece0f612f6c7d` |
-| North America (NTSC), media patched | `702b79fd3bc844a413cbc26404718b1bf7e44e87` |
+## Xbox vs. PC
+<sup>[(Back to top)](#table-of-contents)</sup>
 
-The executable is recompiled from the PAL file. The North American `default.xbe` differs from it only in its signature
-and certificate (region, version, signing keys); every byte of code and data is the same, so the same executable runs
-it. A media patched copy (made to run from a modded console's hard disk) changes one byte of start-up code that the
-port replaces anyway, so it runs too. The log (`logs\pgr2.log`) names the SHA-1 of the `default.xbe` it found. Any other release (the Japanese one, for
-example) has not been checked and the game asks before starting it.
+<p align="center">
+  <img src="docs/images/pgr2-settings-wipe.webp" alt="A wipe across the Florence start line between all settings off and the recommended settings" width="800">
+  <br>
+  <i>All extras off vs. render scale 200%, MSAA 4x, smooth alpha edges, texture filtering 16x and sharpening 50%, at 1920x800 (21:9).</i>
+</p>
 
-## Getting Started
+The Xbox drew PGR2 at 640x480, at 4:3 or in its own 16:9 mode for a widescreen TV, with races at 30 frames a second.
+The port draws it at your screen's resolution and shape, with races at 30 as on the console or at up to 144, and with
+anti-aliasing, sharpening and texture filtering on top of the game's own picture.
 
-There are two ways to get the game running. Both build the game's code on your own PC from your own disc: it is never
-downloaded, only the program around it.
+## Features
+<sup>[(Back to top)](#table-of-contents)</sup>
 
-### The launcher (recommended)
+| | |
+|---|---|
+| **Widescreen and ultrawide** | The game's own 16:9 mode on a 16:9 screen. At 21:9 and wider the 3D views are widened to the screen at full sharpness, with the HUD and menus in a centred 16:9 area. 16:10 and 3:2 screens are filled too. |
+| **High frame rate races** | Race Frame Rate 30 (the console's, and the default), 60, 90, 120 or 144, with the same physics. Menus run at 60. |
+| **Sharper graphics** | Render scale from 25% to 200%, MSAA up to 8x, FXAA or SMAA, sharpening, texture filtering up to 16x, smooth alpha edges and sharp text and HUD. |
+| **Recomp in the game's menus** | Options > General Options > Recomp, or the pause menu in a race: every setting in the game's own option rows. Everything is also in the F1 window and `pgr2.toml`. |
+| **Controllers and wheels** | Xbox, PlayStation and Switch pads with hot plugging and rumble. Any DirectInput wheel, pedals, shifter or button box, with force feedback and H-pattern shifters. |
+| **Keyboard and mouse** | The keyboard plays as controller 1, two keys for each input, remappable. Mouse look on the right stick. |
+| **Your music** | PGR2's custom soundtracks from your own MP3, FLAC, OGG, M4A or WAV files, converted by the launcher. |
+| **Xbox Live DLC** (experimental) | Paris, Long Beach and the 16 DLC cars, from your own booster pack and title update files. |
+| **System link** | On the LAN, or straight to a friend's IP address. |
+| **Achievements** | 64, with pop-ups and a list in the settings window. |
+| **The launcher** | Choose your disc, get the game ready, play. It builds the game's code from your disc in seconds, and updates itself and the game, keeping your saves. |
+| **Quality of life** | Skip intro, hide the HUD, field of view, draw distance, F12 screenshots at full resolution, Alt+Enter for full screen, pause in the background, eight languages. |
+
+## Widescreen and ultrawide
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+<p align="center">
+  <img src="docs/images/pgr2-ultrawide.webp" alt="The title menu at 21:9: the backdrop movie fills the screen's width and the menu stays in a centred 16:9 area" width="800">
+  <br>
+  <i>The title menu at 1920x800 (21:9). The race shots above show the 3D view widened, with the HUD kept in the middle.</i>
+</p>
+
+**Aspect Ratio** chooses the picture's shape:
+- **From Screen** (the default) follows your screen: the game's own 16:9 mode on a 16:9 screen, with its wider view
+  and the HUD at the edges; at 21:9 and wider, the race and replay cameras widened to the screen at full sharpness,
+  with the HUD and menus kept in a centred 16:9 area; on 16:10 and 3:2 screens, the game's 4:3 mode with its 3D
+  widened to the screen.
+- **4:3** and **16:9** fix the shape; **Fill Screen** widens to any screen.
+
+The menus' backdrop movie fills the screen's width; the intro movies keep their 4:3 shape. Ultrawide has been played
+on 21:9 and 32:9 screens, the rear view mirror and replays included.
+
+## Recomp: settings in the game's menus
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+<p align="center">
+  <img src="docs/images/pgr2-recomp-menu.webp" alt="Recomp from the pause menu in a race: its sections, and the Picture section's rows" width="800">
+  <br>
+  <i>Recomp in a race's pause menu: the sections, and Picture.</i>
+</p>
+
+**Options > General Options > Recomp** (where the console had Screen Center), or **Recomp** in the pause menu of a
+race, holds every setting of this PC version in the game's own option rows, changed with left and right and saved at
+once.
+
+| Section | Settings |
+|---|---|
+| **Picture** | MSAA, smooth alpha edges, edge smoothing (FXAA, SMAA), sharpening, texture filtering, world textures, sharp text and HUD |
+| **Performance** | Render scale, scaling filter, frame rate cap, low latency, frame counter, renderer (Direct3D 12 or 11) |
+| **Display** | Monitor, display mode (full screen, borderless, window), resolution, vertical sync, aspect ratio |
+| **Game** | Race frame rate, draw distance, field of view, race HUD, skip intro, Xbox Live DLC, language, pause in background |
+| **Controls** | Keyboard, mouse look, invert mouse, mouse sensitivity, default keys and controller |
+| **Wheel** | Invert steering, wheel rotation, steering lock, dead zone, force feedback, road and impacts |
+
+**Bindings and More** opens the settings window (also **F1**, or **Back + Start** on a pad): the same settings, plus
+key, button and wheel bindings and the achievements list. Everything is saved in `pgr2.toml` beside the game.
+**Quit Game** is at the bottom of Recomp.
+
+## Graphics settings
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+In Recomp > Picture and Performance, or the settings window (F1); they apply at once. These are shots of one frame
+at 1920x800, taken one after another on an Intel Arc A750; the close-ups are enlarged twice.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-edges.webp" alt="Close-up of the start gantry, overhead wires and balconies with all off, MSAA 4x, FXAA and render scale 200%" width="800">
+  <br>
+  <i>Edges: all off, MSAA 4x, FXAA and render scale 200%.</i>
+</p>
+
+- **MSAA** smooths the edges of the 3D scene and keeps textures sharp. The more samples, the slower.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-msaa.webp" alt="The gantry and wires with MSAA off, 2x, 4x and 8x" width="800">
+  <br>
+  <i>MSAA off, 2x, 4x and 8x.</i>
+</p>
+
+- **Edge smoothing** works on the finished frame, HUD included: FXAA softens it a little, SMAA keeps it crisper.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-smaa.webp" alt="The gantry and wires with edge smoothing off and with SMAA" width="800">
+  <br>
+  <i>Edge smoothing off vs. SMAA.</i>
+</p>
+
+- **Render scale** draws the picture larger than the screen: the smoothest fine detail, and the slowest.
+- **Sharpening** makes the picture crisper. Around 50% is a good start; 100% turns walls and roads gritty.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-sharpness.webp" alt="The gantry and wires with sharpening off, 50% and 100%" width="800">
+  <br>
+  <i>Sharpening off, 50% and 100%.</i>
+</p>
+
+- **Texture filtering** keeps the road sharp into the distance.
+
+<p align="center">
+  <img src="docs/images/pgr2-settings-filtering.webp" alt="The cobbled square beside the car with texture filtering Game and 16x" width="800">
+  <br>
+  <i>Texture filtering Game vs. 16x.</i>
+</p>
+
+- **Smooth alpha edges** softens leaves, fences and other cut-out shapes, which MSAA alone leaves jagged. It needs
+  MSAA on.
+- **Scaling filter** chooses how the frame reaches the screen when render scale is not 100%: Bilinear, or Sharp, a
+  little crisper.
+- **World textures** only smooths the texture's pixels and adds no detail, and it can cause hitches of a quarter of a
+  second. Best left off.
+
+A good start for a capable PC is the wipe's: render scale 200%, MSAA 4x, smooth alpha edges, texture filtering 16x
+and sharpening 50%. On a slower graphics card, lower the render scale first.
+
+## Controls
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+| Xbox input | Keyboard | Modern pad |
+|---|---|---|
+| Steer, menus (left stick) | Arrow keys, or A / D | left stick |
+| Accelerate / brake (triggers) | W / S | RT / LT |
+| A / B | Enter or Space / Backspace | A / B |
+| X / Y | Q / E | X / Y |
+| Black / White | R / F | RB / LB |
+| Start / Back | Esc or P / Tab | Start / Back (View) |
+| D-pad | Numpad 8 / 2 / 4 / 6 | d-pad |
+| Right stick, stick clicks | I J K L, C and V | right stick, stick clicks |
+| Settings window | F1 | Back + Start |
+| Screenshot | F12 | |
+| Full screen | Alt+Enter | |
+
+The keyboard plays as controller 1 while the game window has the focus. Keys and buttons can be changed in the F1
+window's Controls tab, two keys for each input; any console input can be put on any pad input. Steering wheels are
+set up in F1 > Wheel: click a control, then turn, press or move it.
+
+## Your music, DLC and system link
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+- **Your music:** the launcher's **Your music** page converts a folder of your own music (MP3, FLAC, OGG, M4A, WAV and
+  more), each folder a soundtrack. In the game: Options > Sound / Music > PGR 2 Custom Soundtrack to build a playlist,
+  then the Radio/CD options in a race's pause menu.
+- **Xbox Live DLC** (experimental): Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
+  files (Recomp > Game, or F1 > Game). See [WINDOWS.md](WINDOWS.md).
+- **System link:** races on the LAN as on the console. Over the internet, the joining player sets
+  `join_ip = 'a.b.c.d'` (the host's address) in `pgr2.toml`; the host needs the game's port forwarded, or both players
+  on one VPN. Xbox Live itself was shut down in 2010 and is not part of the port.
+
+## Achievements
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+64 achievements (780 points): the Kudos World Series and class medals, Arcade, Kudos ranks, the garage, speed, wins
+and Geometry Wars, with a pop-up and a list in the settings window. Unlocks are kept in `achievements.toml` beside the
+game. They are written in RetroAchievements' condition format; the set and its memory map are in
+[ACHIEVEMENTS.md](ACHIEVEMENTS.md).
+
+## Requirements
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+- **Windows 10 or 11, 64 bit**, and a graphics card with Direct3D 12 or 11. Without Direct3D 12 the game starts on 11
+  by itself.
+- **Your own copy of the game:** an `.iso` image of your disc, or a folder with the disc's files. The European (PAL)
+  and North American (NTSC) releases (title id 4D53004B) are supported:
+
+  | Release | `default.xbe` SHA-1 |
+  | --- | --- |
+  | Europe (PAL), version 2 | `676895b86f01938804c5f1cdcad8b44044295cb4` |
+  | North America (NTSC), version 5 | `ec6e902fc167de349f1dc1838a7441dfff932c62` |
+  | Europe (PAL), media patched | `acd776330a9b903fd567b544cf7ece0f612f6c7d` |
+  | North America (NTSC), media patched | `702b79fd3bc844a413cbc26404718b1bf7e44e87` |
+
+  The executable is recompiled from the PAL file. The North American `default.xbe` differs from it only in its
+  signature and certificate, so the same executable runs it. A media patched copy (made to run from a modded console's
+  hard disk) changes one byte of start-up code that the port replaces anyway. The log (`logs\pgr2.log`) names the
+  SHA-1 of the `default.xbe` it found. Any other release (the Japanese one, for example) has not been checked, and the
+  game asks before starting it.
+- **About 1 GB free**, plus room for your copy of the game, and an internet connection for the game's package (about
+  70 MB).
+- **Speed:** races at the console's 30 frames a second run on any recent PC. At 60, the busiest streets need a fast
+  processor; above 60 they dip on most processors, and a variable refresh display (FreeSync, G-Sync) hides dips best.
+  In replays the graphics card is the limit at render scale 200%.
+
+## Getting started
+<sup>[(Back to top)](#table-of-contents)</sup>
 
 `PGR2Launcher.exe` does everything for you: no Visual Studio, no Git, no command line, nothing installed in Windows
-and no admin rights needed.
+and no admin rights needed. Both it and a build from source make the game's code on your own PC from your own disc:
+it is never downloaded, only the program around it.
 
-**You need:**
-- Windows 10 or 11, 64 bit, and a GPU with Direct3D 12 or 11.
-- Your own copy of the game (PAL or NTSC): an `.iso` image of your disc, or a folder with the disc's files.
-- About 1 GB free, plus room for your copy of the game, and an internet connection for the game's package (about 70 MB).
-
-**Steps:**
 1. Download `PGR2Launcher.exe` from the [latest release](https://github.com/hk21x/pgr2-recomp/releases/latest).
-2. Put it in a folder of its own with a short path (for example `C:\Games\PGR2`) and run it. Everything it makes
-   goes in a `PGR2` folder beside it. Windows may warn about an unrecognised app: choose **More info**, then **Run anyway**.
+2. Put it in a folder of its own with a short path (for example `C:\Games\PGR2`) and run it. Everything it makes goes
+   in a `PGR2` folder beside it. Windows may warn about an unrecognised app: choose **More info**, then **Run anyway**.
 3. **Your game:** choose your disc image or the folder with the disc's files. The launcher checks that it is a
    supported release.
-4. **Get the game ready:** the launcher downloads the game's package (the program and a compiler, no game code),
-   then your PC builds the game's code from your disc. That took about 20 seconds on a fast 16 thread PC; it depends
-   on your PC and connection. You can stop at any time; it carries on where it left off.
-5. **Play:** press **Play**. The first start sets up the emulated hard disk and copies the game's cache while the intro
-   movies play (about two minutes); later starts are quick.
+4. **Get the game ready:** the launcher downloads the game's package (the program and a compiler, no game code), then
+   your PC builds the game's code from your disc. That took about 20 seconds on a fast 16 thread PC. You can stop at
+   any time; it carries on where it left off.
+5. **Play.** The first start sets up the emulated hard disk and copies the game's cache while the intro movies play
+   (about two minutes); later starts are quick.
 
-When a new release is out, the launcher offers it at the top of its window: **Update the launcher** downloads it,
-checks it and restarts, then **Update** puts the new version in place, keeping your saves, settings and music. The new
-version is built beside the game and only replaces it once it is ready, so a failed or stopped update leaves the game
-as it was.
-
-**Coming from 1.5.1 or earlier:** those versions built everything from source with about 1.4 GB of tools. The new
-launcher shows **A faster way to play**: press **Update**. Your game keeps playing until the new one is ready, and
-your saves, settings and music are kept. Afterwards, **Manage > Remove the old build tools** frees about 2 GB
-(FFmpeg, for your music, stays).
+When a new release is out, the launcher offers it at the top of its window: **Update the launcher**, then **Update**.
+The new version is built beside the game and only replaces it once it is ready, keeping your saves, settings and music.
 
 The launcher's pages: **Game** (your disc, the steps, Play), **Your music**, **Manage** (the install, its folders,
 removing build files, building the game again if it will not start) and **Log**.
 
 Files, all under the `PGR2` folder beside the launcher:
-- `play\` the game: `PGR2.exe`, `PGR2.dll` (the game's code, built on your PC), `pgr2.toml` (settings), `hdd\` (profiles,
-  saves, caches and your music), `logs\pgr2.log` (the game's log), `achievements.toml`, `compiler\` (what builds the code)
-- `launcher.log` the launcher's log (send it with any problem)
-- `tools\ffmpeg` only if you import your music
+- `play\`: `PGR2.exe`, `PGR2.dll` (the game's code, built on your PC), `pgr2.toml` (settings), `hdd\` (profiles,
+  saves, caches and your music), `logs\pgr2.log`, `achievements.toml`, `screenshots\`, `compiler\`
+- `launcher.log`, the launcher's log (send it with any problem)
+- `tools\ffmpeg`, only if you import your music
 
 To remove everything, delete the launcher and its `PGR2` folder (keep `play\hdd` if you want your saves).
 
-### Building from source (developers)
+## FAQ
+<sup>[(Back to top)](#table-of-contents)</sup>
 
-**You need:** Windows 10 or 11 (64 bit), [Git](https://git-scm.com/download/win), Visual Studio 2022 (Community is
-fine) with **Desktop development with C++** (`build.bat` offers to add **C++ Clang tools for Windows** and **C++ CMake
-tools for Windows**), about 3 GB free, and your disc's files: `default.xbe` and its folders (`Cache`, `CarDynamics`,
-`data`, `Frontend`, `Game`, `media`, ...), or an `.iso` image of the disc.
+<details>
+<summary><b>Is this an emulator?</b></summary>
+<br>
+No. The game's x86 code is translated ahead of time into C++ and built as a Windows program. The Xbox's graphics,
+sound and input are rebuilt for the PC underneath it. That is what makes ultrawide at full sharpness, races above 30
+frames a second and settings inside the game's menus possible.
+</details>
+
+<details>
+<summary><b>Why a recompilation?</b></summary>
+<br>
+PGR2 never came out on PC, so the Xbox game is the only one there is. Recompiling it gives:
+<ul>
+<li><b>The whole game to work with.</b> A feature is a change in source and in our own renderer: ultrawide with the
+HUD kept in place, high frame rate races, and Recomp in the game's own menus were built that way.</li>
+<li><b>One runtime for several games.</b> The renderer, anti-aliasing, controllers and wheels, achievements and the
+settings window come from the toolkit this port shares with other Xbox ports, and a fix made for one reaches the
+others.</li>
+<li><b>A present-day program.</b> 64 bit and Direct3D 12, running at the speed of your PC rather than of an emulated
+console.</li>
+</ul>
+</details>
+
+<details>
+<summary><b>Why do I need my own copy of the game?</b></summary>
+<br>
+The game belongs to its rights holders. This project shares only its own work: the game's code and assets are made
+from your disc on your PC.
+</details>
+
+<details>
+<summary><b>Can I play online?</b></summary>
+<br>
+Xbox Live for the original Xbox closed in 2010, so the game's Xbox Live mode has nothing to connect to. System link
+works on a LAN, and over the internet with <code>join_ip</code>: see
+<a href="#your-music-dlc-and-system-link">system link</a>.
+</details>
+
+<details>
+<summary><b>Races dip below the frame rate I chose.</b></summary>
+<br>
+The limit is usually the processor, in the busiest streets; a draw distance above 100% adds to it. In replays it is
+the graphics card: lower the render scale or MSAA. The console's 30 is the default.
+</details>
+
+<details>
+<summary><b>Something is wrong. What should I send?</b></summary>
+<br>
+<ul>
+<li>The first lines of <code>logs\pgr2.log</code> list the settings, the graphics card and any <code>XBE_*</code> or
+<code>PGR2_*</code> environment variables; leftover ones from experiments change how the game draws.
+<a href="WINDOWS.md">WINDOWS.md</a> lists the diagnostic switches.</li>
+<li>The launcher's build failing: send <code>PGR2\launcher.log</code>. Press Build again after a network problem: it
+carries on where it stopped.</li>
+<li>The build stopping while it unpacks the Windows SDK (the last lines <code>extracting ... .msi</code>): the
+launcher's folder path is too long for Microsoft's installer. Move the launcher and its <code>PGR2</code> folder to a
+short folder such as <code>C:\Games\PGR2</code> and press Build again.</li>
+<li>"Another release" in the log, or the game not starting: the <code>default.xbe</code> is not one of the supported
+releases.</li>
+<li>A crash: the dump in <code>CrashDumps</code> includes the game's memory. Dumps are about 300 MB: zip one and share
+it through a file host.</li>
+<li>A first boot again (the cache, the intro movies): delete the <code>hdd</code> folder beside <code>PGR2.exe</code>.</li>
+</ul>
+Report problems on the <a href="https://github.com/hk21x/pgr2-recomp/issues">issue tracker</a> or the
+<a href="https://discord.gg/PQjkKsdtc">Discord server</a>.
+</details>
+
+## Known issues
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+- **Sound effects:** reverb and filters are not modelled, so some effects sound drier than on the console.
+- **Races above 30** can dip in the busiest streets on most processors (see [Requirements](#requirements)).
+- **Xbox Live DLC** is experimental: a few objects are left out, and some day sets show at night.
+- **Draw distance** above 100% is experimental: most streets end before the console's distance.
+- **World textures** only smooth the texture's pixels and can cause hitches of a quarter of a second. Best left off.
+- Open reports are on the [issue tracker](https://github.com/hk21x/pgr2-recomp/issues).
+
+## Roadmap
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+- **Smoother frame pacing** in races ([#31](https://github.com/hk21x/pgr2-recomp/issues/31)).
+- **Sound effects** closer to the console's: reverb and filters.
+- **Fixes from reports**, such as the rare AI crash in [#29](https://github.com/hk21x/pgr2-recomp/issues/29).
+- **System link over the internet made easier**, without editing `pgr2.toml`.
+
+Progress is logged in [PROGRESS.md](PROGRESS.md), and technical findings in [FINDINGS.md](FINDINGS.md).
+
+## Community and support
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+Join the [Discord server](https://discord.gg/PQjkKsdtc) for help getting the game running, to report problems, and to
+talk about the port with other players.
+
+## Building
+<sup>[(Back to top)](#table-of-contents)</sup>
+
+For developers. **You need:** Windows 10 or 11 (64 bit), [Git](https://git-scm.com/download/win), Visual Studio 2022
+(Community is fine) with **Desktop development with C++** (`build.bat` offers to add **C++ Clang tools for Windows**
+and **C++ CMake tools for Windows**), about 3 GB free, and your disc.
 
 1. Clone the repository with its SDK:
    ```
@@ -91,200 +389,28 @@ tools for Windows**), about 3 GB free, and your disc's files: `default.xbe` and 
    Cloned without `--recurse-submodules`? Run `git submodule update --init`.
 2. Put your game files in the `assets` folder: `assets\default.xbe` with the game's folders beside it. With an `.iso`,
    put the `.iso` in `assets` and also copy `default.xbe` out of it into `assets` (the build recompiles from that file).
-3. Run `build.bat` from Explorer or a command prompt. The first build takes a few minutes on a fast PC (the launcher's old
-   whole build took under 5 on a 16 thread one), longer on a slower PC; later builds are quicker. On Windows the game's code
-   is built into `PGR2.dll` beside the exe.
-   Do not run `xbe_symbols` or edit `config\game.toml`: the committed configuration is the one for the supported release.
+3. Run `build.bat`. The first build takes a few minutes on a fast PC; later builds are quicker. The game's code is
+   built into `PGR2.dll` beside the exe. Do not run `xbe_symbols` or edit `config\game.toml`: the committed
+   configuration is the one for the supported release.
 4. Answer Y to "Play now?", or run `out\build\release\PGR2.exe`. It finds the `assets` folder beside itself or in any
    folder above it.
 
-`launcher.bat` builds `PGR2Launcher.exe` itself. Files the game writes beside the exe: `pgr2.toml` (settings), `hdd\`
-(saves and caches; delete it to start again from a first boot), `logs\pgr2.log`, `achievements.toml`, and
-`CrashDumps\` if it crashes.
+`launcher.bat` builds `PGR2Launcher.exe`. [WINDOWS.md](WINDOWS.md) has the files the game writes, the settings and
+the diagnostic switches; Linux tools and the headless harness are described in [CLAUDE.md](CLAUDE.md) and
+`sdk/README.md`.
 
-## Controls and Settings
-
-**Settings window:** press **F1**, or **Back + Start** on a controller, or choose **Options > General Options > PC
-Settings** in the game's menus. Tabs: Display, Graphics, Game, Achievements, General and Controls. Changes are saved
-at once. **Quit game** (top right) closes the game, as does **Alt+F4**.
-
-**Keyboard** (plays as controller 1 while the window has the focus; remap in Controls, two keys per input):
-
-| Console input | Keys |
-| --- | --- |
-| Steer / menus (left stick) | Arrow keys, or A / D |
-| Accelerate / brake | W / S |
-| A / B / X / Y | Enter or Space / Backspace / Q / E |
-| Black / White | R / F |
-| Start / Back | Escape or P / Tab |
-| D-pad | Numpad 8 / 2 / 4 / 6 |
-| Right stick, stick clicks | I J K L, C and V |
-
-**Controllers:** Xbox, PlayStation and Switch controllers, with hot plugging and rumble; any console input can be
-mapped to any controller input in Controls.
-
-![Ultrawide: the view widened to 21:9, the HUD kept at 16:9](docs/images/pgr2-ultrawide.webp)
-
-## Graphics settings
-
-In Options > General Options > Recomp or the settings window (F1); they apply at once. Each comparison is one paused
-frame at 3440x1440.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-wipe.webp" alt="A wipe across a yellow Carrera GT between all settings off and the recommended settings" width="800">
-  <br>
-  <i>All off vs. the recommended start for a capable PC: render scale 200%, MSAA 4x, smooth alpha edges, texture filtering 16x, sharpening 50%.</i>
-</p>
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-car.webp" alt="Close-up of the car's roof and mirror with all off, MSAA 4x, FXAA and render scale 200%" width="800">
-  <br>
-  <i>Edges around the car, enlarged three times.</i>
-</p>
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-edges.webp" alt="A railing and bench with all off, MSAA 4x, FXAA and render scale 200%" width="800">
-  <br>
-  <i>Fine detail, enlarged twice.</i>
-</p>
-
-- **MSAA** smooths the edges of the 3D scene and keeps textures sharp. The more samples, the slower.
-- **FXAA** smooths the finished frame, HUD included, and softens it a little.
-- **Render scale** draws the picture larger than the screen: the smoothest fine detail, and the slowest.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-sharpness.webp" alt="A shopfront with all off, sharpening 50%, sharpening 100% and all three together" width="800">
-  <br>
-  <i>Sharpening, enlarged twice.</i>
-</p>
-
-- **Sharpening** makes the picture crisper. Around 50% is a good start; 100% turns walls and roads gritty.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-smaa.webp" alt="A barrier with edge smoothing off and with SMAA" width="800">
-  <br>
-  <i>SMAA on the barrier, enlarged three times.</i>
-</p>
-
-- **SMAA** smooths the edges of the finished frame, HUD included, and softens surfaces a little.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-alpha.webp" alt="A tree against the sky with MSAA 4x, without and with smooth alpha edges" width="800">
-  <br>
-  <i>Smooth alpha edges on the leaves, enlarged three times.</i>
-</p>
-
-- **Smooth alpha edges** softens leaves and other cut-out shapes, which MSAA alone leaves jagged. It needs MSAA on.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-filtering.webp" alt="A road into the distance with texture filtering Game and 16x" width="800">
-  <br>
-  <i>Texture filtering, enlarged twice.</i>
-</p>
-
-- **Texture filtering** keeps the road and its lines sharp into the distance. It has the clearest effect here.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-scaling.webp" alt="A pylon at render scale 150% with the bilinear and sharp scaling filters" width="800">
-  <br>
-  <i>Scaling filter at render scale 150%, enlarged three times.</i>
-</p>
-
-- **Scaling filter** is a small gain: Sharp is a little crisper than Bilinear. It does nothing at 100%.
-
-<p align="center">
-  <img src="docs/images/pgr2-settings-world.webp" alt="A number plate with enhanced world textures off and on" width="800">
-  <br>
-  <i>Enhanced world textures, enlarged three times.</i>
-</p>
-
-- **Enhanced world textures** only smooths the texture's pixels and adds no detail, and it can cause hitches of a quarter
-  of a second. Best left off.
-
-## Features
-
-### Display
-- **Display Modes** - Fullscreen, borderless window or window, at any resolution the monitor offers, applied at once.
-- **Widescreen** - The game's own 16:9 mode (wider field of view, HUD at the edges), chosen from the screen's shape or set to 4:3 or 16:9.
-- **Ultrawide** - Aspect ratio "From the screen's shape" (the default) or "Fill the screen": 21:9 and wider, the 3D views widened to the screen's shape at full sharpness, the HUD and menus kept in a centred 16:9 area.
-- **Frame Pacing** - Runs at the game's own rate, menus at 60 and races at 30 as on the console, with vsync and a frame rate cap.
-- **Monitor** - Chooses which display the game uses.
-- **FPS Counter** - Shows the frame rate in a corner.
-
-### Graphics
-- **Render Scale** - Renders at a percentage of the screen, from 25% to 200%.
-- **Renderer** - Direct3D 12 (default) or Direct3D 11, at the next start; 11 for GPUs or drivers where 12 runs badly.
-  Without Direct3D 12 the game starts on 11 by itself.
-- **Anisotropic Filtering** - Up to 16x.
-- **Antialiasing** - MSAA 2x, 4x or 8x on the 3D scene, or FXAA on the finished frame; render scale above 100% supersamples.
-- **Field of View** - Widens or narrows the race cameras, 50% to 200% of the console's.
-- **Console Accurate Depth** - W-buffered depth as the Xbox does it, keeping car bodies, showroom cars and street lights right.
-- **Reflections** - Car paint and glass reflections from the game's environment cube.
-
-### Controller
-Supports Xbox, PlayStation and Switch controllers, with hot plugging and rumble. Any console input can be mapped to any controller input.
-
-**Steering wheels and rigs** - any DirectInput wheel, pedal box, button box or shifter, also spread over several USB
-devices; each control bound in F1 > Wheel by moving or pressing it, force feedback on the steering's device, and
-H-pattern shifters with a manual gearbox.
-
-### Keyboard
-Plays as controller 1, with two keys for each console input, remappable in the settings window.
-
-### General
-- **Launcher** - `PGR2Launcher.exe`: choose your disc, Get the game ready, Play, Update; a prebuilt package and your PC
-  builds the game's code from your disc, nothing installed.
-- **Your Music** - PGR2's custom soundtracks from a folder of your own music (MP3, FLAC, OGG, M4A, WAV and more):
-  the launcher's **Your music** page converts it, each folder a soundtrack. In the game: Options > Sound / Music >
-  PGR 2 Custom Soundtrack to build your playlist, then the Radio/CD options in a race's pause menu.
-- **Xbox Live DLC** (experimental) - Paris, Long Beach and the 16 DLC cars from your own booster pack and title update
-  files (F1 > Game); see [WINDOWS.md](WINDOWS.md).
-- **Recomp in the game's menus** - Options > General Options > Recomp, or the pause menu in a race: every setting of this PC version in the game's own option rows, in sections (Picture, Performance, Display, Game, Controls, Wheel), changed with left and right and saved at once, and Quit Game. Binding a wheel or keys by pressing them, and achievements, are in the settings window, which Recomp opens.
-- **Alt+Enter** - Switches between a window and full screen (the full screen mode you last used), saved as the setting in F1 > Display is.
-- **Screenshots** - F12 saves the frame as a full resolution PNG in the `screenshots` folder beside the game, without the settings window.
-- **Settings Window** - Press F1 or Back + Start on a controller for everything: display, graphics, game options, controls and the wheel. Changes made in either place are saved to `pgr2.toml`.
-- **Skip Intro** - Goes straight to the title screen.
-- **Hide HUD** - Clears the race HUD for screenshots and replays.
-- **Pause On Focus Loss** - The game and its sound stop while another window is in front.
-- **Saves** - Profiles, options and career progress are kept on an emulated hard disk beside the exe.
-- **System Link** - Plays over the LAN, or by connecting straight to a friend's IP address (`join_ip`).
-- **Achievements** - 64 achievements (Kudos World Series and class medals, Arcade, Kudos ranks, the garage, speed, wins, Geometry Wars) with pop-ups and a list in the settings window, written in RetroAchievements' condition format; the set and its memory map are in [ACHIEVEMENTS.md](ACHIEVEMENTS.md).
-- **High Frame Rate Races** - "Race Frame Rate" in Recomp or the settings window, at the next start: 30 as on the console, 60, 90, 120 or 144, with unchanged physics. Off by default. 60 holds on a fast CPU; above that busy streets dip on most CPUs, and a variable refresh display (FreeSync, G-Sync) hides dips best. Replays can dip at render scale 200%.
-- **Draw Distance** - 25% to 400% of the console's (experimental: most streets end before the console's distance).
-
-### Miscellaneous
-- **Boot Splash** - Place a `splash.png` (or `.bmp`) beside the exe to display a splash screen at launch.
-- **Diagnostics** - Logs to `logs\pgr2.log`, and offers frame captures (F3) and frame logs (F4). See [WINDOWS.md](WINDOWS.md).
-
-## Status
-
-Boots, plays the movies and menus, races in every mode tried, saves and plays system link; flicker fixed, ultrawide,
-MSAA and the settings window in. Open: sound effects (reverb, filters) are not modelled, and races at 60 can dip
-below 60 in the busiest streets. Progress is
-in [PROGRESS.md](PROGRESS.md), and technical findings in [FINDINGS.md](FINDINGS.md).
-
-## Community and Support
-
-Join the [Discord server](https://discord.gg/PQjkKsdtc) for help getting the game running, to report problems,
-and to talk about the port with other players.
-
-## Troubleshooting
-
-- Something wrong: the first lines of `logs\pgr2.log` list the settings, the GPU and any `XBE_*` or `PGR2_*`
-  environment variables; leftover ones from experiments change how the game draws. [WINDOWS.md](WINDOWS.md) lists
-  the diagnostic switches (frame captures with F3, frame logs with F4, `XBE_PERF` timings).
-- The launcher's build failing: send `PGR2\launcher.log` (its Details section shows the same). Press Build again
-  after a network problem: it carries on where it stopped.
-- The build stopping while it unpacks the Windows SDK (the last lines `extracting ... .msi`): the launcher's folder
-  path is too long for Microsoft's installer. Move `PGR2Launcher.exe` and its `PGR2` folder to a short folder such
-  as `C:\Games\PGR2` and press Build again. Launchers from 2026-10-27 on say so before building.
-- "Another release" in the log, or the game not starting: the `default.xbe` is not one of the supported releases.
-- A first boot again (the cache, the intro movies): delete the `hdd` folder beside `PGR2.exe` (`PGR2\play\hdd` with
-  the launcher, `out\build\release\hdd` when built from source).
-- Races dipping below the chosen frame rate: the limit is usually the CPU, in the busiest streets (draw distance above 100% adds to it). In replays it is the GPU: lower the render scale or MSAA. The console's 30 is the default.
-
-## Credits
+## Credits and legal
+<sup>[(Back to top)](#table-of-contents)</sup>
 
 - [Xbox XBE Recomp](https://github.com/TGP482/XboxXBE-Recomp), the recompiler and runtime this is built on.
 - [XenonRecomp](https://github.com/hedge-dev/XenonRecomp) for the overridable function layout and instruction hooks.
-- [Zydis](https://github.com/zyantific/zydis) for decoding x86 instructions, [toml++](https://github.com/marzer/tomlplusplus) for the configs, [Dear ImGui](https://github.com/ocornut/imgui) for the settings overlay and [SDL](https://github.com/libsdl-org/SDL) for the window, input and controllers.
+- [Zydis](https://github.com/zyantific/zydis) for decoding x86 instructions, [toml++](https://github.com/marzer/tomlplusplus)
+  for the configs, [Dear ImGui](https://github.com/ocornut/imgui) for the settings overlay and
+  [SDL](https://github.com/libsdl-org/SDL) for the window, input and controllers.
+
+*Project Gotham Racing 2* © Microsoft. Developed by Bizarre Creations and published by Microsoft Game Studios. This is
+an unofficial fan project, not affiliated with or endorsed by them. No game code or assets are distributed: they are
+made from your own copy of the game. Car makers' names and marks seen in the screenshots belong to their owners.
+
+**AI disclosure:** much of this project's code, tooling and documentation was written with AI assistance (Anthropic's
+Claude), directed, reviewed and playtested by the author.

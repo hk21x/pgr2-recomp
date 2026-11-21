@@ -37,6 +37,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-21 - Fork main 5af29c1: issues 40, 43, 39 fixes in PGR2's sdk
+- pgr2-next (world-alpha, crt-filter, launcher-iso-in-place on fork main c06f201) gated: smoke OK on PGR2, PGR1,
+  EoN, AUF, NightFire; PGR1 repro live race; launcher_cli builds per game. Harry's go; fork main fast-forwarded.
+- PGR2 smoke OK on it (menu 11, race 1984 draws a frame). Harry confirmed the #40 fix in game (test-40).
+- Next: release notes and tag when Harry wants a release; #40 and #43 replies are in .local/issues.
+
 ### 2026-11-21 - Issue 40 found: a faint alpha read as a cut-out (SDK branch world-alpha 6caf410, not on fork main)
 - Cause: the enlargement's cut-out test counted alpha 8 and under as outside. Florence's walls have alpha 3 with a
   few opaque patches (81EB1000 at the Piazza della Repubblica arch), so they were masked, 3 became 0, and the

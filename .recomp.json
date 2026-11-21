@@ -1,0 +1,13 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Project Gotham Racing 2",
+  "wikidata": "Q3175136",
+  "system": "Xbox",
+  "type": "recomp",
+  "project": "Project Gotham Racing 2 recomp",
+  "status": "released",
+  "targets": ["Windows"],
+  "toolchain": "XboxXBE-Recomp",
+  "original": [{ "region": "Europe" }, { "region": "USA" }],
+  "links": [{ "label": "Discord", "url": "https://discord.gg/PQjkKsdtc" }]
+}

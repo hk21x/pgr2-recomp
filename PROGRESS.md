@@ -37,6 +37,25 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-21 - Issue triage: 39 fixed (launcher), 40 a likely fix not confirmed, replies drafted
+- Open: 43 CRT shader, 42 cheats, 41 DLC cars, 40 missing faces, 39 two ISO copies, 31 frame pacing, 29 crash, 6 hardtop,
+  5 custom races, 4 unpacked data, 2 Linux/macOS.
+- 39 (sdk branch launcher-iso-in-place, 6b9be69): SetGame emptied play\assets of images before linking the chosen one, so
+  choosing the copy it had made there (an image on another drive is copied, not linked) deleted it. A choice already in
+  play\assets now stays; SavedGame falls back to that copy when the remembered image is gone. launcher_cli with a small
+  xiso: link, choose the copy (kept, "in place"), original deleted (xbes still written).
+- 40 (sdk branch world-mips, 94b5ebb): with Enhanced World Textures the facade of Florence's Arco della Repubblica is gone
+  (reporter's on/off pair). Enlarged textures had a full mip chain made from the enlarged picture and a sampler with no
+  mip limit; now the levels below the enlarged one are the texture's own (decoded) and with no mip filter it stops at
+  the console's size. Not confirmed: on GPU-VM (Arc A750) the arch's circuit is locked on a fresh profile and the car
+  does not move from keyboard throttle (menus take keys; W and Enter held: 0 mph), so only the Duomo 1 start was seen,
+  where nothing is missing either way. 527 textures dumped there: no enlarged texture lost alpha against its original.
+  The cause may be elsewhere; Harry or a reporter to check the arch.
+- 41: DLC cars work here; reply asks for the log and whether the copy has the title update (uPAL/uNTSC).
+- 2: the Linux build failure is the Wine AppImage's libapprun_hooks.so leaking into MinGit's sh; prebuilt avoids it.
+- Replies in .local/issues (i39, i40, i41). Not started: 43, 42, 6, 5, 4 (features), 31 and 29 (pacing, needs a repro).
+- Next: Harry decides on the two SDK branches (all-games gate before fork main) and on which features to take on.
+
 ### 2026-11-18 - README restyled (twine-pc layout), new shots from GPU-VM (branch readme-style)
 - Harry asked (via the juiced session) for every port's README in CipherNovaa/twine-pc's style, as juiced-recomp's
   a826092: banner, badges, link row, hero, table of contents with back-to-top links, Xbox vs. PC wipe, a features

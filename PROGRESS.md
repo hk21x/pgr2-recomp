@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-21 - Issue 43: CRT look (SDK branch crt-filter 5d468d6, not on fork main)
+- F1 > Graphics > "CRT look", 0 to 100% (`crt` in pgr2.toml), in the final pass with FXAA, the scaling filter and
+  sharpening (both renderers). Scanlines: a beam per line, wider where brighter, each line a whole number of screen
+  pixels, the nearest to the console's 480 (2 at 1080, 3 at 1440; a fraction beats with the pixels), normalised over
+  its rows; an aperture grille on screen pixels. Linear light, averages kept.
+- Evidence: GPU-VM (Arc A750), 1920x1080 borderless, Florence Time Attack: D3D12 at 100% and D3D11 at 50% draw it,
+  no errors; light at 100% is 86% of off (clipped highlights). A 1920x800 picture gets 2 pixels a line (400 lines).
+  Under 720 rows only the grille shows.
+- Not done: the issue asks for CRT-Royale and other presets (ShaderGlass/RetroArch .slangp); that needs a multi-pass
+  shader loader, much more work; this is the simple built-in filter.
+- Next: Harry to look at it on his screen; then the all-games gate for fork main, the sdk pointer, smoke.
+
 ### 2026-11-21 - Issue triage: 39 fixed (launcher), 40 a likely fix not confirmed, replies drafted
 - Open: 43 CRT shader, 42 cheats, 41 DLC cars, 40 missing faces, 39 two ISO copies, 31 frame pacing, 29 crash, 6 hardtop,
   5 custom races, 4 unpacked data, 2 Linux/macOS.

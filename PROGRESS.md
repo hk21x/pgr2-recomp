@@ -37,6 +37,18 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-21 - Issue 40 found: a faint alpha read as a cut-out (SDK branch world-alpha 6caf410, not on fork main)
+- Cause: the enlargement's cut-out test counted alpha 8 and under as outside. Florence's walls have alpha 3 with a
+  few opaque patches (81EB1000 at the Piazza della Repubblica arch), so they were masked, 3 became 0, and the
+  console's alpha kill (`t0.a == 0` discards) dropped whole faces. Now any alpha 1 to 246 counts as partial (both
+  enlargements).
+- Evidence: Harry's F3 capture with the faces gone (.local/win/162154, test build with "world:" diagnostics): that
+  texture's enlarged picture had alpha 0 in 94.9% of texels; of the frame's 205 world pictures only it changes
+  under the new rule; UpscaleEdgeDirected2x on its bytes without the mask leaves no texel at 0.
+- world-mips (the mip level guess) and world-diag (diagnostics) are dropped: not for fork main.
+- Next: Harry to confirm on test-40 (sdk at world-alpha); then the all-games gate with crt-filter and
+  launcher-iso-in-place, the sdk pointer, smoke.
+
 ### 2026-11-21 - Issue 43: CRT look (SDK branch crt-filter 5d468d6, not on fork main)
 - F1 > Graphics > "CRT look", 0 to 100% (`crt` in pgr2.toml), in the final pass with FXAA, the scaling filter and
   sharpening (both renderers). Scanlines: a beam per line, wider where brighter, each line a whole number of screen

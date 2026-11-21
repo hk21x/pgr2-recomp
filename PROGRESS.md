@@ -19,7 +19,7 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - CPU renderer: near-camera band fixed (2026-10-20)
 - Checks: scripts/smoke.sh before main; scripts/linktest.sh, savetest.sh, soak.sh
 - Docs: FINDINGS.md (what is established, by topic), WINDOWS.md (testing)
-- Releases: PAL and NTSC (same code, one package; NTSC smoke OK from its disc image); 1.6.0 (2026-11-03) installs a prebuilt package
+- Releases: PAL and NTSC (same code, one package; NTSC smoke OK from its disc image); 1.6.0 (2026-11-03) installs a prebuilt package; latest 1.6.4 (2026-11-21, clang 22.1.3)
 - Direct3D 11 renderer: done and confirmed on Windows (drawing, MSAA; F1 > Graphics > Renderer, next start). Not
   under D3D11: F3 captures, the 8 bit target swizzle (logged if PGR2 needs it)
 - DLC cities (experimental, F1 > Game, `dlc`): Paris and Long Beach race on Windows (2026-10-21); a few objects left
@@ -36,6 +36,12 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 - Upstream: draft PR description in .local/upstream-pr.md, not sent
 
 ## Log
+
+### 2026-11-21 - Release 1.6.4 published
+- Harry published v1.6.4 (18:21 UTC): PGR2-package.zip 73,434,689 bytes; the download's sha256 matches the .json
+  (86bb2454...58ed1), and both match recomp-vm's build. Replies for #39, #40, #41 and #43 are in .local/issues.
+- Next: reporters' answers on #41 (DLC cars); #42 cheats, #6 hardtop, #5 custom races, #4 unpacking, #31 and #29
+  pacing not started.
 
 ### 2026-11-21 - Release 1.6.4 tagged; package built on recomp-vm
 - Tag v1.6.4 at 77e55f1 (SDK fork main 5af29c1), notes docs/releases/v1.6.4.md: CRT look (#43), per-stick dead

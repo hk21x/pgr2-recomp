@@ -37,6 +37,16 @@ Newest first. Each entry: date, what changed, what was learned, what's next.
 
 ## Log
 
+### 2026-11-21 - Release 1.6.4 tagged; package built on recomp-vm
+- Tag v1.6.4 at 77e55f1 (SDK fork main 5af29c1), notes docs/releases/v1.6.4.md: CRT look (#43), per-stick dead
+  zone and sensitivity, launcher play at start; fixes #40 (world textures' faint alpha), #39 (ISO in place),
+  update retries. The workflow made the draft with PGR2Launcher.exe.
+- Package (recomp-vm, fresh clone, PAL disc): PGR2-package.zip 73,434,689 bytes, sha256 86bb2454...58ed1, 41
+  entries as 1.6.3, compiler clang/LLD 22.1.3 (Harry's choice; 1.6.3 shipped 19.1.5, 63,555,981 bytes), no game
+  code or disc files. On \\192.168.1.229\Testing\pgr2-1.6.4-release\.
+- Next: Harry tries the package once (first PGR2 build with clang 22 on Windows), attaches zip and .json, publishes;
+  then the #40, #41 and #43 replies in .local/issues.
+
 ### 2026-11-21 - Fork main 5af29c1: issues 40, 43, 39 fixes in PGR2's sdk
 - pgr2-next (world-alpha, crt-filter, launcher-iso-in-place on fork main c06f201) gated: smoke OK on PGR2, PGR1,
   EoN, AUF, NightFire; PGR1 repro live race; launcher_cli builds per game. Harry's go; fork main fast-forwarded.
